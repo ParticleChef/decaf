@@ -404,10 +404,32 @@ class BTagCorrector:
         up = zerotag(eff_data_up)/zerotag(eff)
         down = zerotag(eff_data_down)/zerotag(eff)
 
+        # Modified b tag Nov 25
+        def onetag(eff):
+            output = np.zeros(eff.shape[0], np.float64)
+            for event_num in range(eff.shape[0]):
+                for i in range(len(eff[event_num]))):
+                    p=1
+                    for j in range(len(eff[event_num]))):
+                        if i != j:
+                            p *= (1.0 - eff[j])
+                        else :
+                        p*=eff[j]
+                        output[event_num] += p
+            return output
+
         if '-1' in tag: 
             nom = (1 - zerotag(eff_data_nom)) / (1 - zerotag(eff))
             up = (1 - zerotag(eff_data_up)) / (1 - zerotag(eff))
             down = (1 - zerotag(eff_data_down)) / (1 - zerotag(eff))
+        elif '2' in tag:
+            nom = (1- zerotag(eff_data_nom) - onetag(eff_data_nom))/(1- zerotag(eff) - onetag(eff))
+            up =(1- zerotag(eff_data_up) - onetag(eff_data_up))/(1- zerotag(eff) - onetag(eff))
+            down =(1- zerotag(eff_data_down) - onetag(eff_data_down))/(1- zerotag(eff) - onetag(eff))
+        elif '+1' in tag:
+            nom = onetag(eff_data_nom)/onetag(eff)
+            up= onetag(eff_data_up)/onetag(eff)
+            down = onetag(eff_data_down)/onetag(eff)
 
         return np.nan_to_num(nom), np.nan_to_num(up), np.nan_to_num(down)
 

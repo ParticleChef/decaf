@@ -136,8 +136,8 @@ class AnalysisProcessor(processor.ProcessorABC):
             'ttbarm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
             'wjete':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD', 'SingleElectron'),
             'wjetm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'dilepe':'DY','TT','ST','WW','WZ','ZZ','SingleElectron'),
-            'dilepm':'DY','TT','ST','WW','WZ','ZZ','SingleMuon')
+            'dilepe':('DY','TT','ST','WW','WZ','ZZ','SingleElectron'),
+            'dilepm':('DY','TT','ST','WW','WZ','ZZ','SingleMuon')
 
         }
 
@@ -528,6 +528,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         get_deepflav_weight     = self._corrections['get_btag_weight']['deepflav'][self._year]
         Jetevaluator            = self._corrections['Jetevaluator']
         
+        isLooseElectron = self._ids['isLooseElectron']
         isTightElectron = self._ids['isTightElectron'] 
         isLooseMuon     = self._ids['isLooseMuon']     
         isTightMuon     = self._ids['isTightMuon']     
@@ -634,7 +635,8 @@ class AnalysisProcessor(processor.ProcessorABC):
         j_good = j[j.isgood.astype(np.bool)]
         j_clean = j_good[j_good.isclean.astype(np.bool)]
         #j_iso = j_clean[j_clean.isiso.astype(np.bool)]
-        j_iso = j_clean[j_clean.astype(np.bool)]    #Sunil changed
+        #j_iso = j_clean[j_clean.astype(np.bool)]    #Sunil changed
+        j_iso = j_good[j_good.isclean.astype(np.bool)]    #Jieun changed
         j_dcsvL = j_iso[j_iso.isdcsvL.astype(np.bool)]
         j_dflvL = j_iso[j_iso.isdflvL.astype(np.bool)]
         j_HEM = j[j.isHEM.astype(np.bool)]
@@ -698,12 +700,24 @@ class AnalysisProcessor(processor.ProcessorABC):
             'ttbare' : np.sqrt(2*leading_e.pt.sum()*met.pt*(1-np.cos(met.T.delta_phi(leading_e.T.sum())))),
             'ttbarm' : np.sqrt(2*leading_mu.pt.sum()*met.pt*(1-np.cos(met.T.delta_phi(leading_mu.T.sum())))),
             'wjete'  : np.sqrt(2*leading_e.pt.sum()*met.pt*(1-np.cos(met.T.delta_phi(leading_e.T.sum())))),
-            'wjetm'  : np.sqrt(2*leading_mu.pt.sum()*met.pt*(1-np.cos(met.T.delta_phi(leading_mu.T.sum())))) 
+            'wjetm'  : np.sqrt(2*leading_mu.pt.sum()*met.pt*(1-np.cos(met.T.delta_phi(leading_mu.T.sum())))),
+            'dilepe' : np.sqrt(2*leading_diele.pt.sum()*met.pt*(1-np.cos(met.T.delta_phi(leading_diele.T.sum())))),
+            'dilepm' : np.sqrt(2*leading_dimu.pt.sum()*met.pt*(1-np.cos(met.T.delta_phi(leading_dimu.T.sum()))))
         }
-        Lpe = leading_e.pt / u.mag * cos(abs(u[region].delta_phi(leading_e.T)).min())
-        Lpm = leading_mu.pt / u.mag * cos(abs(u[region].delta_phi(leading_mu.T)).min())
+        Lpe = leading_e.pt / u[region].mag * np.cos(abs(u[region].delta_phi(leading_e.T)).min()) #Jieun
+        Lpm = leading_mu.pt / u[region].mag * np.cos(abs(u[region].delta_phi(leading_mu.T)).min())#Jieun
 
-    dPhi = abs(dPhiLepW) # nickname for absolute dPhiLepW         
+        dPhiLepW = {
+            'sre'    : leading_e.T.delta_phi(u['sre']),
+            'srm'    : leading_mu.T.delta_phi(u['srm']),
+            'ttbare' : leading_e.T.delta_phi(u['ttbare']),
+            'ttbarm' : leading_mu.T.delta_phi(u['ttbarm']),
+            'wjete'  : leading_e.T.delta_phi(u['wjete']),
+            'wjetm'  : leading_mu.T.delta_phi(u['wjetm']),
+            'dilepm' : leading_dimu.T.delta_phi(u['dilepm']),
+            'dilepe' : leading_diele.T.delta_phi(u['dilepe'])
+        }
+        dPhi = abs(dPhiLepW[region]) # nickname for absolute dPhiLepW         
 #MT = sqrt(2*metp4.Pt()*tightLeps[0].pt * (1-cos(dPhiLepW)))   # mT_{W}                                                                           
 
         ###
