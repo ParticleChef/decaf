@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import uproot, uproot_methods
 import numpy as np
+import numba as nb
 import os
 from coffea import hist, lookup_tools
 from coffea.lookup_tools import extractor, dense_lookup
@@ -68,9 +69,9 @@ for year in ['2016','2017','2018']:
 ###
 
 mu_trig_hists = {
-    '2016': uproot.open("data/trigger_eff/SingleMuTriggerEfficienciesAndSF_2016_RunBtoH.root")['abseta_pt_ratio'],
-    '2017': uproot.open("data/trigger_eff/SingleMuTriggerEfficienciesAndSF_RunBtoF_Nov17Nov2017.root")['abseta_pt_ratio'],
-    '2018': uproot.open("data/trigger_eff/SingleMuTriggerEfficienciesAndSF_2018_RunAtoD.root")['abseta_pt_ratio']
+    '2016': uproot.open("data/trigger_eff/SingleMuTriggerEfficienciesAndSF_2016_RunBtoH.root")['IsoMu24_OR_IsoTkMu24_PtEtaBins']['abseta_pt_ratio'],
+    '2017': uproot.open("data/trigger_eff/SingleMuTriggerEfficienciesAndSF_RunBtoF_Nov17Nov2017.root")['IsoMu27_PtEtaBins']['abseta_pt_ratio'],
+    '2018': uproot.open("data/trigger_eff/SingleMuTriggerEfficienciesAndSF_2018_RunAtoD.root")['IsoMu24_PtEtaBins']['abseta_pt_ratio']
 }
 get_mu_trig_weight = {}
 for year in ['2016','2017','2018']:
@@ -405,18 +406,28 @@ class BTagCorrector:
         down = zerotag(eff_data_down)/zerotag(eff)
 
         # Modified b tag Nov 25
+        @nb.njit
         def onetag(eff):
             output = np.zeros(eff.shape[0], np.float64)
             for event_num in range(eff.shape[0]):
-                for i in range(len(eff[event_num]))):
-                    p=1
-                    for j in range(len(eff[event_num]))):
-                        if i != j:
-                            p *= (1.0 - eff[j])
-                        else :
-                        p*=eff[j]
-                        output[event_num] += p
+                p=0
+                for i in range(len(eff[event_num])):
+                    p += eff[event_num][i] * (1 - np.delete(eff[event_num],i)).prod()
+                output[event_num] = p
             return output
+#        @nb.njit
+#        def onetag(eff):
+#            output = np.zeros(eff.shape[0], np.float64)
+#            for event_num in range(eff.shape[0]):
+#                for i in range(len(eff[event_num])):
+#                    p=1
+#                    for j in range(len(eff[event_num])):
+#                        if i != j:
+#                            p *= (1.0 - eff[j])
+#                        else :
+#                            p*=eff[j]
+#                        output[event_num] += p
+#            return output
 
         if '-1' in tag: 
             nom = (1 - zerotag(eff_data_nom)) / (1 - zerotag(eff))
