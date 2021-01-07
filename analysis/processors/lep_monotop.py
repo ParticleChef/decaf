@@ -679,7 +679,7 @@ class AnalysisProcessor(processor.ProcessorABC):
             'wjete' : met.T+leading_e.T.sum(),
             'wjetm' : met.T+leading_mu.T.sum(),
             'dilepe': met.T+leading_diele.T.sum(),
-            'dilepm': met.T+leading_dimu.T.sum(),
+            'dilepm': met.T+leading_dimu.T.sum()
             #'gcr'   : met.T+leading_pho.T.sum()
         }
 
@@ -910,8 +910,8 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'wjete': np.ones(events.size),
                 'wjetm': np.ones(events.size),
                 'dilepe': np.ones(events.size),
-                'dilepm': np.ones(events.size),
-                'gcr':  csev_weight  
+                'dilepm': np.ones(events.size)
+                #'gcr':  csev_weight  
             }
 
             ###
@@ -929,7 +929,7 @@ class AnalysisProcessor(processor.ProcessorABC):
             btag['wjetm'], btagUp['wjetm'], btagDown['wjetm'] = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'-1')
             btag['dilepe'], btagUp['dilepe'], btagDown['dilepe'] = np.ones(events.size), np.ones(events.size), np.ones(events.size)
             btag['dilepm'], btagUp['dilepm'], btagDown['dilepm'] = np.ones(events.size), np.ones(events.size), np.ones(events.size)
-            btag['gcr'],  btagUp['gcr'],  btagDown['gcr']  = np.ones(events.size), np.ones(events.size), np.ones(events.size)
+            #btag['gcr'],  btagUp['gcr'],  btagDown['gcr']  = np.ones(events.size), np.ones(events.size), np.ones(events.size)
 
         ###
         # Selections
@@ -954,6 +954,12 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('singleelectron_triggers', triggers)
 
         triggers = np.zeros(events.size, dtype=np.bool)
+        for path in self._singlemuon_triggers[self._year]:
+            if path not in events.HLT.columns: continue
+            triggers = triggers | events.HLT[path]
+        selection.add('singlemuon_triggers',triggers)
+
+        triggers = np.zeros(events.size, dtype=np.bool)
         for path in self._singlephoton_triggers[self._year]:
             if path not in events.HLT.columns: continue
             triggers = triggers | events.HLT[path]
@@ -976,6 +982,9 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('diele_mass',(leading_diele.mass.sum()>60)&(leading_diele.mass.sum()<120))
         selection.add('noextrab', (j_ndflvL==0))
         selection.add('extrab', (j_ndflvL>0))
+        selection.add('zerobjet',(j_ndflvL==0))
+        selection.add('onebjet',(j_ndflvL==1))
+        selection.add('twobjet',(j_ndflvL==2))
         selection.add('noHEMj', noHEMj)
         selection.add('noHEMmet', noHEMmet)
         selection.add('met80',(met.pt<80))
@@ -983,16 +992,15 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('mindphimet',(abs(met.T.delta_phi(j_clean.T)).min())>0.7)
 
         regions = {
-            'sre' : {'isoneE','onebjet','noHEMj','met_filters','singlelectron_triggers'},
-            'srm' : {'isoneM','onebjet','noHEMj','met_filters','singlmuon_triggers'},
-            'ttbare' : {'isoneE','twobjet','noHEMj','met_filters','singlelectron_triggers'},
-            'ttbarm' : {'isoneM','twobjet','noHEMj','met_filters','singlmuon_triggers'},
-            'wjete' : {'isoneE','zerobjet','noHEMj','met_filters','singlelectecon_triggers'},
-            'wjetm' : {'isoneM','zerobjet','noHEMj','met_filters','singlmuon_triggers'},
-            'dilepe' : {'istwoE','onebjet','noHEMj','met_filters','singlelectecon_triggers'},
-            'dilepm' : {'istwoM','onebjet','noHEMj','met_filters','singlmuon_triggers'},
-
-            'gcr': {'isoneA','fatjet','noHEMj','met_filters','singlephoton_triggers'}
+            'sre' : {'isoneE','onebjet','noHEMj','met_filters','singleelectron_triggers'},
+            'srm' : {'isoneM','onebjet','noHEMj','met_filters','singlemuon_triggers'},
+            'ttbare' : {'isoneE','twobjet','noHEMj','met_filters','singleelectron_triggers'},
+            'ttbarm' : {'isoneM','twobjet','noHEMj','met_filters','singlemuon_triggers'},
+            'wjete' : {'isoneE','zerobjet','noHEMj','met_filters','singleelectron_triggers'},
+            'wjetm' : {'isoneM','zerobjet','noHEMj','met_filters','singlemuon_triggers'},
+            'dilepe' : {'istwoE','onebjet','noHEMj','met_filters','singleelectron_triggers'},
+            'dilepm' : {'istwoM','onebjet','noHEMj','met_filters','singlemuon_triggers'}
+            #'gcr': {'isoneA','fatjet','noHEMj','met_filters','singlephoton_triggers'}
         }
 
         isFilled = False
