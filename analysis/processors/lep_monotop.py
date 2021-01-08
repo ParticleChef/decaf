@@ -1007,6 +1007,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 
         for region in selected_regions: 
             print('Considering region:', region)
+            print('selected_regions: ', selected_regions)
 
             ###
             # Adding recoil and minDPhi requirements
@@ -1110,7 +1111,8 @@ class AnalysisProcessor(processor.ProcessorABC):
                 weights.add('btag',btag[region], btagUp[region], btagDown[region])
 
 
-                if 'WJets' in dataset or 'DY' in dataset or 'TT' in dataset or 'ST' in dataset:
+                #if 'WJets' in dataset or 'DY' in dataset or 'TT' in dataset or 'ST' in dataset:
+                if 'WJets' in dataset or 'DY' in dataset:
                     if not isFilled:
                         hout['sumw'].fill(dataset='HF--'+dataset, sumw=1, weight=events.genWeight.sum())
                         hout['sumw'].fill(dataset='LF--'+dataset, sumw=1, weight=events.genWeight.sum())
