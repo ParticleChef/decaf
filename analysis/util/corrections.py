@@ -441,6 +441,10 @@ class BTagCorrector:
             nom = onetag(eff_data_nom)/onetag(eff)
             up= onetag(eff_data_up)/onetag(eff)
             down = onetag(eff_data_down)/onetag(eff)
+        else:
+            nom = zerotag(eff_data_nom)/zerotag(eff)
+            up = zerotag(eff_data_up)/zerotag(eff)
+            down = zerotag(eff_data_down)/zerotag(eff)
 
         return np.nan_to_num(nom), np.nan_to_num(up), np.nan_to_num(down)
 

@@ -130,13 +130,13 @@ class AnalysisProcessor(processor.ProcessorABC):
         self._xsec = xsec
 
         self._samples = {
-            'sre':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleElectron'),
+            'sre':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','EGamma'),
             'srm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'ttbare':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleElectron'),
+            'ttbare':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','EGamma'),
             'ttbarm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'wjete':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD', 'SingleElectron'),
+            'wjete':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD', 'EGamma'),
             'wjetm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'dilepe':('DY','TT','ST','WW','WZ','ZZ','SingleElectron'),
+            'dilepe':('DY','TT','ST','WW','WZ','ZZ','EGamma'),
             'dilepm':('DY','TT','ST','WW','WZ','ZZ','SingleMuon')
 
         }
@@ -921,15 +921,14 @@ class AnalysisProcessor(processor.ProcessorABC):
             btag = {}
             btagUp = {}
             btagDown = {}
-            btag['sre'],   btagUp['sre'],   btagDown['sre']   = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'0')
-            btag['srm'],   btagUp['srm'],   btagDown['srm']   = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'0')
-            btag['ttbare'], btagUp['ttbare'], btagDown['ttbare'] = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'0')
-            btag['ttbarm'], btagUp['ttbarm'], btagDown['ttbarm'] = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'-1')
+            btag['sre'],   btagUp['sre'],   btagDown['sre']   = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'+1')
+            btag['srm'],   btagUp['srm'],   btagDown['srm']   = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'+1')
+            btag['ttbare'], btagUp['ttbare'], btagDown['ttbare'] = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'2')
+            btag['ttbarm'], btagUp['ttbarm'], btagDown['ttbarm'] = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'2')
             btag['wjete'], btagUp['wjete'], btagDown['wjete'] = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'0')
-            btag['wjetm'], btagUp['wjetm'], btagDown['wjetm'] = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'-1')
-            btag['dilepe'], btagUp['dilepe'], btagDown['dilepe'] = np.ones(events.size), np.ones(events.size), np.ones(events.size)
-            btag['dilepm'], btagUp['dilepm'], btagDown['dilepm'] = np.ones(events.size), np.ones(events.size), np.ones(events.size)
-            #btag['gcr'],  btagUp['gcr'],  btagDown['gcr']  = np.ones(events.size), np.ones(events.size), np.ones(events.size)
+            btag['wjetm'], btagUp['wjetm'], btagDown['wjetm'] = get_deepflav_weight['loose'](j_iso.pt,j_iso.eta,j_iso.hadronFlavour,'0')
+            btag['dilepe'], btagUp['dilepe'], btagDown['dilepe'] = get_deepflav_wleight['loose'](j_iso.pt,j_isol.eta,j_isol.hadronFlavour,'+1')
+            btag['dilepm'], btagUp['dilepm'], btagDown['dilepm'] = get_deepflav_wleight['loose'](j_iso.pt,j_isol.eta,j_isol.hadronFlavour,'+1') 
 
         ###
         # Selections
@@ -980,8 +979,6 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('leading_e_pt',(e_loose.pt.max()>40))
         selection.add('dimu_mass',(leading_dimu.mass.sum()>60)&(leading_dimu.mass.sum()<120))
         selection.add('diele_mass',(leading_diele.mass.sum()>60)&(leading_diele.mass.sum()<120))
-        selection.add('noextrab', (j_ndflvL==0))
-        selection.add('extrab', (j_ndflvL>0))
         selection.add('zerobjet',(j_ndflvL==0))
         selection.add('onebjet',(j_ndflvL==1))
         selection.add('twobjet',(j_ndflvL==2))
@@ -1000,7 +997,6 @@ class AnalysisProcessor(processor.ProcessorABC):
             'wjetm' : {'isoneM','zerobjet','noHEMj','met_filters','singlemuon_triggers'},
             'dilepe' : {'istwoE','onebjet','noHEMj','met_filters','singleelectron_triggers'},
             'dilepm' : {'istwoM','onebjet','noHEMj','met_filters','singlemuon_triggers'}
-            #'gcr': {'isoneA','fatjet','noHEMj','met_filters','singlephoton_triggers'}
         }
 
         isFilled = False
@@ -1043,7 +1039,8 @@ class AnalysisProcessor(processor.ProcessorABC):
             }
             if region in mT:
                 variables['mT']           = mT[region]
-                if 'e' in region:
+                #if 'e' in region:
+                if region[-1] == 'e' :
                     WRF = leading_e.T.sum()-met.T
                 else:
                     WRF = leading_mu.T.sum()-met.T
@@ -1079,9 +1076,9 @@ class AnalysisProcessor(processor.ProcessorABC):
                 hout['template'].fill(dataset=dataset,
                                       region=region,
                                       systematic='nominal',
-                                      recoil=u[region].mag,
                                       weight=np.ones(events.size)*cut)
-                fill(dataset, np.zeros(events.size, dtype=np.int), np.ones(events.size), cut)
+                #fill(dataset, np.zeros(events.size, dtype=np.int), np.ones(events.size), cut)
+                fill(dataset, np.ones(events.size), cut)
             else:
                 weights = processor.Weights(len(events))
                 if 'L1PreFiringWeight' in events.columns: weights.add('prefiring',events.L1PreFiringWeight.Nom)
@@ -1107,12 +1104,12 @@ class AnalysisProcessor(processor.ProcessorABC):
                 weights.add('ids', ids[region])
                 weights.add('reco', reco[region])
                 weights.add('isolation', isolation[region])
-                weights.add('csev', csev[region])
+                #weights.add('csev', csev[region])
                 weights.add('btag',btag[region], btagUp[region], btagDown[region])
 
 
                 #if 'WJets' in dataset or 'DY' in dataset or 'TT' in dataset or 'ST' in dataset:
-                if 'WJets' in dataset or 'DY' in dataset:
+                if 'WJets' in dataset or 'DY' in dataset or 'ZJets' in dataset or 'GJets' in dataset:
                     if not isFilled:
                         hout['sumw'].fill(dataset='HF--'+dataset, sumw=1, weight=events.genWeight.sum())
                         hout['sumw'].fill(dataset='LF--'+dataset, sumw=1, weight=events.genWeight.sum())
@@ -1154,12 +1151,10 @@ class AnalysisProcessor(processor.ProcessorABC):
                         hout['template'].fill(dataset='HF--'+dataset,
                                               region=region,
                                               systematic=sname,
-                                              recoil=u[region].mag,
                                               weight=weights.weight(modifier=systematic)*whf*cut)
                         hout['template'].fill(dataset='LF--'+dataset,
                                               region=region,
                                               systematic=sname,
-                                              recoil=u[region].mag,
                                               weight=weights.weight(modifier=systematic)*wlf*cut)
                     fill('HF--'+dataset, weights.weight()*whf, cut)
                     fill('LF--'+dataset, weights.weight()*wlf, cut)
@@ -1173,7 +1168,6 @@ class AnalysisProcessor(processor.ProcessorABC):
                         hout['template'].fill(dataset=dataset,
                                               region=region,
                                               systematic=sname,
-                                              recoil=u[region].mag,
                                               weight=weights.weight(modifier=systematic)*cut)
                     fill(dataset, weights.weight(), cut)
                                     
