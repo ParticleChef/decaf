@@ -227,9 +227,9 @@ class AnalysisProcessor(processor.ProcessorABC):
             '2018':
                 [
                 'IsoMu24',
-                'Mu50',
-                'OldMu100',
-                'TkMu100'
+                #'Mu50',
+                #'OldMu100',
+                #'TkMu100'
                 ]
         }
 
@@ -514,6 +514,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         get_met_zmm_trig_weight = self._corrections['get_met_zmm_trig_weight'][self._year]
         get_ele_trig_weight     = self._corrections['get_ele_trig_weight'][self._year]    
         get_pho_trig_weight     = self._corrections['get_pho_trig_weight'][self._year]    
+        get_mu_trig_weight      = self._corrections['get_mu_trig_weight'][self._year]    
         get_ele_loose_id_sf     = self._corrections['get_ele_loose_id_sf'][self._year]
         get_ele_tight_id_sf     = self._corrections['get_ele_tight_id_sf'][self._year]
         get_pho_tight_id_sf     = self._corrections['get_pho_tight_id_sf'][self._year]
@@ -795,7 +796,8 @@ class AnalysisProcessor(processor.ProcessorABC):
             # Calculate PU weight and systematic variations
             ###
 
-            pu = get_pu_weight(events.PV.npvs)
+            #pu = get_pu_weight(events.PV.npvs)
+            pu = get_pu_weight(events.Pileup.nTrueInt)
 
             ###
             # Trigger efficiency weight
@@ -814,14 +816,14 @@ class AnalysisProcessor(processor.ProcessorABC):
                 sf[np.isnan(sf) | np.isinf(sf)] == 1
 
             trig = {
-                'sre' : get_met_trig_weight(leading_e.eta.sum(),leading_e.pt.sum()),
-                'srm' : get_met_trig_weight(leading_mu.eta.sum(),leading_mu.pt.sum()),
-                'ttbare' : get_met_trig_weight(leading_e.eta.sum(),leading_e.pt.sum()),
-                'ttbarm' : get_met_trig_weight(leading_mu.eta.sum(),leading_mu.pt.sum()),
-                'wjete' : get_met_trig_weight(leading_e.eta.sum(),leading_e.pt.sum()),
-                'wjetm' : get_met_trig_weight(leading_mu.eta.sum(),leading_mu.pt.sum()),
-                'dilepe' : get_met_trig_weight(leading_e.eta.sum(),leading_e.pt.sum()),
-                'dilepm' : get_met_trig_weight(leading_mu.eta.sum(),leading_mu.pt.sum()),
+                'sre' : get_ele_trig_weight(leading_e.eta.sum()+leading_e.deltaEtaSC.sum(),leading_e.pt.sum()),
+                'srm' : get_mu_trig_weight(leading_mu.pt.sum(),abs(leading_mu.eta.sum())),
+                'ttbare' : get_ele_trig_weight(leading_e.eta.sum()+leading_e.deltaEtaSC.sum(),leading_e.pt.sum()),
+                'ttbarm' : get_mu_trig_weight(leading_mu.pt.sum(),abs(leading_mu.eta.sum())),
+                'wjete' : get_ele_trig_weight(leading_e.eta.sum()+leading_e.deltaEtaSC.sum(),leading_e.pt.sum()),
+                'wjetm' : get_mu_trig_weight(leading_mu.pt.sum(),abs(leading_mu.eta.sum())),
+                'dilepe' : get_ele_trig_weight(leading_e.eta.sum()+leading_e.deltaEtaSC.sum(),leading_e.pt.sum()),
+                'dilepm' : get_mu_trig_weight(leading_mu.pt.sum(),abs(leading_mu.eta.sum())),
             }
 
             ### 
@@ -1171,6 +1173,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                                               weight=weights.weight(modifier=systematic)*cut)
                     fill(dataset, weights.weight(), cut)
                                     
+        time.sleep(.10)
         return hout
 
     def postprocess(self, accumulator):

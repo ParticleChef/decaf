@@ -9,7 +9,7 @@ processes =    {
     'MET':('MET','Data',1),
     'EGamma':('EGamma','Data',1),
     #'MuonEG':('MuonEG','Data',1),
-    #'SingleMuon':('SingleMuon','Data',1),
+    'SingleMuon':('SingleMuon','Data',1),
     #'DoubleMuon':('DoubleMuon','Data',1),
     #'DoubleEG':('DoubleEG','Data',1),
     'SingleElectron':('SingleElectron','Data',1),
@@ -378,11 +378,11 @@ processes =    {
 
     # New Signals
 
-    'MonoHs_MZprime_500_Mhs_50_Mchi_150_2018':('MonoHs_MZprime_500_Mhs_50_Mchi_150','MC',0.5302),
-    'MonoHs_MZprime_500_Mhs_70_Mchi_150_2018':('MonoHs_MZprime_500_Mhs_70_Mchi_150','MC',0.4331),                                                                                         
-    'MonoHs_MZprime_500_Mhs_90_Mchi_150_2018':('MonoHs_MZprime_500_Mhs_90_Mchi_150','MC',0.3656),
-    'MonoJet_MZprime_500_Mchi_150_2018':('MonoJet_MZprime_500_Mchi_150','MC',2.621),
-    'MonoW_MZprime_500_Mchi_150_2018':('MonoW_MZprime_500_Mchi_150','MC',0.05872),
-    'MonoZ_MZprime_500_Mchi_150_2018':('MonoZ_MZprime_500_Mchi_150','MC',0.01820),
-    'DarkHiggs_MonoHs_LO_TuneCP5_13TeV-madgraph-pythia8':('DarkHiggs_MonoHs_LO_TuneCP5_13TeV-madgraph-pythia8','MC',1.),
+    #'MonoHs_MZprime_500_Mhs_50_Mchi_150_2018':('MonoHs_MZprime_500_Mhs_50_Mchi_150','MC',0.5302),
+    #'MonoHs_MZprime_500_Mhs_70_Mchi_150_2018':('MonoHs_MZprime_500_Mhs_70_Mchi_150','MC',0.4331),                                                                                         
+    #'MonoHs_MZprime_500_Mhs_90_Mchi_150_2018':('MonoHs_MZprime_500_Mhs_90_Mchi_150','MC',0.3656),
+    #'MonoJet_MZprime_500_Mchi_150_2018':('MonoJet_MZprime_500_Mchi_150','MC',2.621),
+    #'MonoW_MZprime_500_Mchi_150_2018':('MonoW_MZprime_500_Mchi_150','MC',0.05872),
+    #'MonoZ_MZprime_500_Mchi_150_2018':('MonoZ_MZprime_500_Mchi_150','MC',0.01820),
+    #'DarkHiggs_MonoHs_LO_TuneCP5_13TeV-madgraph-pythia8':('DarkHiggs_MonoHs_LO_TuneCP5_13TeV-madgraph-pythia8','MC',1.),
 }
