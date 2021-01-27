@@ -406,7 +406,6 @@ class BTagCorrector:
         down = zerotag(eff_data_down)/zerotag(eff)
 
         # Modified b tag Nov 25
-        @nb.njit
         def onetag(eff):
             output = np.zeros(eff.shape[0], np.float64)
             for event_num in range(eff.shape[0]):

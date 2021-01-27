@@ -13,6 +13,7 @@ from coffea.util import load, save
 from coffea.jetmet_tools import FactorizedJetCorrector, JetCorrectionUncertainty, JetTransformer, JetResolution, JetResolutionScaleFactor
 from optparse import OptionParser
 from uproot_methods import TVector2Array, TLorentzVectorArray
+import time
 
 class AnalysisProcessor(processor.ProcessorABC):
 
@@ -817,13 +818,13 @@ class AnalysisProcessor(processor.ProcessorABC):
 
             trig = {
                 'sre' : get_ele_trig_weight(leading_e.eta.sum()+leading_e.deltaEtaSC.sum(),leading_e.pt.sum()),
-                'srm' : get_mu_trig_weight(leading_mu.pt.sum(),abs(leading_mu.eta.sum())),
+                'srm' : get_mu_trig_weight(abs(leading_mu.eta.sum()),leading_mu.pt.sum()),
                 'ttbare' : get_ele_trig_weight(leading_e.eta.sum()+leading_e.deltaEtaSC.sum(),leading_e.pt.sum()),
-                'ttbarm' : get_mu_trig_weight(leading_mu.pt.sum(),abs(leading_mu.eta.sum())),
+                'ttbarm' : get_mu_trig_weight(abs(leading_mu.eta.sum()),leading_mu.pt.sum()),
                 'wjete' : get_ele_trig_weight(leading_e.eta.sum()+leading_e.deltaEtaSC.sum(),leading_e.pt.sum()),
-                'wjetm' : get_mu_trig_weight(leading_mu.pt.sum(),abs(leading_mu.eta.sum())),
+                'wjetm' : get_mu_trig_weight(abs(leading_mu.eta.sum()),leading_mu.pt.sum()),
                 'dilepe' : get_ele_trig_weight(leading_e.eta.sum()+leading_e.deltaEtaSC.sum(),leading_e.pt.sum()),
-                'dilepm' : get_mu_trig_weight(leading_mu.pt.sum(),abs(leading_mu.eta.sum())),
+                'dilepm' : get_mu_trig_weight(abs(leading_mu.eta.sum()),leading_mu.pt.sum()),
             }
 
             ### 
