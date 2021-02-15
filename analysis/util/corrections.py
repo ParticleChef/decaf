@@ -401,9 +401,9 @@ class BTagCorrector:
         eff_data_up   = np.minimum(1., sf_up*eff)
         eff_data_down = np.minimum(1., sf_down*eff)
 
-        nom = zerotag(eff_data_nom)/zerotag(eff)
-        up = zerotag(eff_data_up)/zerotag(eff)
-        down = zerotag(eff_data_down)/zerotag(eff)
+        #nom = zerotag(eff_data_nom)/zerotag(eff)
+        #up = zerotag(eff_data_up)/zerotag(eff)
+        #down = zerotag(eff_data_down)/zerotag(eff)
 
         # Modified b tag Nov 25
         def onetag(eff):
@@ -503,6 +503,8 @@ corrections = {
     'get_msd_weight':           get_msd_weight,
     'get_ttbar_weight':         get_ttbar_weight,
     'get_nnlo_nlo_weight':      get_nnlo_nlo_weight,
+    'get_nlo_qcd_weight':       get_nlo_qcd_weight,
+    'get_nlo_ewk_weight':       get_nlo_ewk_weight,
     'get_pu_weight':            get_pu_weight,
     'get_met_trig_weight':      get_met_trig_weight,
     'get_met_zmm_trig_weight':  get_met_zmm_trig_weight,
