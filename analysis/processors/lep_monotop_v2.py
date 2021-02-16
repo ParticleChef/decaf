@@ -139,7 +139,6 @@ class AnalysisProcessor(processor.ProcessorABC):
             'wjetm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
             'dilepe':('DY','TT','ST','WW','WZ','ZZ','EGamma'),
             'dilepm':('DY','TT','ST','WW','WZ','ZZ','SingleMuon')
-
         }
 
         self._gentype_map = {
@@ -216,26 +215,22 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'IsoTkMu24',
                 'Mu50',
                 'TkMu50'
-        
             ],
-            '2017':
-                [
+            '2017': [
                 'IsoMu27',
                 'Mu50',
                 'OldMu100',
                 'TkMu100'
-                ],
-            '2018':
-                [
+            ],
+            '2018': [
                 'IsoMu24',
                 #'Mu50',
                 #'OldMu100',
                 #'TkMu100'
-                ]
+            ]
         }
 
         self._jec = {
-        
             '2016': [
                 'Summer16_07Aug2017_V11_MC_L1FastJet_AK4PFPuppi',
                 'Summer16_07Aug2017_V11_MC_L2L3Residual_AK4PFPuppi',
@@ -243,7 +238,6 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'Summer16_07Aug2017_V11_MC_L2Residual_AK4PFPuppi',
                 'Summer16_07Aug2017_V11_MC_L3Absolute_AK4PFPuppi'
             ],
-            
             '2017':[
                 'Fall17_17Nov2017_V32_MC_L1FastJet_AK4PFPuppi',
                 'Fall17_17Nov2017_V32_MC_L2L3Residual_AK4PFPuppi',
@@ -251,7 +245,6 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'Fall17_17Nov2017_V32_MC_L2Residual_AK4PFPuppi',
                 'Fall17_17Nov2017_V32_MC_L3Absolute_AK4PFPuppi'
             ],
-
             '2018':[
                 'Autumn18_V19_MC_L1FastJet_AK4PFPuppi',
                 'Autumn18_V19_MC_L2L3Residual_AK4PFPuppi',
@@ -320,7 +313,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'Events',
                 hist.Cat('dataset', 'Dataset'),
                 hist.Cat('region', 'Region'),
-                hist.Cat('systematic', 'Systematic'),
+                hist.Cat('systematic', 'Systematic')
                 #hist.Bin('recoil','Hadronic Recoil',[250,310,370,470,590,840,1020,1250,3000]),
             ),
             'met': hist.Hist(
@@ -370,6 +363,12 @@ class AnalysisProcessor(processor.ProcessorABC):
                 hist.Cat('dataset', 'Dataset'), 
                 hist.Cat('region', 'Region'), 
                 hist.Bin('ndflvL','AK4 Number of deepFlavor Loose Jets',6,-0.5,5.5)
+            ),
+            'ndflvM': hist.Hist(
+                'Events', 
+                hist.Cat('dataset', 'Dataset'), 
+                hist.Cat('region', 'Region'), 
+                hist.Bin('ndflvM','AK4 Number of deepFlavor Medium Jets',6,-0.5,5.5)
             ),
             'mT': hist.Hist(
                 'Events',
@@ -756,7 +755,6 @@ class AnalysisProcessor(processor.ProcessorABC):
             if('TTJets' in dataset): 
                 nlo = np.sqrt(get_ttbar_weight(genTops[:,0].pt.sum()) * get_ttbar_weight(genTops[:,1].pt.sum()))
                 
-
             gen['isW'] = (abs(gen.pdgId)==24)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
             gen['isZ'] = (abs(gen.pdgId)==23)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
             gen['isA'] = (abs(gen.pdgId)==22)&gen.hasFlags(['isPrompt', 'fromHardProcess', 'isLastCopy'])&(gen.status==1)
@@ -916,7 +914,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'wjete': np.ones(events.size),
                 'wjetm': get_mu_tight_iso_sf(mueta,leading_mu.pt.sum()),
                 'dilepm': get_mu_loose_iso_sf(mu1eta,leading_mu_pair.i0.pt.sum()) * get_mu_loose_iso_sf(mu2eta,leading_mu_pair.i1.pt.sum()),
-                'dilepe': np.ones(events.size),
+                'dilepe': np.ones(events.size)
             }
 
             ###
@@ -1050,18 +1048,12 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('leading_j>70',(leading_j.pt.sum() >70)) # from the monotop paper
 
         regions = { ## from Rishabh, btag(L->M), wpT, Dphi, DR, met_sre, met cut
-            'sre': {'isoneE', 'exactly_1_medium_btag', 'noHEMj', 'met_filters', 'single_electron_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Ele_mask', 'mt_sre>40','met100','noHEMmet',},
-            'srm': {'isoneM', 'exactly_1_medium_btag', 'met_filters', 'single_muon_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Mu_mask', 'mt_srm>40',  'met100', 'noHEMmet','noHEMj'},
-            'ttbare': {'isoneE', 'atleast_2_medium_btag', 'noHEMj', 'met_filters', 'single_electron_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Ele_mask', 'mt_ttbare>40', 'met100', 'noHEMmet'},
-            'ttbarm': {'isoneM', 'atleast_2_medium_btag', 'met_filters', 'single_muon_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Mu_mask', 'mt_ttbarm>40' , 'met100','noHEMmet','noHEMj' },
-            'wjete': {'isoneE', 'zero_medium_btags', 'met_filters', 'single_electron_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Ele_mask', 'mt_wjete>40' , 'met100', 'leading_j>70', 'noHEMmet','noHEMj'},
-            'wjetm': {'isoneM', 'zero_medium_btags', 'met_filters', 'single_muon_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Mu_mask', 'mt_wjetm>40', 'met100' ,'noHEMj', 'leading_j>70','noHEMmet','noHEMj'},
-            #'sre' : {'isoneE','onebjet','noHEMj','met_filters','singleelectron_triggers'},
-            #'srm' : {'isoneM','onebjet','noHEMj','met_filters','singlemuon_triggers'},
-            #'ttbare' : {'isoneE','twobjet','noHEMj','met_filters','singleelectron_triggers'},
-            #'ttbarm' : {'isoneM','twobjet','noHEMj','met_filters','singlemuon_triggers'},
-            #'wjete' : {'isoneE','zerobjet','noHEMj','met_filters','singleelectron_triggers'},
-            #'wjetm' : {'isoneM','zerobjet','noHEMj','met_filters','singlemuon_triggers'},
+            'sre': {'isoneE', 'exactly_1_medium_btag', 'noHEMj', 'met_filters', 'singleelectron_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Ele_mask', 'mt_sre>40','met100','noHEMmet',},
+            'srm': {'isoneM', 'exactly_1_medium_btag', 'met_filters', 'singlemuon_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Mu_mask', 'mt_srm>40',  'met100', 'noHEMmet','noHEMj'},
+            'ttbare': {'isoneE', 'atleast_2_medium_btag', 'noHEMj', 'met_filters', 'singleelectron_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Ele_mask', 'mt_ttbare>40', 'met100', 'noHEMmet'},
+            'ttbarm': {'isoneM', 'atleast_2_medium_btag', 'met_filters', 'singlemuon_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Mu_mask', 'mt_ttbarm>40' , 'met100','noHEMmet','noHEMj' },
+            'wjete': {'isoneE', 'zero_medium_btags', 'met_filters', 'singleelectron_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Ele_mask', 'mt_wjete>40' , 'met100', 'leading_j>70', 'noHEMmet','noHEMj'},
+            'wjetm': {'isoneM', 'zero_medium_btags', 'met_filters', 'singlemuon_triggers', 'exclude_low_WpT_JetHT', 'Delta_Phi_Met_LJ', 'DeltaR_LJ_Mu_mask', 'mt_wjetm>40', 'met100' ,'noHEMj', 'leading_j>70','noHEMmet','noHEMj'},
             'dilepe' : {'istwoE','exactly_1_medium_btag','noHEMj','met_filters','singleelectron_triggers'},
             'dilepm' : {'istwoM','exactly_1_medium_btag','noHEMj','met_filters','singlemuon_triggers'}
         }
@@ -1079,7 +1071,7 @@ class AnalysisProcessor(processor.ProcessorABC):
             #selection.add('recoil_'+region, (u[region].mag>250))
             #selection.add('mindphi_'+region, (abs(u[region].delta_phi(j_clean.T)).min()>0.8))
             #regions[region].update({'recoil_'+region,'mindphi_'+region})
-            print('Selection:',regions[region])
+            #print('Selection:',regions[region])
             variables = {
                 'met':                    met.pt,
                 'metphi':                 met.phi,
@@ -1129,9 +1121,9 @@ class AnalysisProcessor(processor.ProcessorABC):
                     else:
                         flat_variable = {histname: flat_variables[histname]}
                         h.fill(dataset=dataset, 
-                               region=region, 
-                               **flat_variable, 
-                               weight=flat_weight[histname])
+                            region=region, 
+                            **flat_variable, 
+                            weight=flat_weight[histname])
 
             if isData:
                 if not isFilled:
@@ -1146,7 +1138,8 @@ class AnalysisProcessor(processor.ProcessorABC):
                 fill(dataset, np.ones(events.size), cut)
             else:
                 weights = processor.Weights(len(events))
-                if 'L1PreFiringWeight' in events.columns: weights.add('prefiring',events.L1PreFiringWeight.Nom)
+                if 'L1PreFiringWeight' in events.columns: 
+                    weights.add('prefiring',events.L1PreFiringWeight.Nom)
                 weights.add('genw',events.genWeight)
                 weights.add('nlo_qcd', nlo_qcd) ## from Rishabh
                 weights.add('nlo_ewk', nlo_ewk) ## from Rishabh
@@ -1218,11 +1211,11 @@ class AnalysisProcessor(processor.ProcessorABC):
                         sname = 'nominal' if systematic is None else systematic
                         hout['template'].fill(dataset='HF--'+dataset,
                                               region=region,
-                                              systematic=sname,) ## from Rishabh
+                                              systematic=sname) ## from Rishabh
                                               #weight=weights.weight(modifier=systematic)*whf*cut)
                         hout['template'].fill(dataset='LF--'+dataset,
                                               region=region,
-                                              systematic=sname,) ## from Rishabh
+                                              systematic=sname) ## from Rishabh
                                               #weight=weights.weight(modifier=systematic)*wlf*cut)
                     fill('HF--'+dataset, weights.weight()*whf, cut)
                     fill('LF--'+dataset, weights.weight()*wlf, cut)
