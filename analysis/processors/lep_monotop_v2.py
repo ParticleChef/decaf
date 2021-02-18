@@ -751,9 +751,10 @@ class AnalysisProcessor(processor.ProcessorABC):
 
             gen['isTop'] = (abs(gen.pdgId)==6)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
             genTops = gen[gen.isTop]
-            nlo = np.ones(events.size)
+            ttjet_weights = np.ones(events.size)
+            #nlo = np.ones(events.size)
             if('TTJets' in dataset): 
-                nlo = np.sqrt(get_ttbar_weight(genTops[:,0].pt.sum()) * get_ttbar_weight(genTops[:,1].pt.sum()))
+                ttjet_weights = np.sqrt(get_ttbar_weight(genTops.pt.sum()) * get_ttbar_weight(genTops.pt.sum()))
                 
             gen['isW'] = (abs(gen.pdgId)==24)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
             gen['isZ'] = (abs(gen.pdgId)==23)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
@@ -847,7 +848,9 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'wjete' : get_ele_trig_weight(leading_e.eta.sum()+leading_e.deltaEtaSC.sum(),leading_e.pt.sum()),
                 #'wjetm' : get_mu_trig_weight(abs(leading_mu.eta.sum()),leading_mu.pt.sum()),
                 'wjetm' : get_mu_trig_weight(leading_mu.pt.sum(), abs(leading_mu.eta.sum())),
-                'dilepe' : get_ele_trig_weight(leading_diele.eta.sum()+leading_diele.deltaEtaSC.sum(),leading_diele.pt.sum()),
+                'dilepe' : 1 - (1 - e1sf)*(1 - e2sf),
+                #'dilepe' : get_ele_trig_weight(leading_diele.eta.sum(),leading_diele.pt.sum()),
+                #'dilepe' : get_ele_trig_weight(leading_ele_pair.i0.eta.sum()+leading_ele_pair.i0.deltaEtaSC.sum(),leading_ele_pair.i0.pt.sum()),
                 #'dilepm' : get_mu_trig_weight(abs(leading_mu.eta.sum()),leading_mu.pt.sum()),
                 'dilepm' : get_mu_trig_weight(leading_dimu.pt.sum(), abs(leading_dimu.eta.sum())),
             }
