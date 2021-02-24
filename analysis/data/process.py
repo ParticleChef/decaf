@@ -23,6 +23,9 @@ processes =    {
     'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':('WJets_lo_incl','MC',50400.),
     'WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8':('WJets_lo_incl_CP5','MC',50400.),
 
+    ('WJetsToLNu_Wpt-0To50_TuneCP5_13TeV-amcatnloFXFX-pythia8',2018):('WJets_pt0to50','MC', 62470),
+    ('WJetsToLNu_Pt-50To100_TuneCP5_13TeV-amcatnloFXFX-pythia8',2018):('WJets_pt50to100','MC', 3580),
+
     # LO Z->nunu
     #2018
     ('ZJetsToNuNu_HT-100To200_13TeV-madgraph',2018):('ZtoNuNu_ht100to200','MC',303.4),
