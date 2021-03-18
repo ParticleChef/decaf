@@ -131,13 +131,13 @@ class AnalysisProcessor(processor.ProcessorABC):
         self._xsec = xsec
 
         self._samples = {
-            'sre':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','EGamma'),
+            'sre':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleElectron','SinglePhoton'),
             'srm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'ttbare':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','EGamma'),
+            'ttbare':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleElectron','SinglePhoton'),
             'ttbarm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'wjete':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD', 'EGamma'),
+            'wjete':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD', 'SingleElectron','SinglePhoton'),
             'wjetm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'dilepe':('DY','TT','ST','WW','WZ','ZZ','EGamma'),
+            'dilepe':('DY','TT','ST','WW','WZ','ZZ','SingleElectron','SinglePhoton'),
             'dilepm':('DY','TT','ST','WW','WZ','ZZ','SingleMuon')
         }
 
@@ -212,15 +212,15 @@ class AnalysisProcessor(processor.ProcessorABC):
         self._singlemuon_triggers = {
             '2016': [
                 'IsoMu24',
-                'IsoTkMu24',
-                'Mu50',
-                'TkMu50'
+                #'IsoTkMu24',
+                #'Mu50',
+                #'TkMu50'
             ],
             '2017': [
                 'IsoMu27',
-                'Mu50',
-                'OldMu100',
-                'TkMu100'
+                #'Mu50',
+                #'OldMu100',
+                #'TkMu100'
             ],
             '2018': [
                 'IsoMu24',
@@ -334,6 +334,18 @@ class AnalysisProcessor(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Bin('mindphimet','Min dPhi(MET,AK4s)',30,0,3.5)
             ),
+            #'dphimetlep': hist.Hist(
+            #    'Events',
+            #    hist.Cat('dataset', 'Dataset'),
+            #    hist.Cat('region', 'Region'),
+            #    hist.Bin('dphimetlep','Min dPhi(MET,lepton)',30,0,3.5)
+            #),
+            #'drlepjet': hist.Hist(
+            #    'Events',
+            #    hist.Cat('dataset', 'Dataset'),
+            #    hist.Cat('region', 'Region'),
+            #    hist.Bin('drlepjet','Min dR(lepton,AK4s)',30,0,3.5)
+            #),
             'j1pt': hist.Hist(
                 'Events',
                 hist.Cat('dataset', 'Dataset'),
@@ -1096,6 +1108,12 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'dimumass' : leading_dimu.mass,
                 'dimupt' : leading_dimu.pt
             }
+            #if 'e' in region[-1]:
+            #    variables['dphimetlep'] = abs(met['T'].delta_phi(leading_e['T'].sum()))
+            #    variables['drlepjet'] = DeltaR_LJ_Ele
+            #if 'm' in region[-1]:
+            #    variables['dphimetlep'] = abs(met['T'].delta_phi(leading_mu['T'].sum()))
+            #    variables['drlepjet'] = DeltaR_LJ_Mu
             if region in mT:
                 variables['mT']           = mT[region]
                 #if 'e' in region:
