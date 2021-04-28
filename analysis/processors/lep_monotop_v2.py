@@ -131,13 +131,13 @@ class AnalysisProcessor(processor.ProcessorABC):
         self._xsec = xsec
 
         self._samples = {
-            'sre':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleElectron','SinglePhoton'),
+            'sre':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleElectron','SinglePhoton','EGamma'),
             'srm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'ttbare':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleElectron','SinglePhoton'),
+            'ttbare':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleElectron','SinglePhoton','EGamma'),
             'ttbarm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'wjete':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD', 'SingleElectron','SinglePhoton'),
+            'wjete':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD', 'SingleElectron','SinglePhoton','EGamma'),
             'wjetm':('WJets','DY','TT','ST','WW','WZ','ZZ','QCD','SingleMuon'),
-            'dilepe':('DY','TT','ST','WW','WZ','ZZ','SingleElectron','SinglePhoton'),
+            'dilepe':('DY','TT','ST','WW','WZ','ZZ','SingleElectron','SinglePhoton','EGamma'),
             'dilepm':('DY','TT','ST','WW','WZ','ZZ','SingleMuon')
         }
 
