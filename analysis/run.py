@@ -12,11 +12,12 @@ import uproot
 import numpy as np
 from coffea import hist, processor
 from coffea.util import load, save
-from coffea.nanoaod.methods import collection_methods, LorentzVector, FatJet 
-
-collection_methods['AK15Puppi'] = FatJet
-collection_methods['AK15PuppiSubJet'] = LorentzVector
-FatJet.subjetmap['AK15Puppi'] = 'AK15PuppiSubJet' 
+#from coffea.nanoaod.methods import collection_methods, LorentzVector, FatJet 
+from coffea.nanoevents.methods import nanoaod
+from coffea.nanoevents import NanoAODSchema, NanoEventsFactory
+#collection_methods['AK15Puppi'] = FatJet
+#collection_methods['AK15PuppiSubJet'] = LorentzVector
+#FatJet.subjetmap['AK15Puppi'] = 'AK15PuppiSubJet' 
 
 parser = OptionParser()
 parser.add_option('-p', '--processor', help='processor', dest='processor')
@@ -43,11 +44,17 @@ for dataset, info in samplefiles.items():
 
     tstart = time.time()
     output = processor.run_uproot_job(filelist,
-                                      treename='Events',
+                                      'Events',
                                       processor_instance=processor_instance,
                                       executor=processor.futures_executor,
-                                      executor_args={'nano': True, 'workers': options.workers},
+                                      executor_args={'schema': NanoAODSchema, 'workers': options.workers},
                                       )
+    #output = processor.run_uproot_job(filelist,
+    #                                  treename='Events',
+    #                                  processor_instance=processor_instance,
+    #                                  executor=processor.futures_executor,
+    #                                  executor_args={'nano': True, 'workers': options.workers},
+    #                                  )
     
     #nbins = sum(sum(arr.size for arr in h._sumw.values()) for h in output.values() if isinstance(h, hist.Hist))
     #nfilled = sum(sum(np.sum(arr > 0) for arr in h._sumw.values()) for h in output.values() if isinstance(h, hist.Hist))
