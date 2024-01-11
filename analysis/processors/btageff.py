@@ -1,12 +1,13 @@
 import os
 import numpy
 import json
-from coffea import processor, hist, util
+from coffea import processor, util
 from coffea.util import save, load
 from optparse import OptionParser
 import numpy as np
 import awkward as ak
 from coffea.lookup_tools.dense_lookup import dense_lookup
+import hist
 
 class BTagEfficiency(processor.ProcessorABC):
 
@@ -47,10 +48,9 @@ class BTagEfficiency(processor.ProcessorABC):
         isGoodJet = self._ids['isGoodJet']
 
         j = events.Jet
-        #j['isgood'] = isGoodJet(j.pt, j.eta, j.jetId, j.puId, j.neHEF, j.chHEF)
-        #j_good = j[j.isgood.astype(np.bool)]
-        j_isgood_mask = isGoodJet(j.pt, j.eta, j.jetId, j.puId, self._year)
-        j_good = j[j_isgood_mask]
+        j['isgood'] = isGoodJet(j.pt, j.eta, j.jetId, j.puId, self._year)
+        j_good = j[j.isgood.astype(np.bool)]
+        #j_good = j[j_isgood_mask]
 
         name = {}
         name['deepflav']= 'btagDeepFlavB'

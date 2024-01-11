@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 import correctionlib
 import os
-#import uproot, uproot_methods
+#import uproot
+#import uproot_methods
 import awkward as ak
 
 import numpy as np
@@ -280,11 +281,6 @@ def XY_MET_Correction(year, events, pt, phi):
     return corrected_pt, corrected_phi
 
 
-####
-# Jet
-# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME
-####
-
 
 ###
 # V+jets NLO k-factors
@@ -346,6 +342,10 @@ def get_ecal_bad_calib(run_number, lumi_number, event_number, year, dataset):
     # We want events that do NOT have (a vetoed run AND a vetoed LS and a vetoed event number)
     return np.logical_not(np.isin(run_number, runs_to_veto) * np.isin(lumi_number, lumis_to_veto) * np.isin(event_number, events_to_veto))
 
+
+############
+## BTag
+## Btag recommend: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation#Recommendation_for_13_TeV_Data
 
 
 
@@ -582,6 +582,12 @@ get_reweighting = {
     '2018': Reweighting('2018').weight,
 }
 
+
+####
+# Jet
+# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME
+# But it still uses txt file
+####
 
 Jetext = extractor()
 for directory in ['jec_UL', 'jersf_UL', 'jr_UL', 'junc_UL']:

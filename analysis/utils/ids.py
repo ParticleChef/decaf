@@ -34,6 +34,7 @@ def isTightElectron(pt,eta,dxy,dz,tight_id,year):
 #######
 ## Muon
 ## https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonSelection#Muon_Isolation
+## pfIsoID < 0.25, pfIsoID < 0.15
 #######
 def isLooseMuon(pt,eta,iso,loose_id,year):
     #dxy and dz cuts are missing from med_id; loose isolation is 0.25
@@ -87,8 +88,7 @@ def isLooseTau(pt,eta,decayMode,decayModeDMs,ide,idj,idm,year):
 ######
 ## Photon
 ######
-#Photon_cutBased Int_t "cut-based spring16-V2p2 ID (0:fail, 1:loose, 2:medium, 3:tight" for 2016 NanoAOD
-#Photon_cutBasedBitmap  Int_t   cut-based ID bitmap, 2^(0:loose, 1:medium, 2:tight)
+#Photon_cutBased Int_t  cut-based ID bitmap, Fall17V2, (0:fail, 1:loose, 2:medium, 3:tight)
 #Photon IDs:  https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2?rev=36
 def isLoosePhoton(pt,eta,loose_id,year):
     mask = ~(pt==np.nan)#just a complicated way to initialize a jagged array with the needed shape to True
@@ -102,8 +102,7 @@ def isLoosePhoton(pt,eta,loose_id,year):
 
 def isTightPhoton(pt,tight_id,year):
     #isScEtaEB is used (barrel only), so no eta requirement
-    #2017/18 pT requirement adjusted to match monojet, using dedicated ID SFs
-    #Tight photon use medium ID, as in monojet
+    #Tight photon use medium ID, as in monojet, monotop
     mask = ~(pt==np.nan)#just a complicated way to initialize a jagged array with the needed shape to True
     if year=='2016':
         mask = (pt>200)&(tight_id>=2)
@@ -115,25 +114,44 @@ def isTightPhoton(pt,tight_id,year):
 
 
 ######
-## Jet
-## https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
-## https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL
-## tight working point including lepton veto (TightLepVeto)
-######
-######
 ## Fatjet
+## https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+## JetID:tight working point including lepton veto (TightLepVeto)
 ######
 def isGoodFatJet(pt, eta, jet_id, nhf, chf):
     mask = (pt > 160) & (abs(eta)<2.4) & ((jet_id&6)==6) & (nhf<0.8) & (chf>0.1) 
     return mask
 
 
-#Jet ID flags bit1 is loose (always false in 2017 since it does not exist), bit2 is tight, bit3 is tightLepVeto
-#POG use tight jetID as a standart JetID 
 
-def isGoodJet(pt, eta, jet_id, pu_id):
+######
+## Jet
+## https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+## Jet ID flags bit1 is loose (always false in 2017 since it does not exist), 
+## bit2 is tight, bit3 is tightLepVeto
+## POG use tight jetID as a standart JetID 
+## JetID:tight working point including lepton veto (TightLepVeto)
+######
+## PileupJetID
+## https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL
+## Using loose PU ID
+## Note: There is a bug in 2016 UL in which bit values for Loose and Tight Jet
+## Pileup IDs are accidentally flipped relative to 2017 UL and 2018 UL.
+##
+## For 2016 UL,
+## Jet_puId = (passtightID*4 + passmediumID*2 + passlooseID*1).
+##
+## For 2017 UL and 2018 UL,
+## Jet_puId = (passlooseID*4 + passmediumID*2 + passtightID*1).
+######
+def isGoodJet(pt, eta, jet_id, pu_id, year):
     mask = (pt>30) & (abs(eta)<2.4) & ((jet_id&6)==6) # & (nhf<0.8) & (chf>0.1)# & (nef<0.99) & (cef<0.99)
-    mask = ((pt>=50)&mask) | ((pt<50)&mask&((pu_id&4)==4)) #https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetID, using loose wp
+    if '2016' in year:
+        mask = ((pt>=50)&mask) | ((pt<50)&mask&((pu_id&1)==1))
+    if year=='2017':
+        mask = ((pt>=50)&mask) | ((pt<50)&mask&((pu_id&4)==4))
+    if year=='2018':
+        mask = ((pt>=50)&mask) | ((pt<50)&mask&((pu_id&4)==4)) 
     return mask
 
 
@@ -142,7 +160,7 @@ def isGoodJet(pt, eta, jet_id, pu_id):
 ######
 
 def isHEMJet(pt, eta, phi):
-    mask = (pt>30) & ((eta>-3.0)&(eta<-1.3)) & ((phi>-1.57)&(phi<-0.87))
+    mask = (pt>15) & ((eta>-3.0)&(eta<-1.3)) & ((phi>-1.57)&(phi<-0.87))
     return mask
 
 
