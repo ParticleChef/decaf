@@ -26,45 +26,45 @@ def isLooseElectron(e, year):
         mask = (
             (pt > 10)
             & (abs(eta) < 1.4442)
-            & (abs(dxy) < 0.05)
-            & (abs(dz) < 0.1)
+#            & (abs(dxy) < 0.05)
+#            & (abs(dz) < 0.1)
             & (loose_id >= 2)
         ) | (
             (pt > 10)
             & (abs(eta) > 1.5660)
             & (abs(eta) < 2.5)
-            & (abs(dxy) < 0.1)
-            & (abs(dz) < 0.2)
+#            & (abs(dxy) < 0.1)
+#            & (abs(dz) < 0.2)
             & (loose_id >= 2)
         )
     elif year == "2017":
         mask = (
             (pt > 10)
             & (abs(eta) < 1.4442)
-            & (abs(dxy) < 0.05)
-            & (abs(dz) < 0.1)
+#            & (abs(dxy) < 0.05)
+#            & (abs(dz) < 0.1)
             & (loose_id >= 2)
         ) | (
             (pt > 10)
             & (abs(eta) > 1.5660)
             & (abs(eta) < 2.5)
-            & (abs(dxy) < 0.1)
-            & (abs(dz) < 0.2)
+#            & (abs(dxy) < 0.1)
+#            & (abs(dz) < 0.2)
             & (loose_id >= 2)
         )
     elif year == "2018":
         mask = (
             (pt > 10)
             & (abs(eta) < 1.4442)
-            & (abs(dxy) < 0.05)
-            & (abs(dz) < 0.1)
+#            & (abs(dxy) < 0.05)
+#            & (abs(dz) < 0.1)
             & (loose_id >= 2)
         ) | (
             (pt > 10)
             & (abs(eta) > 1.5660)
             & (abs(eta) < 2.5)
-            & (abs(dxy) < 0.1)
-            & (abs(dz) < 0.2)
+#            & (abs(dxy) < 0.1)
+#            & (abs(dz) < 0.2)
             & (loose_id >= 2)
         )
     return mask
@@ -85,45 +85,45 @@ def isTightElectron(e, year):
         mask = (
             (pt > 40)
             & (abs(eta) < 1.4442)
-            & (abs(dxy) < 0.05)
-            & (abs(dz) < 0.1)
+#            & (abs(dxy) < 0.05)
+#            & (abs(dz) < 0.1)
             & (tight_id == 4)
         ) | (
             (pt > 40)
             & (abs(eta) > 1.5660)
             & (abs(eta) < 2.5)
-            & (abs(dxy) < 0.1)
-            & (abs(dz) < 0.2)
+#            & (abs(dxy) < 0.1)
+#            & (abs(dz) < 0.2)
             & (tight_id == 4)
         )
     elif year == "2017":  # Trigger: HLT_Ele35_WPTight_Gsf_v
         mask = (
             (pt > 40)
             & (abs(eta) < 1.4442)
-            & (abs(dxy) < 0.05)
-            & (abs(dz) < 0.1)
+#            & (abs(dxy) < 0.05)
+#            & (abs(dz) < 0.1)
             & (tight_id == 4)
         ) | (
             (pt > 40)
             & (abs(eta) > 1.5660)
             & (abs(eta) < 2.5)
-            & (abs(dxy) < 0.1)
-            & (abs(dz) < 0.2)
+#            & (abs(dxy) < 0.1)
+#            & (abs(dz) < 0.2)
             & (tight_id == 4)
         )
     elif year == "2018":  # Trigger: HLT_Ele32_WPTight_Gsf_v
         mask = (
             (pt > 40)
             & (abs(eta) < 1.4442)
-            & (abs(dxy) < 0.05)
-            & (abs(dz) < 0.1)
+#            & (abs(dxy) < 0.05)
+#            & (abs(dz) < 0.1)
             & (tight_id == 4)
         ) | (
             (pt > 40)
             & (abs(eta) > 1.5660)
             & (abs(eta) < 2.5)
-            & (abs(dxy) < 0.1)
-            & (abs(dz) < 0.2)
+#            & (abs(dxy) < 0.1)
+#            & (abs(dz) < 0.2)
             & (tight_id == 4)
         )
     return mask
@@ -309,8 +309,7 @@ def isLoosePhoton(pho, year):
     elif year == "2018":
         mask = (
             (pt > 20)
-            & ~(abs(eta) > 1.4442)
-            & (abs(eta) < 1.5660)
+            & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660))
             & (abs(eta) < 2.5)
             & (loose_id >= 1)
         )
@@ -326,11 +325,11 @@ def isTightPhoton(pho, year):
     
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2016":
-        mask = (pt > 230) & (tight_id == 3)
+        mask = (pt > 200) & (tight_id == 2)
     elif year == "2017":
-        mask = (pt > 230) & (tight_id == 3)
+        mask = (pt > 230) & (tight_id == 2)
     elif year == "2018":
-        mask = (pt > 230) & (tight_id == 3)
+        mask = (pt > 230) & (tight_id == 2)
     return mask&(pho.isScEtaEB)&(pho.electronVeto) #tight photons are barrel only
 
 
@@ -346,9 +345,11 @@ def isGoodAK15(fj):
     pt=fj.pt
     eta=fj.eta
     jet_id=fj.jetId
+    nhf=fj.neHEF
+    chf=fj.chHEF
     
     mask = (
-        (pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6)
+        (pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6 ) & (nhf < 0.8) & (chf > 0.1)
     )
     return mask
 
@@ -390,11 +391,11 @@ def isGoodAK4(j, year):
     
     mask = (pt > 30) & (abs(eta) < 2.4) & ((jet_id & 6) == 6)
     if year == "2016":
-        mask = ((pt >= 50) & mask) | ((pt < 50) & mask & ((pu_id & 1) == 1)) & (nhf < 0.8) & (chf > 0.1)
+        mask = ((pt >= 50) & mask) | ((pt < 50) & mask & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1)
     elif year == "2017":
-        mask = ((pt >= 50) & mask) | ((pt < 50) & mask & ((pu_id & 4) == 4)) & (nhf < 0.8) & (chf > 0.1)
+        mask = ((pt >= 50) & mask) | ((pt < 50) & mask & ((pu_id & 4) == 4))# & (nhf < 0.8) & (chf > 0.1)
     elif year == "2018":
-        mask = ((pt >= 50) & mask) | ((pt < 50) & mask & ((pu_id & 4) == 4)) & (nhf < 0.8) & (chf > 0.1)
+        mask = ((pt >= 50) & mask) | ((pt < 50) & mask & ((pu_id & 4) == 4))# & (nhf < 0.8) & (chf > 0.1)
     return mask
 
 

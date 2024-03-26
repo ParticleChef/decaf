@@ -371,15 +371,27 @@ def XY_MET_Correction(year, npv, run, pt, phi, isData):
 # Only use nlo ewk sf
 ###
 
+#nlo_ewk_hists = {
+#    'dy': uproot.open("data/vjets_SFs/merged_kfactors_zjets.root")["kfactor_monojet_ewk"],
+#    'w': uproot.open("data/vjets_SFs/merged_kfactors_wjets.root")["kfactor_monojet_ewk"],
+#    'z': uproot.open("data/vjets_SFs/merged_kfactors_zjets.root")["kfactor_monojet_ewk"],
+#    'a': uproot.open("data/vjets_SFs/merged_kfactors_gjets.root")["kfactor_monojet_ewk"]
+#}    
+#for p in ['dy','w','z','a']:
+#    get_nlo_ewk_weight[p] = lookup_tools.dense_lookup.dense_lookup(nlo_ewk_hists[p].values(), nlo_ewk_hists[p].axes)
 nlo_ewk_hists = {
-    'dy': uproot.open("data/vjets_SFs/merged_kfactors_zjets.root")["kfactor_monojet_ewk"],
-    'w': uproot.open("data/vjets_SFs/merged_kfactors_wjets.root")["kfactor_monojet_ewk"],
-    'z': uproot.open("data/vjets_SFs/merged_kfactors_zjets.root")["kfactor_monojet_ewk"],
-    'a': uproot.open("data/vjets_SFs/merged_kfactors_gjets.root")["kfactor_monojet_ewk"]
+        'dy': ["* * data/vjets_SFs/merged_kfactors_zjets.root"],
+        'w': ["* * data/vjets_SFs/merged_kfactors_wjets.root"],
+        'z': ["* * data/vjets_SFs/merged_kfactors_zjets.root"],
+        'a': ["* * data/vjets_SFs/merged_kfactors_gjets.root"],
 }    
 get_nlo_ewk_weight = {}
 for p in ['dy','w','z','a']:
-    get_nlo_ewk_weight[p] = lookup_tools.dense_lookup.dense_lookup(nlo_ewk_hists[p].values(), nlo_ewk_hists[p].axes)
+    print(nlo_ewk_hists[p])
+    ext = extractor()
+    ext.add_weight_sets(nlo_ewk_hists[p])
+    ext.finalize()
+    get_nlo_ewk_weight[p] = ext.make_evaluator()["kfactor_monojet_ewk"]
 
 ###
 # V+jets NNLO weights
@@ -1015,7 +1027,7 @@ corrections = {
     'get_mu_rochester_sf':      get_mu_rochester_sf,
     'jet_factory':              jet_factory,
     'subjet_factory':           subjet_factory,
-    #'fatjet_factory':           fatjet_factory,
+    'fatjet_factory':           fatjet_factory,
     'met_factory':              met_factory
 }
 
