@@ -31,26 +31,20 @@ def scale(filename):
     ###
     # Defining 'process', to aggregate different samples into a single process
     ##
-
     sig_map = {}
     bkg_map = {}
     data_map = {}
-    bkg_map['QCD-$\mu$ (bb)'] = ['bb--QCD']
-    bkg_map['QCD-$\mu$ (b)'] = ['b--QCD']
-    bkg_map['QCD-$\mu$ (cc)'] = ['cc--QCD']
-    bkg_map['QCD-$\mu$ (c)'] = ['c--QCD']
-    bkg_map['QCD-$\mu$ (l)'] = ['l--QCD']
-    bkg_map["Hbb"] = ["HTo"]
-    bkg_map["DY+HF"] = ["HF--DYJets"]
-    bkg_map["DY+LF"] = ["LF--DYJets"]
-    bkg_map["DY+jetsLO"] = ["lo--DYJets"]
-    bkg_map["DY+jetsNNLO"] = ["nnlo--DYJets"]
     #bkg_map["VV"] = (["WW*","WZ*","ZZ*"],)
-    bkg_map["WW"] = ["WW"]
-    bkg_map["WZ"] = ["WZ"]
-    bkg_map["ZZ"] = ["ZZ"]
-    bkg_map["ST"] = ["ST"]
+    #bkg_map["WW"] = ["WW"]
+    #bkg_map["WZ"] = ["WZ"]
+    #bkg_map["ZZ"] = ["ZZ"]
+    bkg_map["QCD Multijet"] = ["QCD"]
+    bkg_map["VV"] = ["_TuneCP5_13TeV-pythia8"]
     bkg_map["TT"] = ["TT"]
+    bkg_map["Single Top"] = ["ST"]
+    bkg_map[r"W ($\ell\nu$) + Jets"]  = ["WJets"]
+    bkg_map[r"Z ($\ell\ell$) + Jets"] = ["DYJets"]
+    bkg_map[r"Z ($\nu\nu$) + Jets"]   = ["JetsToNuNu"]
     bkg_map["W+HF"] = ["HF--WJets"]
     bkg_map["W+LF"] = ["LF--WJets"]
     bkg_map["W+jetsLO"] = ["lo--WJets"]
@@ -63,12 +57,12 @@ def scale(filename):
     bkg_map["G+LF"] = ["LF--GJets"]
     bkg_map["G+jetsLO"] = ["lo--GJets"]
     bkg_map["G+jetsNNLO"] = ["nnlo--GJets"]
-    bkg_map["QCD"] = ["QCD"]
     data_map["MET"] = ["MET"]
     data_map["SingleElectron"] = ["SingleElectron"]
     data_map["SinglePhoton"] = ["SinglePhoton"]
     data_map["EGamma"] = ["EGamma"]
     data_map["BTagMu"] = ["BTagMu"]
+
     for signal in hists['sumw'].keys():
         if 'TPhiTo2Chi' not in signal: continue
         print(signal)
