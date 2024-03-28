@@ -899,11 +899,11 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('one_ak15', (fj_nclean>0))
         selection.add('leading_fj250', (leading_fj.pt>250))
 
-        selection.add('dPhi_recoil_j', (ak.min(abs(u['sr'].delta_phi(j_clean.T)), axis=1, mask_identity=False) > 0.5))
-        selection.add('dPhi_recoil_fj',(ak.sum(abs(u['sr'].delta_phi(fj_clean.T))>1.5, axis=1, mask_identity=False) > 0))
-        selection.add('dPhi_recoil_fj_e', (ak.min(abs(u['wecr'].delta_phi(fj_clean.T))>1.5, axis=1, mask_identity=False) > 0))
-        selection.add('dPhi_recoil_fj_m', (ak.min(abs(u['wmcr'].delta_phi(fj_clean.T))>1.5, axis=1, mask_identity=False) > 0))
-        selection.add('dPhi_recoil_fj_g', (ak.min(abs(u['gcr'].delta_phi(fj_clean.T))>1.5, axis=1, mask_identity=False) > 0))
+        #selection.add('dPhi_recoil_j', (ak.min(abs(u['sr'].delta_phi(j_clean.T)), axis=1, mask_identity=False) > 0.5))
+        #selection.add('dPhi_recoil_fj',(ak.sum(abs(u['sr'].delta_phi(fj_clean.T))>1.5, axis=1, mask_identity=False) > 0))
+        #selection.add('dPhi_recoil_fj_e', (ak.min(abs(u['wecr'].delta_phi(fj_clean.T))>1.5, axis=1, mask_identity=False) > 0))
+        #selection.add('dPhi_recoil_fj_m', (ak.min(abs(u['wmcr'].delta_phi(fj_clean.T))>1.5, axis=1, mask_identity=False) > 0))
+        #selection.add('dPhi_recoil_fj_g', (ak.min(abs(u['gcr'].delta_phi(fj_clean.T))>1.5, axis=1, mask_identity=False) > 0))
         selection.add('noextrab', (j_ndflvL==0))
         selection.add('extrab', (j_ndflvL>0))
         selection.add('oneb', (j_ndflvL==1))
@@ -1101,15 +1101,16 @@ class AnalysisProcessor(processor.ProcessorABC):
 
             if 'qcd' not in region:
                 selection.add('recoil_'+region, (u[region].r>350))
-                #selection.add('mindphi_'+region, (ak.min(abs(u[region].delta_phi(j_clean.T)), axis=1, mask_identity=False) > 0.5))
-                #selection.add('minDphi_'+region, (ak.min(abs(u[region].delta_phi(fj_clean.T)), axis=1, mask_identity=False) > 1.5))
+                selection.add('mindphi_'+region, (ak.min(abs(u['sr'].delta_phi(j_clean.T)), axis=1, mask_identity=False) > 0.5))
+                selection.add('minDphi_'+region, (ak.min(abs(u[region].delta_phi(fj_clean.T)), axis=1, mask_identity=False) > 1.5))
                 #selection.add('calo_'+region, ( (abs(calomet.pt - met.pt) / u[region].r) < 0.5))
                 regions[region].insert(0, 'recoil_'+region)
-                #regions[region].insert(3, 'mindphi_'+region)
-                #regions[region].insert(4, 'minDphi_'+region)
+                regions[region].insert(3, 'mindphi_'+region)
+                regions[region].insert(4, 'minDphi_'+region)
                 #regions[region].insert(5, 'calo_'+region)
                 if region in mT:
-                    selection.add('mT_'+region, (mT[region]<150))
+                    if 'g' not in region and 'z' not in region:
+                        selection.add('mT_'+region, (mT[region]<150))
 
             for systematic in systematics:
                 if isData and systematic is not None:
