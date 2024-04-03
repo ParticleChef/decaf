@@ -91,7 +91,7 @@ def isTightElectron(e, year):
         ) | (
             (pt > 40)
             & (abs(eta) > 1.5660)
-            & (abs(eta) < 2.5)
+            & (abs(eta) < 2.4)
 #            & (abs(dxy) < 0.1)
 #            & (abs(dz) < 0.2)
             & (tight_id == 4)
@@ -106,7 +106,7 @@ def isTightElectron(e, year):
         ) | (
             (pt > 40)
             & (abs(eta) > 1.5660)
-            & (abs(eta) < 2.5)
+            & (abs(eta) < 2.4)
 #            & (abs(dxy) < 0.1)
 #            & (abs(dz) < 0.2)
             & (tight_id == 4)
@@ -121,7 +121,7 @@ def isTightElectron(e, year):
         ) | (
             (pt > 40)
             & (abs(eta) > 1.5660)
-            & (abs(eta) < 2.5)
+            & (abs(eta) < 2.4)
 #            & (abs(dxy) < 0.1)
 #            & (abs(dz) < 0.2)
             & (tight_id == 4)
@@ -321,16 +321,17 @@ def isTightPhoton(pho, year):
         year='2016'
 
     pt=pho.pt
+    eta=pho.eta
     tight_id=pho.cutBased
     
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2016":
-        mask = (pt > 200) & (tight_id == 2)
+        mask = (pt > 200) & (tight_id == 2) & ( abs(eta) < 1.479)
     elif year == "2017":
-        mask = (pt > 230) & (tight_id == 2)
+        mask = (pt > 230) & (tight_id == 2) & ( abs(eta) < 1.479)
     elif year == "2018":
-        mask = (pt > 230) & (tight_id == 2)
-    return mask&(pho.isScEtaEB)&(pho.electronVeto) #tight photons are barrel only
+        mask = (pt > 230) & (tight_id == 2) & ( abs(eta) < 1.479)
+    return mask#&(pho.isScEtaEB)#&(pho.electronVeto) #tight photons are barrel only
 
 
 ######
@@ -410,7 +411,7 @@ def isHEMJet(j):
     eta=j.eta
     phi=j.phi
     
-    mask = (pt > 30) & (eta > -3.0) & (eta < -1.3) & (phi > -1.57) & (phi < -0.87)
+    mask = (pt > 15) & (eta > -3.0) & (eta < -1.3) & (phi > -1.57) & (phi < -0.87)
     return mask
 
 
