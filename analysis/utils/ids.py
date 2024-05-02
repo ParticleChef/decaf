@@ -150,9 +150,9 @@ def isLooseMuon(mu, year):
     
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2016":
-        mask = (pt > 15) & (abs(eta) < 2.4) & loose_id & (iso < 0.25)
+        mask = (pt > 20) & (abs(eta) < 2.4) & loose_id & (iso < 0.25)
     elif year == "2017":
-        mask = (pt > 15) & (abs(eta) < 2.4) & loose_id & (iso < 0.25)
+        mask = (pt > 20) & (abs(eta) < 2.4) & loose_id & (iso < 0.25)
     elif year == "2018":
         mask = (pt > 15) & (abs(eta) < 2.4) & loose_id & (iso < 0.25)
     return mask
@@ -330,8 +330,8 @@ def isTightPhoton(pho, year):
     elif year == "2017":
         mask = (pt > 230) & (tight_id == 2) & ( abs(eta) < 1.479)
     elif year == "2018":
-        mask = (pt > 230) & (tight_id == 2) & ( abs(eta) < 1.479)
-    return mask#&(pho.isScEtaEB)#&(pho.electronVeto) #tight photons are barrel only
+        mask = (pt > 230) & (tight_id >= 2) & ( abs(eta) < 1.479)
+    return mask&(pho.electronVeto)&(pho.isScEtaEB) #tight photons are barrel only
 
 
 ######
