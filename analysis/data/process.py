@@ -101,6 +101,12 @@ processes =    {
 
 
     # Private signal samples
+    'TPhiTo2Chi_MPhi150_MChi150_TuneCP5_13TeV-amcatnlo-pythia8':('TPhiTo2Chi_MPhi150_MChi150', 'MC', 0.188),
+    'TPhiTo2Chi_MPhi745_MChi325_TuneCP5_13TeV-amcatnlo-pythia8':('TPhiTo2Chi_MPhi745_MChi325', 'MC', 0.897),
+    'TPhiTo2Chi_MPhi1245_MChi625_TuneCP5_13TeV-amcatnlo-pythia8':('TPhiTo2Chi_MPhi1245_MChi625', 'MC', 0.02814),
+    'TPhiTo2Chi_MPhi2250_MChi150_TuneCP5_13TeV-amcatnlo-pythia8':('TPhiTo2Chi_MPhi2250_MChi150', 'MC', 0.007298),
+    'TPhiTo2Chi_MPhi2245_MChi1125_TuneCP5_13TeV-amcatnlo-pythia8':('TPhiTo2Chi_MPhi2245_MChi1125', 'MC', 0.001324),
+
     'TPhiTo2Chi_MPhi1000_MChi1000_TuneCP5_13TeV-amcatnlo-pythia8':('TPhiTo2Chi_MPhi1000_MChi1000', 'MC', 0.00005344),
     'TPhiTo2Chi_MPhi1000_MChi150_TuneCP5_13TeV-amcatnlo-pythia8' :('TPhiTo2Chi_MPhi1000_MChi150', 'MC', 0.3727),
     'TPhiTo2Chi_MPhi1250_MChi150_TuneCP5_13TeV-amcatnlo-pythia8' :('TPhiTo2Chi_MPhi1250_MChi150', 'MC', 0.1444),
@@ -108,7 +114,7 @@ processes =    {
     'TPhiTo2Chi_MPhi1500_MChi1000_TuneCP5_13TeV-amcatnlo-pythia8':('TPhiTo2Chi_MPhi1500_MChi1000', 'MC', 0.0001071),
     'TPhiTo2Chi_MPhi1500_MChi150_TuneCP5_13TeV-amcatnlo-pythia8' :('TPhiTo2Chi_MPhi1500_MChi150', 'MC', 0.06213),
     'TPhiTo2Chi_MPhi1700_MChi800_TuneCP5_13TeV-amcatnlo-pythia8' :('TPhiTo2Chi_MPhi1700_MChi800', 'MC', 0.0189),
-    'TPhiTo2Chi_MPhi1750_MChi150_TuneCP5_13TeV-amcatnlo-pythia8' :('TPhiTo2Chi_MPhi1750_MChi150', 'MC', 0.02879.),
+    'TPhiTo2Chi_MPhi1750_MChi150_TuneCP5_13TeV-amcatnlo-pythia8' :('TPhiTo2Chi_MPhi1750_MChi150', 'MC', 0.02879),
     'TPhiTo2Chi_MPhi1750_MChi700_TuneCP5_13TeV-amcatnlo-pythia8' :('TPhiTo2Chi_MPhi1750_MChi700', 'MC', 0.02263),
     'TPhiTo2Chi_MPhi195_MChi100_TuneCP5_13TeV-amcatnlo-pythia8'  :('TPhiTo2Chi_MPhi195_MChi100', 'MC', 4.931),
     'TPhiTo2Chi_MPhi1995_MChi1000_TuneCP5_13TeV-amcatnlo-pythia8':('TPhiTo2Chi_MPhi1995_MChi1000', 'MC', 0.002655),
