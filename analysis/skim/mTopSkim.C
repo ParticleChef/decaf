@@ -1,4 +1,4 @@
-void splitted_file_name_mTopSkim() {
+void mTopSkim() {
 
     std::ifstream fileList("splitted_file_name");
     std::string fileName;
