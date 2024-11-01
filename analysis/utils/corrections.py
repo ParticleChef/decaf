@@ -841,6 +841,8 @@ jet_factory = {
         files=[
             "Summer19UL18_V5_MC_L1FastJet_AK4PFchs.jec.txt",
             "Summer19UL18_V5_MC_L2Relative_AK4PFchs.jec.txt",
+            "Summer19UL18_V5_MC_L2L3Residual_AK4PFchs.txt",
+            "Summer19UL18_V5_MC_L3Absolute_AK4PFchs.txt",
             "Summer19UL18_V5_MC_UncertaintySources_AK4PFchs.junc.txt",
             "Summer19UL18_V5_MC_Uncertainty_AK4PFchs.junc.txt",
             "Summer19UL18_JRV2_MC_PtResolution_AK4PFchs.jr.txt",
@@ -983,6 +985,8 @@ fatjet_factory = {
         files=[
             "Summer19UL18_V5_MC_L1FastJet_AK8PFPuppi.jec.txt",
             "Summer19UL18_V5_MC_L2Relative_AK8PFPuppi.jec.txt",
+            "Summer19UL18_V5_MC_L2L3Residual_AK8PFPuppi.txt",
+            "Summer19UL18_V5_MC_L3Absolute_AK8PFPuppi.txt",
             "Summer19UL18_V5_MC_UncertaintySources_AK8PFPuppi.junc.txt",
             "Summer19UL18_V5_MC_Uncertainty_AK8PFPuppi.junc.txt",
             "Summer19UL18_JRV2_MC_PtResolution_AK8PFPuppi.jr.txt",
