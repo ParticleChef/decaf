@@ -51,6 +51,10 @@ class Mydrawer:
             'tw':[r'W ($\ell\nu$) + Jets', 'TT','QCD Multijet', 'VV','Single Top', 'Z ($\ell\ell$) + Jets',r'Z ($\nu\nu$) + Jets', '$\gamma$ + Jets'],
             'zr':['Z ($\ell\ell$) + Jets',r'W ($\ell\nu$) + Jets', 'TT','QCD Multijet', 'VV','Single Top', r'Z ($\nu\nu$) + Jets', '$\gamma$ + Jets'],
             'gr':['$\gamma$ + Jets',r'W ($\ell\nu$) + Jets', 'TT','QCD Multijet', 'VV','Single Top', 'Z ($\ell\ell$) + Jets',r'Z ($\nu\nu$) + Jets'],
+            #'sr':[r'Z ($\nu\nu$) + Jets'],
+            #'tw':[r'Z ($\nu\nu$) + Jets'],
+            #'zr':[r'Z ($\nu\nu$) + Jets'],
+            #'gr':[r'Z ($\nu\nu$) + Jets'],
         }
         #stacks = [r'W ($\ell\nu$) + Jets', 'TT','QCD Multijet', 'VV','Single Top', 'Z ($\ell\ell$) + Jets',r'Z ($\nu\nu$) + Jets']
         colors = {
@@ -89,23 +93,23 @@ class Mydrawer:
                 ### Plotting loop
                 for sample in stacks[stack_map]:
                     try:
-                        target = bkg[key][sample][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}]
+                        target = bkg[key][sample][{'TvsQCD': sum, 'region': region}]
 
                         bins = target.axes.edges[0]
                         try:
-                            mcstack += bkg[key][sample][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}]
-                            drawstack += bkg[key][sample][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].values()
+                            mcstack += bkg[key][sample][{'TvsQCD': sum, 'region': region}]
+                            drawstack += bkg[key][sample][{'TvsQCD': sum, 'region': region}].values()
                         except:
-                            mcstack = bkg[key][sample][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}]
-                            drawstack = bkg[key][sample][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].values()
+                            mcstack = bkg[key][sample][{'TvsQCD': sum, 'region': region}]
+                            drawstack = bkg[key][sample][{'TvsQCD': sum, 'region': region}].values()
                     except:
                         continue                
                 
                 if region == 'sr':
                     sig_key = 'TPhiTo2Chi_MPhi1000_MChi150_TuneCP5_13TeV-amcatnlo-pythia8'
                     try:
-                        sig[key][sig_key][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].plot1d(ax=ax, histtype='step', color='c', stack=False, label='Monotop_MPhi1500_MChi150')
-                        sigstack = sig[key][sig_key][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}]
+                        sig[key][sig_key][{'TvsQCD': sum, 'region': region}].plot1d(ax=ax, histtype='step', color='c', stack=False, label='Monotop_MPhi1500_MChi150')
+                        sigstack = sig[key][sig_key][{'TvsQCD': sum, 'region': region}]
                     except:
                         print("Not able to draw... skipping", key, 'Data')
                         continue
@@ -113,7 +117,7 @@ class Mydrawer:
                 for sample in stacks[stack_map]:
                     try:
                         ax.hist(bins[:-1], bins, weights=drawstack, histtype='stepfilled', label=sample, linewidth=2, edgecolor=(0,0,0,0.3), alpha=1.0)
-                        drawstack -= bkg[key][sample][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].values()
+                        drawstack -= bkg[key][sample][{'TvsQCD': sum, 'region': region}].values()
                     except:
                         continue
 
@@ -136,19 +140,35 @@ class Mydrawer:
                 if blind != 'blind':
                     if region == 'sr' or 'mcr' in region:
                         try:
-                            data[key]['MET'][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].plot1d(ax=ax, histtype='errorbar', color='k', stack=False, label='Data')
-                            datastack = data[key]['MET'][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}]
+                            data[key]['MET'][{'TvsQCD': sum, 'region': region}].plot1d(ax=ax, histtype='errorbar', color='k', stack=False, label='Data')
+                            datastack = data[key]['MET'][{'TvsQCD': sum, 'region': region}]
                         except:
                             print("Not able to draw... skipping", key, 'Data')
                             continue
 
                     elif region == 'gcr' or 'ecr' in region:
-                        try:
-                            data[key]['EGamma'][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].plot1d(ax=ax, histtype='errorbar', color='k', stack=False, label='Data')
-                            datastack = data[key]['EGamma'][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}]
-                        except:
-                            print("Not able to draw... skipping", key, 'Data')
-                            continue
+                        if year == '2018':
+                            try:
+                                data[key]['EGamma'][{'TvsQCD': sum, 'region': region}].plot1d(ax=ax, histtype='errorbar', color='k', stack=False, label='Data')
+                                datastack = data[key]['EGamma'][{'TvsQCD': sum, 'region': region}]
+                            except:
+                                print("Not able to draw... skipping", key, 'Data')
+                                continue
+                        else:
+                            if region == 'gcr':
+                                try:
+                                    data[key]['SinglePhoton'][{'TvsQCD': sum, 'region': region}].plot1d(ax=ax, histtype='errorbar', color='k', stack=False, label='Data')
+                                    datastack = data[key]['SinglePhoton'][{'TvsQCD': sum, 'region': region}]
+                                except:
+                                    print("Not able to draw... skipping", key, 'Data')
+                                    continue
+                            elif 'ecr' in region:
+                                try:
+                                    data[key]['SingleElectron'][{'TvsQCD': sum, 'region': region}].plot1d(ax=ax, histtype='errorbar', color='k', stack=False, label='Data')
+                                    datastack = data[key]['SingleElectron'][{'TvsQCD': sum, 'region': region}]
+                                except:
+                                    print("Not able to draw... skipping", key, 'Data')
+                                    continue
 
                 ax.set_yscale('log')
                 ax.set_ylim(0.01, 1000000)
@@ -209,8 +229,8 @@ class Mydrawer:
             for sample in stacks:
                 try:
                     # print upper stat unc.
-                    print("{0:<25} {1:>10}".format(sample, np.sum(bkg['fj1pt'][sample][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].values())))
-                    sum_stack += np.sum(bkg['fj1pt'][sample][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].values())
+                    print("{0:<25} {1:>10}".format(sample, np.sum(bkg['fj1pt'][sample][{'TvsQCD': sum, 'region': region}].values())))
+                    sum_stack += np.sum(bkg['fj1pt'][sample][{'TvsQCD': sum, 'region': region}].values())
                 except:
                     continue
                 
@@ -218,9 +238,22 @@ class Mydrawer:
             print("{0:<25} {1:>10}".format('Total BKG', np.sum(mcstack.view().value)))
             if blind != 'blind':
                 if region == 'sr' or 'mcr' in region:
-                    print("{0:<25} {1:>10}".format('Data', np.sum(data['fj1pt']['MET'][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].values())))
+                    print("{0:<25} {1:>10}".format('Data', np.sum(data['fj1pt']['MET'][{'TvsQCD': sum, 'region': region}].values())))
                 elif region == 'gcr' or 'ecr' in region:
-                    print("{0:<25} {1:>10}".format('Data', np.sum(data['fj1pt']['EGamma'][{'TvsQCD': slice(0.0j,0.26j,sum), 'region': region}].values())))
+                    if year == '2018':
+                        print("{0:<25} {1:>10}".format('Data', np.sum(data['fj1pt']['EGamma'][{'TvsQCD': sum, 'region': region}].values())))
+                    else:
+                        if region == 'gcr':
+                            print("{0:<25} {1:>10}".format('Data', np.sum(data['fj1pt']['SinglePhoton'][{'TvsQCD': sum, 'region': region}].values())))
+                        if 'ecr' in region:
+                            try:
+                                print("{0:<25} {1:>10}".format('Data', np.sum(data['fj1pt']['SingleElectron'][{'TvsQCD': sum, 'region': region}].values())))
+                            except:
+                                try:
+                                    print("{0:<25} {1:>10}".format('Data', np.sum(data['fj1pt']['SingleElecton'][{'TvsQCD': sum, 'region': region}].values())))
+                                except:
+                                    print("????")
+                                
 
     def btagSpliter(self, wp):
         hists = self.f
