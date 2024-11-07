@@ -26,7 +26,7 @@ def update(events, collections):
 class AnalysisProcessor(processor.ProcessorABC):
 
     lumis = { 
-        #Values from https://twiki.cern.ch/twiki/bin/view/CMS/LumiRecommendationsRun2                                                      
+        #Values from https://twiki.cern.ch/twiki/bin/view/CMS/LumiRecommendationsRun2 
         '2016postVFP': 16.81,
         '2016preVFP': 19.52,
         '2017': 41.48,
@@ -146,7 +146,11 @@ class AnalysisProcessor(processor.ProcessorABC):
             ]
         }
         self._singlephoton_triggers = {
-            '2016': [
+            '2016postVFP': [
+                'Photon175',
+                'Photon165_HE10'
+            ],
+            '2016preVFP': [
                 'Photon175',
                 'Photon165_HE10'
             ],
@@ -176,7 +180,11 @@ class AnalysisProcessor(processor.ProcessorABC):
             ]
         }
         self._singlemuon_triggers = {
-            '2016': [
+            '2016postVFP': [
+                'IsoMu24',
+                'IsoTkMu24',
+            ],
+            '2016preVFP': [
                 'IsoMu24',
                 'IsoTkMu24',
             ],
@@ -1117,7 +1125,7 @@ class AnalysisProcessor(processor.ProcessorABC):
             systematics = [shift_name]
             
         saveNumbers = {}
-        f = open("./egmD_gcr.txt", "w")
+        #f = open("./egmD_gcr.txt", "w")
         for region in regions:
             if region not in selected_regions: continue
 
@@ -1155,26 +1163,26 @@ class AnalysisProcessor(processor.ProcessorABC):
                 vcut = (i+1)*jcut
                 output['cutflow'].fill(region=region,cutname=icut, cutflow=vcut, weight=weights.weight()*jcut)
                 #print(i, ", ", icut, ": ", events.run[jcut], " len: ", len(events.run[jcut]))
-                if i == len(cuts)-1:
-                    saveNumbers[region] = {
-                        'event': list(events.event[jcut]),
-                        'run': list(events.run[jcut])
-                        #'event': list(events.event),
-                        #'run': list(events.run)
-                    }
+                #if i == len(cuts)-1:
+                #    saveNumbers[region] = {
+                #        'event': list(events.event[jcut]),
+                #        'run': list(events.run[jcut])
+                #        #'event': list(events.event),
+                #        #'run': list(events.run)
+                #    }
 
-        print(saveNumbers.keys())
-        if region == 'gcr':
-            print('region: gamma + jet CR')
-            title = str("%15s " % str('event number') + "%15s " % str('run number') + "%15s " % str('lumi number') + "\n")
-            f.write(title)
-            print("%15s " % str('event number'), "%15s " % str('run number'), '%15s ' % str('lumi number'))
-            for i in range(len(saveNumbers[region]['event'])):
-                print("%15s " % saveNumbers['gcr']['event'][i], "%15s " %saveNumbers['gcr']['run'][i])
-                contents = str("%15s " % saveNumbers['gcr']['event'][i] + "%15s " %saveNumbers['gcr']['run'][i] + "\n")
-                f.write(contents)
+        #print(saveNumbers.keys())
+        #if region == 'gcr':
+        #    print('region: gamma + jet CR')
+        #    title = str("%15s " % str('event number') + "%15s " % str('run number') + "%15s " % str('lumi number') + "\n")
+        #    f.write(title)
+        #    print("%15s " % str('event number'), "%15s " % str('run number'), '%15s ' % str('lumi number'))
+        #    for i in range(len(saveNumbers[region]['event'])):
+        #        print("%15s " % saveNumbers['gcr']['event'][i], "%15s " %saveNumbers['gcr']['run'][i])
+        #        contents = str("%15s " % saveNumbers['gcr']['event'][i] + "%15s " %saveNumbers['gcr']['run'][i] + "\n")
+        #        f.write(contents)
 
-        f.close()
+        #f.close()
 
         scale = 1
         if self._xsec[dataset]!= -1: 
