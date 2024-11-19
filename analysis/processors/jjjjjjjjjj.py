@@ -1122,7 +1122,7 @@ class AnalysisProcessor(processor.ProcessorABC):
             systematics = [shift_name]
             
         saveNumbers = {}
-        #f = open("./egmD_gcr.txt", "w")
+        f = open(f"./egmNumberlist/egm_gcr_{dataset}.txt", "w")
         for region in regions:
             if region not in selected_regions: continue
 
@@ -1162,27 +1162,28 @@ class AnalysisProcessor(processor.ProcessorABC):
                 jcut = selection.all(*allcuts)
                 vcut = (i+1)*jcut
                 output['cutflow'].fill(region=region,cutname=icut, cutflow=vcut, weight=weights.weight()*jcut)
-                #print(i, ", ", icut, ": ", events.run[jcut], " len: ", len(events.run[jcut]))
-                #if i == len(cuts)-1:
-                #    saveNumbers[region] = {
-                #        'event': list(events.event[jcut]),
-                #        'run': list(events.run[jcut])
-                #        #'event': list(events.event),
-                #        #'run': list(events.run)
-                #    }
+                print(i, ", ", icut, ": ", events.run[jcut], " len: ", len(events.run[jcut]))
+                if i == len(cuts)-1:
+                    saveNumbers[region] = {
+                        'event': list(events.event[jcut]),
+                        'run':   list(events.run[jcut]),
+                        'lumi':  list(events.luminosityBlock[jcut])
+                        #'event': list(events.event),
+                        #'run': list(events.run)
+                    }
 
-        #print(saveNumbers.keys())
-        #if region == 'gcr':
-        #    print('region: gamma + jet CR')
-        #    title = str("%15s " % str('event number') + "%15s " % str('run number') + "%15s " % str('lumi number') + "\n")
-        #    f.write(title)
-        #    print("%15s " % str('event number'), "%15s " % str('run number'), '%15s ' % str('lumi number'))
-        #    for i in range(len(saveNumbers[region]['event'])):
-        #        print("%15s " % saveNumbers['gcr']['event'][i], "%15s " %saveNumbers['gcr']['run'][i])
-        #        contents = str("%15s " % saveNumbers['gcr']['event'][i] + "%15s " %saveNumbers['gcr']['run'][i] + "\n")
-        #        f.write(contents)
+        print(saveNumbers.keys())
+        if region == 'gcr':
+            print('region: gamma + jet CR')
+            title = str("%15s " % str('event number') + "%15s " % str('run number') + "%15s " % str('lumi number') + "\n")
+            f.write(title)
+            print("%15s " % str('event number'), "%15s " % str('run number'), '%15s ' % str('lumi number'))
+            for i in range(len(saveNumbers[region]['event'])):
+                print("%15s " % saveNumbers['gcr']['event'][i], "%15s " %saveNumbers['gcr']['run'][i], "%15s " % saveNumbers['gcr']['lumi'][i])
+                contents = str("%15s " % saveNumbers['gcr']['event'][i] + "%15s " %saveNumbers['gcr']['run'][i] + "%15s " %saveNumbers['gcr']['lumi'][i] + "\n")
+                f.write(contents)
 
-        #f.close()
+        f.close()
 
         scale = 1
         if self._xsec[dataset]!= -1: 
