@@ -137,49 +137,40 @@ def isTightElectron(e, year):
 ## https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonSelection#Muon_Isolation
 #######
 
-
 def isLooseMuon(mu, year):
     
-    if '2016' in year:
-        year='2016'
+    if '2022' in year:
+        year='2022'
         
     pt=mu.pt
     eta=mu.eta
     #iso=mu.pfRelIso04_all
-    iso=mu.pfIsoId
+    #iso=mu.pfIsoId
     loose_id=mu.looseId
     isTracker=mu.isTracker
     ispfcan=mu.isPFcand
     isglobal=mu.isGlobal
     
     mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2016":
-        mask = (pt > 20) & (abs(eta) < 2.4) & loose_id & (iso >= 2) & isTracker & ispfcan & isglobal
-    elif year == "2017":
-        mask = (pt > 20) & (abs(eta) < 2.4) & loose_id & (iso >= 2) & isTracker & ispfcan & isglobal
-    elif year == "2018":
-        mask = (pt > 15) & (abs(eta) < 2.4) & loose_id & (iso >= 2) & isTracker & ispfcan & isglobal
+    if year == "2022":
+        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal #& (iso >= 2)
     return mask
 
 
 def isTightMuon(mu, year):
     
-    if '2016' in year:
-        year='2016'
+    if '2022' in year:
+        year='2022'
         
     pt=mu.pt
     eta=mu.eta
-    iso=mu.pfIsoId
-    #iso=mu.pfRelIso04_all # (iso < 0.15)
-    tight_id=mu.tightId
+    #iso=mu.pfIsoId
+    iso=mu.pfRelIso04_all # (iso < 0.15)
+    #tight_id=mu.tightId
     
     mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2016":
-        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & (iso >= 4)
-    elif year == "2017":
-        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & (iso >= 4)
-    elif year == "2018":
-        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & (iso >= 4)
+    if year == "2022":
+        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & (iso < 0.1)
     return mask
 
 
@@ -344,19 +335,19 @@ def isTightPhoton(pho, year):
 ######
 
 
-def isGoodAK15(fj):
-    
-    pt=fj.pt
-    eta=fj.eta
-    jet_id=fj.jetId
-    nhf=fj.neHEF
-    chf=fj.chHEF
-    
-    mask = (
-        (pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6 ) & (nhf < 0.8) & (chf > 0.1)
-    )
-    return mask
-
+#def isGoodAK15(fj):
+#    
+#    pt=fj.pt
+#    eta=fj.eta
+#    jet_id=fj.jetId
+#    nhf=fj.neHEF
+#    chf=fj.chHEF
+#    
+#    mask = (
+#        (pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6 ) & (nhf < 0.8) & (chf > 0.1)
+#    )
+#    return mask
+#
 
 ######
 ## Jet
@@ -403,31 +394,18 @@ def isGoodAK4(j, year):
     return mask
 
 
-######
-## HEM
-######
 
-
-def isHEMJet(j):
-
-    pt=j.pt
-    eta=j.eta
-    phi=j.phi
-    
-    mask = (pt > 15) & (eta > -3.0) & (eta < -1.3) & (phi > -1.57) & (phi < -0.87)
-    return mask
 
 
 ids = {}
-ids["isLooseElectron"] = isLooseElectron
-ids["isTightElectron"] = isTightElectron
+#ids["isLooseElectron"] = isLooseElectron
+#ids["isTightElectron"] = isTightElectron
 ids["isLooseMuon"] = isLooseMuon
 ids["isTightMuon"] = isTightMuon
 ids["isSoftMuon"] = isSoftMuon
-ids["isLooseTau"] = isLooseTau
-ids["isLoosePhoton"] = isLoosePhoton
-ids["isTightPhoton"] = isTightPhoton
-ids["isGoodAK4"] = isGoodAK4
-ids["isGoodAK15"] = isGoodAK15
-ids["isHEMJet"] = isHEMJet
+#ids["isLooseTau"] = isLooseTau
+#ids["isLoosePhoton"] = isLoosePhoton
+#ids["isTightPhoton"] = isTightPhoton
+#ids["isGoodAK4"] = isGoodAK4
+#ids["isGoodAK15"] = isGoodAK15
 save(ids, "data/ids.coffea")
