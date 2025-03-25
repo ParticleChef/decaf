@@ -153,7 +153,7 @@ def isLooseMuon(mu, year):
     
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2022":
-        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal #& (iso >= 2)
+        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal  #& (iso >= 2)
     return mask
 
 
@@ -166,7 +166,7 @@ def isTightMuon(mu, year):
     eta=mu.eta
     #iso=mu.pfIsoId
     iso=mu.pfRelIso04_all # (iso < 0.15)
-    #tight_id=mu.tightId
+    tight_id=mu.tightId
     
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2022":

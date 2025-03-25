@@ -105,7 +105,7 @@ def get_mu_sf (year, corr, eta, pt):
     return ak.unflatten(weight, counts=counts)
 
 def get_mu_loose_id_sf (year, eta, pt):
-    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'_UL/muon_Z.json.gz')
+    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
 
     eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
     flateta, counts = ak.flatten(eta), ak.num(eta)
@@ -118,7 +118,7 @@ def get_mu_loose_id_sf (year, eta, pt):
     return ak.unflatten(weight, counts=counts)
 
 def get_mu_tight_id_sf (year, eta, pt):
-    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'_UL/muon_Z.json.gz')
+    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
 
     eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
     flateta, counts = ak.flatten(eta), ak.num(eta)

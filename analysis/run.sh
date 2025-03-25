@@ -8,26 +8,35 @@ echo $(hostname)
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
 if [ "${4}" == "kisti" ]; then
-    env
-    /usr/bin/voms-proxy-info -exists
-    if [ $? -eq 0 ]; then
-        echo "No need to copy"
-        ls -l /tmp/x509up_u$(id -u)
-        /usr/bin/voms-proxy-info -all
-    else
-        cp ./x509up_u* /tmp
-        ls -l /tmp/x509up_u$(id -u)
-        /usr/bin/voms-proxy-info -all
-    fi
-    xrdcp -s root://cms-xrdr.private.lo:2094//xrd/store/user/$USER/cmssw_11_3_4.tgz .
-    echo "Decaf correctly copied"
-    xrdcp -s root://cms-xrdr.private.lo:2094//xrd/store/user/$USER/pylocal_3_8.tgz .
-    echo "Python correctly copied"
+	env
+	/usr/bin/voms-proxy-info -exists
+	if [ $? -eq 0 ]; then
+		echo "No need to copy"
+		ls -l /tmp/x509up_u$(id -u)
+		/usr/bin/voms-proxy-info -all
+	else
+		cp ./x509up_u* /tmp
+		ls -l /tmp/x509up_u$(id -u)
+		/usr/bin/voms-proxy-info -all
+	fi
+	xrdcp -s root://cms-xrdr.private.lo:2094//xrd/store/user/$USER/cmssw_11_3_4.tgz .
+	echo "Decaf correctly copied"
+	xrdcp -s root://cms-xrdr.private.lo:2094//xrd/store/user/$USER/pylocal_3_8.tgz .
+	echo "Python correctly copied"
+elif [ "${4}" == "knut3" ]; then
+#xrdcp -s root://cluster142.knu.ac.kr//store/user/$USER/cmssw_11_3_4.tgz .
+#echo "Decaf correctly copied"
+#xrdcp -s root://cluster142.knu.ac.kr//store/user/$USER/pylocal_3_8.tgz .
+#echo "Python correctly copied"
+	xrdcp -s root://cluster142.knu.ac.kr//store/user/jhong/cmssw_11_3_4.tgz .
+	echo "Decaf correctly copied"
+	xrdcp -s root://cluster142.knu.ac.kr//store/user/jhong/pylocal_3_8.tgz .
+	echo "Python correctly copied"
 else
-    xrdcp -s root://cmseos.fnal.gov//store/user/$USER/cmssw_11_3_4.tgz .
-    echo "Decaf correctly copied"
-    xrdcp -s root://cmseos.fnal.gov//store/user/$USER/pylocal_3_8.tgz .
-    echo "Python correctly copied"
+	xrdcp -s root://cmseos.fnal.gov//store/user/$USER/cmssw_11_3_4.tgz .
+	echo "Decaf correctly copied"
+	xrdcp -s root://cmseos.fnal.gov//store/user/$USER/pylocal_3_8.tgz .
+	echo "Python correctly copied"
 fi
 tar -zxvf cmssw_11_3_4.tgz
 tar -zxvf pylocal_3_8.tgz
