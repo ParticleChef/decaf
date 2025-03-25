@@ -129,6 +129,11 @@ class AnalysisProcessor(processor.ProcessorABC):
 				hist.axis.Regular(64,-3.2,3.2, name='l1phi', label='Leading Lepton Phi'),
 				storage=hist.storage.Weight(),
 			),
+			'mT': hist.Hist(
+				hist.axis.StrCategory([], name='region', growth=True),
+				hist.axis.Regular(38,250,1200, name='mT', label='mT'),
+				storage=hist.storage.Weight(),
+			),
 	}
 
 	def process(self, events):
@@ -306,6 +311,9 @@ class AnalysisProcessor(processor.ProcessorABC):
 		mu_ntot = ak.num(mu, axis=1)
 		mu_nloose = ak.num(mu_loose, axis=1)
 		mu_ntight = ak.num(mu_tight, axis=1)
+		print('mu tight: ', (mu_ntight==1))
+		print('mu loose: ', (mu_nloose==0))
+		print('and: ', (mu_ntight==1)&(mu_nloose==0))
 		
 		# define leading mu
 		leading_mu = ak.firsts(mu_tight)
@@ -474,10 +482,10 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 			weights.add('genw',events.genWeight)
 			weights.add('pileup',pu[region])
-			#weights.add('trig', trig[region])
 			weights.add('ids', ids[region])
 			weights.add('isolation', isolation[region])
 			weights.add('hlt', hlt[region])
+			#weights.add('trig', trig[region])
 			#weights.add('nlo_ewk',nlo_ewk)
 			#weights.add('reco', reco[region])
 			#weights.add('btagSF',btagSF)
@@ -515,9 +523,9 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		
 
-		selection.add('isoneM', (mu_ntight==1)&(mu_nloose==0))
+		selection.add('isoneM', ((mu_ntight==1)&(mu_nloose==0)))
 
-		selection.add('tiMuonpt', leading_mu.pt>53)
+		selection.add('tiMuonpt', (leading_mu.pt>53))
 		
 		#selection.add('one_ak4', (j_nclean>0))
 		#selection.add('noextrab', (j_ndflvL==0))
