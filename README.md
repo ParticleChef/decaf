@@ -42,9 +42,14 @@ Fork this repo on github and clone it into your `CMSSW_11_3_4/src` directory:
 
 ```
 cd $CMSSW_BASE/src
-git clone ttps://github.com/<USERNAME>/decaf.git
+git clone https://github.com/<USERNAME>/decaf.git
 cd decaf
 git switch UL
+```
+
+If you want to change run3 branch, following this command
+```
+git switch run3
 ```
 
 Then, setup the proper dependences:
