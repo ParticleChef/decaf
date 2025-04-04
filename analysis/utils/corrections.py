@@ -161,6 +161,37 @@ for year in ['2016postVFP', '2016preVFP', '2017','2018']:
     sfs = lookup_tools.txt_converters.convert_rochester_file(fname,loaduncs=True)
     get_mu_rochester_sf[year] = lookup_tools.rochester_lookup.rochester_lookup(sfs)
 
+####
+# Photon ID scale factor
+# https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaSFJSON
+# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/EGM
+# /cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration
+####
+
+def get_photon_id_sf(year, wp, eta, pt, phi):
+    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/photon.json.gz')
+
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+    
+    pt  = ak.where((pt<20.),ak.full_like(pt,20.),pt)
+    flatpt = ak.flatten(pt)
+
+    flatphi = ak.flatten(phi)
+    yr = {
+        '2022pre' : '2022Re-recoBCD',
+        '2022post': '2022Re-recoE+PromptFG',
+        '2023pre' : '2023PromptC',
+        '2023post': '2023PromptD'
+    }
+    
+    if '2022' in year:
+        weight = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt)
+    if '2023' in year:
+        weight = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt, flatphi)
+
+    return ak.unflatten(weight, counts=counts)
+
+
 ###
 # MET trigger efficiency SFs, 2017/18 from monojet. Depends on recoil.
 ###
@@ -297,56 +328,6 @@ for year in ['2016postVFP', '2016preVFP', '2017','2018']:
 #    return ak.unflatten(weight, counts=counts)
 #    #get_ele_reco_err_above20[year]=lookup_tools.dense_lookup.dense_lookup(ele_reco_hist.variances() ** 0.05, ele_reco_hist.axes)
     
-
-
-####
-# Photon ID scale factor
-# https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaSFJSON
-# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/EGM
-# /cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration
-####
-
-#def get_pho_tight_id_sf(year, eta, pt):
-#    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'_UL/photon.json.gz')
-#
-#    flateta, counts = ak.flatten(eta), ak.num(eta)
-#
-#    pt  = ak.where((pt<20.),ak.full_like(pt,20.),pt)
-#    flatpt = ak.flatten(pt)
-#    
-#    weight = evaluator["UL-Photon-ID-SF"].evaluate(year, "sf", "Tight", flateta, flatpt)
-#
-#    return ak.unflatten(weight, counts=counts)
-#
-#
-#def get_pho_loose_id_sf(year, eta, pt):
-#    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'_UL/photon.json.gz')
-#
-#    flateta, counts = ak.flatten(eta), ak.num(eta)
-#    
-#    pt  = ak.where((pt<20.),ak.full_like(pt,20.),pt)
-#    flatpt = ak.flatten(pt)
-#    
-#    weight = evaluator["UL-Photon-ID-SF"].evaluate(year, "sf", "Loose", flateta, flatpt)
-#
-#    return ak.unflatten(weight, counts=counts)
-#
-
-#### 
-# Photon CSEV sf 
-# https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaSFJSON
-# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/EGM
-# 
-
-#def get_pho_csev_sf(year, eta, pt):
-#    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'_UL/photon.json.gz')
-#
-#    flateta, counts = ak.flatten(eta), ak.num(eta)
-#    flatpt = ak.flatten(pt)
-#    weight = evaluator["UL-Photon-CSEV-SF"].evaluate(year, "sf", "Tight", flateta, flatpt)
-#
-#    return ak.unflatten(weight, counts=counts)
-
 
 ####
 # Photon Trigger weight
@@ -1085,6 +1066,7 @@ corrections = {
     'get_mu_tight_id_sf':       get_mu_tight_id_sf,
     'get_mu_tight_iso_sf':      get_mu_tight_iso_sf,
 
+    'get_photon_id_sf':         get_photon_id_sf,
 #    'get_met_trig_weight':      get_met_trig_weight,
 #    'get_ele_loose_id_sf':      get_ele_loose_id_sf,
 #    'get_ele_tight_id_sf':      get_ele_tight_id_sf,
@@ -1093,7 +1075,6 @@ corrections = {
 #    #'get_ele_reco_err_below20': get_ele_reco_err_below20,
 #    'get_ele_reco_sf_above20':  get_ele_reco_sf_above20,
 #    #'get_ele_reco_err_above20': get_ele_reco_err_above20,
-#    'get_pho_loose_id_sf':      get_pho_loose_id_sf,
 #    'get_pho_tight_id_sf':      get_pho_tight_id_sf,
 #    'get_pho_trig_weight':      get_pho_trig_weight,
 #    'get_met_xy_correction':    XY_MET_Correction,
