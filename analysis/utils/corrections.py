@@ -191,6 +191,96 @@ def get_photon_id_sf(year, wp, eta, pt, phi):
 
     return ak.unflatten(weight, counts=counts)
 
+####
+# Electron ID scale factor
+# https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaSFJSON
+# jsonPOG: https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/EGM
+# /cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration
+####
+
+def get_ele_veto_id_sf (year, eta, pt, phi):
+    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+    
+    pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
+    flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
+    
+    yr = {
+        '2022pre' : '2022Re-recoBCD',
+        '2022post': '2022Re-recoE+PromptFG',
+        '2023pre' : '2023PromptC',
+        '2023post': '2023PromptD'
+    }
+    if '2022' in year:
+        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt)
+    if '2023' in year:
+        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt, flatphi)
+
+    return ak.unflatten(weight, counts=counts)
+
+def get_ele_loose_id_sf (year, eta, pt, phi):
+    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+    
+    pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
+    flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
+    
+    yr = {
+        '2022pre' : '2022Re-recoBCD',
+        '2022post': '2022Re-recoE+PromptFG',
+        '2023pre' : '2023PromptC',
+        '2023post': '2023PromptD'
+    }
+    if '2022' in year:
+        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt)
+    if '2023' in year:
+        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt, flatphi)
+
+    return ak.unflatten(weight, counts=counts)
+
+def get_ele_medium_id_sf (year, eta, pt, phi):
+    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+    
+    pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
+    flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
+    
+    yr = {
+        '2022pre' : '2022Re-recoBCD',
+        '2022post': '2022Re-recoE+PromptFG',
+        '2023pre' : '2023PromptC',
+        '2023post': '2023PromptD'
+    }
+    if '2022' in year:
+        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt)
+    if '2023' in year:
+        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt, flatphi)
+
+    return ak.unflatten(weight, counts=counts)
+
+def get_ele_tight_id_sf (year, eta, pt, phi):
+    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+    
+    pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
+    flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
+    
+    yr = {
+        '2022pre' : '2022Re-recoBCD',
+        '2022post': '2022Re-recoE+PromptFG',
+        '2023pre' : '2023PromptC',
+        '2023post': '2023PromptD'
+    }
+    if '2022' in year:
+        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt)
+    if '2023' in year:
+        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt, flatphi)
+
+    return ak.unflatten(weight, counts=counts)
 
 ###
 # MET trigger efficiency SFs, 2017/18 from monojet. Depends on recoil.
@@ -215,13 +305,6 @@ def get_photon_id_sf(year, wp, eta, pt, phi):
 #        ak.zeros_like(met)
 #    )
 #    return weight
-
-####
-# Electron ID scale factor
-# https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaSFJSON
-# jsonPOG: https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/EGM
-# /cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration
-####
 
 #def get_ele_loose_id_sf (year, eta, pt):
 #    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'_UL/electron.json.gz')
@@ -1067,6 +1150,11 @@ corrections = {
     'get_mu_tight_iso_sf':      get_mu_tight_iso_sf,
 
     'get_photon_id_sf':         get_photon_id_sf,
+    'get_ele_veto_id_sf':       get_ele_veto_id_sf,
+    'get_ele_loose_id_sf':      get_ele_loose_id_sf,
+    'get_ele_medium_id_sf':     get_ele_medium_id_sf,
+    'get_ele_tight_id_sf':      get_ele_tight_id_sf,
+
 #    'get_met_trig_weight':      get_met_trig_weight,
 #    'get_ele_loose_id_sf':      get_ele_loose_id_sf,
 #    'get_ele_tight_id_sf':      get_ele_tight_id_sf,
