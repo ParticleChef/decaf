@@ -200,12 +200,9 @@ def get_photon_id_sf(year, wp, eta, pt, phi):
 
 def get_ele_veto_id_sf (year, eta, pt, phi):
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
-
-    flateta, counts = ak.flatten(eta), ak.num(eta)
-    
     pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
     flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
-    
+    flateta, counts = ak.flatten(eta), ak.num(eta)
     yr = {
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
@@ -213,20 +210,20 @@ def get_ele_veto_id_sf (year, eta, pt, phi):
         '2023post': '2023PromptD'
     }
     if '2022' in year:
-        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt)
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Veto", flateta, flatpt)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Veto", flateta, flatpt)
     if '2023' in year:
-        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt, flatphi)
-
-    return ak.unflatten(weight, counts=counts)
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Veto", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Veto", flateta, flatpt, flatphi)
+    return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 def get_ele_loose_id_sf (year, eta, pt, phi):
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
-
-    flateta, counts = ak.flatten(eta), ak.num(eta)
-    
     pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
     flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
-    
+    flateta, counts = ak.flatten(eta), ak.num(eta)
     yr = {
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
@@ -234,20 +231,20 @@ def get_ele_loose_id_sf (year, eta, pt, phi):
         '2023post': '2023PromptD'
     }
     if '2022' in year:
-        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt)
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Loose", flateta, flatpt)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Loose", flateta, flatpt)
     if '2023' in year:
-        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt, flatphi)
-
-    return ak.unflatten(weight, counts=counts)
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Loose", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Loose", flateta, flatpt, flatphi)
+    return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 def get_ele_medium_id_sf (year, eta, pt, phi):
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
-
-    flateta, counts = ak.flatten(eta), ak.num(eta)
-    
     pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
     flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
-    
+    flateta, counts = ak.flatten(eta), ak.num(eta)
     yr = {
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
@@ -255,20 +252,20 @@ def get_ele_medium_id_sf (year, eta, pt, phi):
         '2023post': '2023PromptD'
     }
     if '2022' in year:
-        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt)
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Medium", flateta, flatpt)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Medium", flateta, flatpt)
     if '2023' in year:
-        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt, flatphi)
-
-    return ak.unflatten(weight, counts=counts)
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Medium", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Medium", flateta, flatpt, flatphi)
+    return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 def get_ele_tight_id_sf (year, eta, pt, phi):
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
-
-    flateta, counts = ak.flatten(eta), ak.num(eta)
-    
     pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
     flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
-    
+    flateta, counts = ak.flatten(eta), ak.num(eta)
     yr = {
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
@@ -276,11 +273,14 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
         '2023post': '2023PromptD'
     }
     if '2022' in year:
-        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt)
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Tight", flateta, flatpt)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Tight", flateta, flatpt)
     if '2023' in year:
-        weight = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt, flatphi)
-
-    return ak.unflatten(weight, counts=counts)
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Tight", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Tight", flateta, flatpt, flatphi)
+    return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 ###
 # MET trigger efficiency SFs, 2017/18 from monojet. Depends on recoil.
