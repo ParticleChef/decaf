@@ -170,12 +170,9 @@ for year in ['2016postVFP', '2016preVFP', '2017','2018']:
 
 def get_photon_id_sf(year, wp, eta, pt, phi):
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/photon.json.gz')
-
     flateta, counts = ak.flatten(eta), ak.num(eta)
-    
     pt  = ak.where((pt<20.),ak.full_like(pt,20.),pt)
     flatpt = ak.flatten(pt)
-
     flatphi = ak.flatten(phi)
     yr = {
         '2022pre' : '2022Re-recoBCD',
@@ -183,13 +180,15 @@ def get_photon_id_sf(year, wp, eta, pt, phi):
         '2023pre' : '2023PromptC',
         '2023post': '2023PromptD'
     }
-    
     if '2022' in year:
-        weight = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt)
+        sf_nominal = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt)
+        sf_up = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfup", wp, flateta, flatpt)
+        sf_down = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfdown", wp, flateta, flatpt)
     if '2023' in year:
-        weight = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt, flatphi)
-
-    return ak.unflatten(weight, counts=counts)
+        sf_nominal = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt, flatphi)
+        sf_up = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfup", wp, flateta, flatpt, flatphi)
+        sf_down = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfdown", wp, flateta, flatpt, flatphi)
+    return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 ####
 # Electron ID scale factor
