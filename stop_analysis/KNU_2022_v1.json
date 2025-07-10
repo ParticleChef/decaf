@@ -1,0 +1,1919 @@
+{
+    "EGamma____1_": {
+        "files": [
+            "/data/data/2022G//EGamma/fcd877a6-380a-400f-ae28-c758e2163fc8.root",
+            "/data/data/2022G//EGamma/202d56f2-6f00-484a-8afb-9915257a3f1e.root",
+            "/data/data/2022G//EGamma/547118a7-3e0d-43f1-bf29-586fd91c18b6.root",
+            "/data/data/2022G//EGamma/f2ccb498-685f-4a9f-ab14-521cf3017ad1.root",
+            "/data/data/2022G//EGamma/fe3459c6-3c7b-4096-bdcd-530c491724ce.root",
+            "/data/data/2022G//EGamma/258a4ff8-eb0c-4f3d-9f55-5e0d69ddef75.root",
+            "/data/data/2022G//EGamma/bee753e5-3655-4e76-93d8-f0c2af3878df.root",
+            "/data/data/2022G//EGamma/99dba4d1-8733-481e-8b03-6056451ef3dd.root",
+            "/data/data/2022G//EGamma/012cd8b2-5423-4ed7-935f-d24681233992.root",
+            "/data/data/2022G//EGamma/664d46bb-18a4-4a02-902d-d67edc98ace8.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____2_": {
+        "files": [
+            "/data/data/2022G//EGamma/8363211f-de07-4f6a-9d1c-8900f62bd808.root",
+            "/data/data/2022G//EGamma/65e51854-8694-40c9-8f0a-fad5cb575741.root",
+            "/data/data/2022G//EGamma/da3e56a8-c200-427f-b26c-0b7e651daeba.root",
+            "/data/data/2022G//EGamma/329fbd3b-2d11-4498-b818-33a3ad985c5c.root",
+            "/data/data/2022G//EGamma/9b456527-9401-4dc6-90e1-b506293a1e8f.root",
+            "/data/data/2022G//EGamma/2982b637-963c-4ce5-82fb-5afa500b720a.root",
+            "/data/data/2022G//EGamma/3ff3b03b-c6dc-4c75-b947-dceb014e1010.root",
+            "/data/data/2022G//EGamma/c90c1cf2-0f0d-4e27-a341-56d019109e2f.root",
+            "/data/data/2022G//EGamma/a1a7a2bc-6d14-4533-ae9d-66034fcf3bda.root",
+            "/data/data/2022G//EGamma/388b916f-1cf4-4ecc-9d08-490fae255bc7.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____3_": {
+        "files": [
+            "/data/data/2022G//EGamma/67e510e7-f360-4218-ab87-3bb41c7e2bc4.root",
+            "/data/data/2022G//EGamma/ea085105-be9a-4d83-9bfb-577c7eab98d9.root",
+            "/data/data/2022G//EGamma/0fce68cf-b710-4b7f-8404-a5e2e4a4be58.root",
+            "/data/data/2022G//EGamma/e9bca355-19da-47e4-92a6-941a6877000a.root",
+            "/data/data/2022G//EGamma/1f799a26-26e4-4557-a9ec-0e50340a104a.root",
+            "/data/data/2022G//EGamma/b238bfe6-d5ae-45d2-b5ae-82b6c0bd6452.root",
+            "/data/data/2022G//EGamma/c0d179c9-b78f-491c-81d6-20dfa89d6ed1.root",
+            "/data/data/2022G//EGamma/6618ea83-6811-4d57-9132-102675bf2c81.root",
+            "/data/data/2022G//EGamma/a80a82d0-beb3-406f-8765-764c027dacf4.root",
+            "/data/data/2022G//EGamma/a7d2e44b-ce9a-452e-bd16-a83786f5eb13.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____4_": {
+        "files": [
+            "/data/data/2022G//EGamma/8588f4e3-dcb5-4462-abbd-dde8cb4215c1.root",
+            "/data/data/2022G//EGamma/06ae412e-37a0-4829-a350-969838a18c1b.root",
+            "/data/data/2022G//EGamma/ddc7f89f-fecc-479c-aa7a-221dc7bc76b3.root",
+            "/data/data/2022G//EGamma/5e599c1d-cb7c-4983-9cdc-6a7bbacb4ac6.root",
+            "/data/data/2022G//EGamma/0a1c7b26-17fa-4e1c-881c-f22b14cbd221.root",
+            "/data/data/2022G//EGamma/edc726a2-03c9-43d2-983b-4a145083b0bf.root",
+            "/data/data/2022G//EGamma/0bc9557b-5afa-4e93-a076-7307061e778b.root",
+            "/data/data/2022G//EGamma/296bdf73-2575-40d2-804e-8219de117740.root",
+            "/data/data/2022G//EGamma/922d00a5-f2f2-44de-9d4e-9d162c77b398.root",
+            "/data/data/2022G//EGamma/168eb08a-5ad8-4489-8511-aef5cb9f16bd.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____5_": {
+        "files": [
+            "/data/data/2022G//EGamma/eae4bd8b-41fc-44e3-bb31-d91e24d798db.root",
+            "/data/data/2022G//EGamma/753c239d-325f-49dd-bcab-a67b6a428ca5.root",
+            "/data/data/2022G//EGamma/c022dae7-433d-43b0-89d5-557e5c41e72d.root",
+            "/data/data/2022G//EGamma/96cdf8d6-1203-43ee-956e-c6edeaa00539.root",
+            "/data/data/2022G//EGamma/80b9a0aa-3c17-4248-934d-39203cca1778.root",
+            "/data/data/2022G//EGamma/d93cef8d-a196-41b9-95b3-b439f2a8e7d4.root",
+            "/data/data/2022G//EGamma/3566d3b8-bcdc-4a1f-8d2a-891a242be938.root",
+            "/data/data/2022G//EGamma/b3109122-6961-44d5-b4ea-2624a1e9d5bb.root",
+            "/data/data/2022G//EGamma/3c9a16ed-bf5c-486a-9e5a-6a81176e8f0f.root",
+            "/data/data/2022G//EGamma/f81c2bb0-527a-4f04-894a-109432e5fdde.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____6_": {
+        "files": [
+            "/data/data/2022G//EGamma/b0e8f011-3bee-4c8e-bad0-e3953079baef.root",
+            "/data/data/2022G//EGamma/dd8de4d5-d6e4-4e78-964b-04e5b3fdb47c.root",
+            "/data/data/2022G//EGamma/98b64715-f716-4053-9af1-fc95ef1e3b19.root",
+            "/data/data/2022G//EGamma/e987208c-55a2-43d3-b1be-b58e3742a4f3.root",
+            "/data/data/2022G//EGamma/923e08b7-afc3-43cc-aa4b-71bbd89492d7.root",
+            "/data/data/2022G//EGamma/50c9528e-fe97-4345-91ee-2629806c43b3.root",
+            "/data/data/2022G//EGamma/6cc1e09e-28fd-4d3d-bb21-dc86d997e427.root",
+            "/data/data/2022G//EGamma/051fd941-5c84-4709-8cbb-0177dde587b5.root",
+            "/data/data/2022G//EGamma/f638dfd0-b5a4-4895-afe5-8e697b836d51.root",
+            "/data/data/2022G//EGamma/46dbc816-4ca5-4749-8490-e04637ab0b02.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____7_": {
+        "files": [
+            "/data/data/2022G//EGamma/820708bb-6cfb-45de-b230-294dd732e3de.root",
+            "/data/data/2022G//EGamma/3bbda72c-1326-488e-aac7-aef7e1a3dc48.root",
+            "/data/data/2022G//EGamma/11835381-975d-4de7-9de2-0a0fe9f1c819.root",
+            "/data/data/2022G//EGamma/4fc86f90-d20b-4038-9439-3402d2ab9ac6.root",
+            "/data/data/2022G//EGamma/0590da99-4ca5-4d94-9450-725e4f978b90.root",
+            "/data/data/2022G//EGamma/bc0c78e3-c0b2-4ae4-aae7-eea5573bd3c1.root",
+            "/data/data/2022G//EGamma/affa1ff4-fde1-4a5e-8743-06fe4be6ec39.root",
+            "/data/data/2022G//EGamma/e05dfd1c-f275-4ab0-8fea-f7dd20b14122.root",
+            "/data/data/2022G//EGamma/9450f05d-d62e-443f-9a15-f469d1d1103b.root",
+            "/data/data/2022G//EGamma/96808f6e-eaa9-4fe5-9c5e-6e8c9f77ab23.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____8_": {
+        "files": [
+            "/data/data/2022G//EGamma/4b53d1df-3124-4092-879e-baf93de5f701.root",
+            "/data/data/2022G//EGamma/5ede6823-246e-4acd-87eb-96532c368c37.root",
+            "/data/data/2022G//EGamma/f8eeb22a-b7c5-4e47-8c6b-3d8295c2d534.root",
+            "/data/data/2022G//EGamma/acd13f53-4ea0-4749-9ddd-01e754bc17d8.root",
+            "/data/data/2022G//EGamma/887b2ca7-6578-4edd-95e2-96f03112c8c0.root",
+            "/data/data/2022G//EGamma/3147d01b-dee7-46f7-aef8-c94f0ce5452a.root",
+            "/data/data/2022G//EGamma/9dc335ab-6b78-4b79-b28c-8490627415a6.root",
+            "/data/data/2022G//EGamma/57b453a0-b368-41a3-9804-313f15a75a88.root",
+            "/data/data/2022G//EGamma/df17e8a7-43af-452e-bc13-f7fccb181471.root",
+            "/data/data/2022G//EGamma/98af7bb4-3b8c-4394-ae03-acb515fea6a1.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____9_": {
+        "files": [
+            "/data/data/2022G//EGamma/1ef00656-7320-4218-94e8-d29f8a6ee906.root",
+            "/data/data/2022G//EGamma/b1bb7dd0-f56a-4570-8127-4f98edb4f642.root",
+            "/data/data/2022G//EGamma/f29a7f6f-9043-409a-829f-281543e57744.root",
+            "/data/data/2022G//EGamma/31f0873d-f9c5-4e15-8f8f-5dd7a8f8e888.root",
+            "/data/data/2022G//EGamma/e7642d90-5ef2-4e2b-add7-e55fe48d1e9f.root",
+            "/data/data/2022G//EGamma/5418896e-7903-47bd-963a-35af48a8b0b8.root",
+            "/data/data/2022G//EGamma/3a28c61c-1c0b-4219-9a5b-7b20e93e2bb7.root",
+            "/data/data/2022G//EGamma/8e321e3a-f0a6-4ba5-9c29-97f615829c61.root",
+            "/data/data/2022G//EGamma/9af9e08f-bad6-4d14-bf06-fc1a46f596b7.root",
+            "/data/data/2022G//EGamma/c308a8ea-1e6d-48e2-a84f-a6be95fa203d.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____10_": {
+        "files": [
+            "/data/data/2022G//EGamma/abcd7c32-cb98-4c56-ab42-78bdef026a2b.root",
+            "/data/data/2022G//EGamma/c570b9ed-3caa-4d3f-b607-ab166935132a.root",
+            "/data/data/2022G//EGamma/5b9afcff-1140-4da9-b915-a70c71920a58.root",
+            "/data/data/2022G//EGamma/28b74513-f1db-4690-bcfd-f9cddc055b91.root",
+            "/data/data/2022G//EGamma/2ba48ad2-9323-4d86-be38-10cc6513852b.root",
+            "/data/data/2022G//EGamma/db19ef8d-51c4-4e4a-b4c2-e43322fe7009.root",
+            "/data/data/2022G//EGamma/051406bd-26ed-4efb-9113-11d2af5146eb.root",
+            "/data/data/2022G//EGamma/0689ccd0-15a0-4378-bd74-1e78787f610a.root",
+            "/data/data/2022G//EGamma/cb79604e-ecdd-405c-9141-862611f3cc0a.root",
+            "/data/data/2022G//EGamma/f9128663-898f-4c9e-9c30-a8ced2f7f7f1.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____11_": {
+        "files": [
+            "/data/data/2022G//EGamma/637eeaf1-4e60-4dcc-b096-0928e3efdfdd.root",
+            "/data/data/2022G//EGamma/8e008d16-b55a-45aa-83b0-60c3ec41d770.root",
+            "/data/data/2022G//EGamma/9bde084e-f262-4cf3-bf7b-e0d4f0f99a78.root",
+            "/data/data/2022G//EGamma/9485d6a6-860e-4da4-b09e-adf17b090c8a.root",
+            "/data/data/2022G//EGamma/cfd64b60-715f-4bc5-86c5-78bccdd04de6.root",
+            "/data/data/2022G//EGamma/35b2db01-8c7b-4c89-9f1e-9f8965f92322.root",
+            "/data/data/2022G//EGamma/24d004d1-0131-4bc1-8f78-66d5b9115e11.root",
+            "/data/data/2022G//EGamma/09f07fc0-8d41-4ec4-81c4-bb51d9d9fcc1.root",
+            "/data/data/2022G//EGamma/451cf06d-3f6f-49df-b656-ab9f4303997b.root",
+            "/data/data/2022G//EGamma/b1eec7c1-0116-4e0a-b12a-15f9f87f077a.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____12_": {
+        "files": [
+            "/data/data/2022G//EGamma/237c263d-c474-46a0-bd0d-7d2f43fc598a.root",
+            "/data/data/2022G//EGamma/5c458b17-d419-4b77-a076-d720a1a3421b.root",
+            "/data/data/2022G//EGamma/9acce9b3-f3ae-4108-81d4-58094e321073.root",
+            "/data/data/2022G//EGamma/cad20986-400e-4b22-9dce-65c5a39e3629.root",
+            "/data/data/2022G//EGamma/651e0281-f7d3-41d6-bce6-eee4a0ac57ef.root",
+            "/data/data/2022G//EGamma/5484ad02-dbac-484e-a0f8-5eff71e2033b.root",
+            "/data/data/2022G//EGamma/16db9aca-9de7-440c-9694-cb485ee59607.root",
+            "/data/data/2022G//EGamma/7b56f913-cdba-483c-a1ae-b758981670f9.root",
+            "/data/data/2022G//EGamma/8f22447d-c472-4491-86fc-ffef62b1d82f.root",
+            "/data/data/2022G//EGamma/2170588b-35e6-4e74-a83b-0cdcf4dd5796.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____13_": {
+        "files": [
+            "/data/data/2022G//EGamma/ed1b7a2c-2c4b-4290-a61e-290f60e85e77.root",
+            "/data/data/2022G//EGamma/6d903144-9741-4c5c-89e8-7791d478fac1.root",
+            "/data/data/2022G//EGamma/799817ed-d84e-4b13-ae2b-a8b4f1373d5c.root",
+            "/data/data/2022G//EGamma/f9674ce3-f9dc-42b9-8fed-f15829386c63.root",
+            "/data/data/2022G//EGamma/9a3cff91-689c-4a1d-9737-29155dd8b2a4.root",
+            "/data/data/2022G//EGamma/cb46f55c-e5b5-4ca1-85da-24e1c8018e96.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____14_": {
+        "files": [
+            "/data/data/2022F//EGamma/c6da13e3-ad2a-49c2-a3ec-1b055959036c.root",
+            "/data/data/2022F//EGamma/b29974c6-ec45-4510-9956-c80dfced99fb.root",
+            "/data/data/2022F//EGamma/df9985e0-f4a9-460f-b3ed-58b585be5b6d.root",
+            "/data/data/2022F//EGamma/5d107ae1-dbd7-4bb3-8d13-6291a8b66496.root",
+            "/data/data/2022F//EGamma/573748e7-d150-4c90-bc9d-c5d9256a1739.root",
+            "/data/data/2022F//EGamma/82c457cf-d344-463b-9fe7-c8144e3b2500.root",
+            "/data/data/2022F//EGamma/6c2f0419-fe61-44a1-bd99-ef2e2bbebcba.root",
+            "/data/data/2022F//EGamma/89a6631b-8b17-437d-a05c-06e2c88b83ba.root",
+            "/data/data/2022F//EGamma/3572006e-2e7e-4154-be10-7ba7a80c16de.root",
+            "/data/data/2022F//EGamma/f44d98e4-0d33-43a1-87fb-c43c1b13be69.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____15_": {
+        "files": [
+            "/data/data/2022F//EGamma/27821241-ffa7-46bf-be67-316e25d4d56c.root",
+            "/data/data/2022F//EGamma/4c78cb9c-f685-41a7-964b-0a61284e4371.root",
+            "/data/data/2022F//EGamma/58e99ff8-41c2-4856-b842-b4d265ad86ff.root",
+            "/data/data/2022F//EGamma/3be91c4c-0a55-4640-bf67-617b4b74beb6.root",
+            "/data/data/2022F//EGamma/cbbd4a4f-ccb3-449f-a8c0-db982180a7af.root",
+            "/data/data/2022F//EGamma/e0fac03c-8a12-4742-a540-e387c5d1ac1c.root",
+            "/data/data/2022F//EGamma/ee9e6e29-5765-4d1a-ae79-91718ab40f60.root",
+            "/data/data/2022F//EGamma/aaf3206a-d624-44db-a62e-0c18e0ffd83d.root",
+            "/data/data/2022F//EGamma/1ccc46db-e197-4765-be32-3c4be85db02e.root",
+            "/data/data/2022F//EGamma/50952d88-bcd0-45d5-b421-32857725f7a1.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____16_": {
+        "files": [
+            "/data/data/2022F//EGamma/b4fb78f3-2121-44dd-aba8-caf2344d4259.root",
+            "/data/data/2022F//EGamma/32b1072d-6cce-41df-a6a0-1a3318520a64.root",
+            "/data/data/2022F//EGamma/37a8a5ce-54cb-420c-8849-ebee129cd011.root",
+            "/data/data/2022F//EGamma/e99af09c-35a3-44d2-a112-f70528953685.root",
+            "/data/data/2022F//EGamma/f645f5a6-12a4-4bf8-a88f-1868a7842496.root",
+            "/data/data/2022F//EGamma/152b5637-13e1-4b19-9f77-d144edee93e0.root",
+            "/data/data/2022F//EGamma/99b2453a-b6e9-491a-8e95-916b28949ea0.root",
+            "/data/data/2022F//EGamma/8394869e-9797-4b5c-af28-58cc976fb6a0.root",
+            "/data/data/2022F//EGamma/8871f208-cfcb-46b5-9836-83eb79b5fffa.root",
+            "/data/data/2022F//EGamma/a08a2e59-39af-4b39-8aaa-c58f53a3e8ed.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____17_": {
+        "files": [
+            "/data/data/2022F//EGamma/611998bc-390a-4e9c-9758-56109ce4c76a.root",
+            "/data/data/2022F//EGamma/ba8aa4b3-7d1a-41fc-8277-fd767f97bfdf.root",
+            "/data/data/2022F//EGamma/e91e8e59-496a-4c23-b95a-ceffa7f1440a.root",
+            "/data/data/2022F//EGamma/931fb92d-6d6d-4c9d-a34e-9c6cbc5204ce.root",
+            "/data/data/2022F//EGamma/a4faf21c-586b-47d6-a138-7ea46c16f980.root",
+            "/data/data/2022F//EGamma/123c40d5-a724-4b73-ac83-004adb413005.root",
+            "/data/data/2022F//EGamma/9203204a-bf7d-4cac-82aa-60144fcd534e.root",
+            "/data/data/2022F//EGamma/a6c7e505-eb59-4dd7-9afb-28068e20ef2a.root",
+            "/data/data/2022F//EGamma/8ebe22b6-c9fc-484b-82a6-b1d0d3b23b1b.root",
+            "/data/data/2022F//EGamma/6d0f6e6b-2c1d-4718-91bb-d763383dbc8c.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____1_": {
+        "files": [
+            "/data/data/2022G//JetMET/78a23af7-a005-4ed8-a2d7-ce19d23c2850.root",
+            "/data/data/2022G//JetMET/89d98c08-c4c7-4e35-b4b8-97bbddbcbe41.root",
+            "/data/data/2022G//JetMET/6eac4477-0b1b-41fa-ac3b-2852eacca4a1.root",
+            "/data/data/2022G//JetMET/3706315b-4940-40a1-bdbf-1cd8ec08ccb4.root",
+            "/data/data/2022G//JetMET/12dc97f0-e928-4aed-ae72-cf7b7ec30836.root",
+            "/data/data/2022G//JetMET/58b7fa1c-4ca3-47cb-9cd8-66378e90e366.root",
+            "/data/data/2022G//JetMET/119e307d-d797-4ebf-af0e-1e5a8622269e.root",
+            "/data/data/2022G//JetMET/d3ffd3dc-e8d2-4e3c-ba83-4bebedd905c1.root",
+            "/data/data/2022G//JetMET/6a8d55a6-7f49-43a0-be7b-4aab0c42148f.root",
+            "/data/data/2022G//JetMET/870f03c6-92ae-4f96-b599-0a3b19bb2a8e.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____2_": {
+        "files": [
+            "/data/data/2022G//JetMET/e55ffa8d-db75-4111-90da-dfee78a60cf3.root",
+            "/data/data/2022G//JetMET/815aa990-e25f-4623-8a73-ba21783e4b1c.root",
+            "/data/data/2022G//JetMET/bed65028-1756-42b0-a440-e1afa26a47f7.root",
+            "/data/data/2022G//JetMET/b481a45a-ff39-4ad6-9629-cbb9df491264.root",
+            "/data/data/2022G//JetMET/8f16cfa1-7fcc-43c7-9424-9e2070f8793a.root",
+            "/data/data/2022G//JetMET/4c18b997-65d5-4b0d-b5d8-295e32313b27.root",
+            "/data/data/2022G//JetMET/cd78ad4a-071a-4601-9ba7-adf9ec6f789a.root",
+            "/data/data/2022G//JetMET/7c2f0965-5719-4e2b-94f6-8f558680d1d0.root",
+            "/data/data/2022G//JetMET/1f312b16-ed46-4a3f-a8c8-c82bee3631c4.root",
+            "/data/data/2022G//JetMET/0df853f5-5d38-46c3-bd58-7d6e9195d2d8.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____3_": {
+        "files": [
+            "/data/data/2022G//JetMET/d26e1a15-ed7a-4db9-8f50-f372c8d6b106.root",
+            "/data/data/2022G//JetMET/f01c198a-c235-4736-8e93-ffea02c8902e.root",
+            "/data/data/2022G//JetMET/1ad8f241-c1f6-4c6e-959a-6700902f48bd.root",
+            "/data/data/2022G//JetMET/6dc628b9-bd4e-4e0c-a5a7-8b57fe550456.root",
+            "/data/data/2022G//JetMET/7ee6151c-fef4-49b2-bb35-8cb4f97daf1f.root",
+            "/data/data/2022G//JetMET/e83cfc52-e902-4f03-8bac-a96dc11d1416.root",
+            "/data/data/2022G//JetMET/df155d53-8265-4e1a-9992-a692d7e3e739.root",
+            "/data/data/2022G//JetMET/cc9abb07-a13f-429d-b088-4d29ac258e6a.root",
+            "/data/data/2022G//JetMET/b0c50980-0f92-4f1c-80ed-586caf17f913.root",
+            "/data/data/2022G//JetMET/d841c1a6-f1a6-4a9e-a91f-7430bb29f3a7.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____4_": {
+        "files": [
+            "/data/data/2022G//JetMET/fb2574b0-a6ac-4d5d-95cf-ef35e5ba6da0.root",
+            "/data/data/2022G//JetMET/3b90dc4b-7912-4081-8537-c76997b9a5e9.root",
+            "/data/data/2022G//JetMET/f58dc52f-0fb8-48de-8031-3eb3c1333ca6.root",
+            "/data/data/2022G//JetMET/0df49d49-c4ab-427e-bbf0-212291b05abb.root",
+            "/data/data/2022G//JetMET/149a2a50-9ec0-49aa-b853-063a1d8f4d4c.root",
+            "/data/data/2022G//JetMET/3c3d4f0e-3754-4e10-81dd-0c727f81eba5.root",
+            "/data/data/2022G//JetMET/8e93ef0e-5df1-4162-992b-0bdedc210e0b.root",
+            "/data/data/2022G//JetMET/4897983b-5e58-4857-9b84-62a26d99c027.root",
+            "/data/data/2022G//JetMET/dbdd86d0-33cb-4136-8f3b-7c6123c40b61.root",
+            "/data/data/2022G//JetMET/5e941dbc-08ce-4f28-adc6-97a44da77811.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____5_": {
+        "files": [
+            "/data/data/2022G//JetMET/74d15f44-0d1c-4060-91fa-b369c91e8f2b.root",
+            "/data/data/2022G//JetMET/61d4dcce-0295-4a99-b17b-abde4e15f491.root",
+            "/data/data/2022G//JetMET/2eba794c-2770-45c7-80f0-0b1b4b1c846e.root",
+            "/data/data/2022G//JetMET/11bb1c77-723d-4978-947c-3d2f12613c3f.root",
+            "/data/data/2022G//JetMET/b0c6fd18-befb-4e35-96f4-b0c6c9df0598.root",
+            "/data/data/2022G//JetMET/e06f1690-85a2-499b-8afc-c3880c4e15ff.root",
+            "/data/data/2022G//JetMET/f8d1f494-1b03-445b-be23-0ff3d854c1e9.root",
+            "/data/data/2022G//JetMET/31910325-ea6d-4ebc-bbfa-ba44073c1490.root",
+            "/data/data/2022G//JetMET/c7a70a95-a358-44a1-ac09-5215e4611ba3.root",
+            "/data/data/2022G//JetMET/fdb331be-e326-445c-ac38-4f0ac833b93b.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____6_": {
+        "files": [
+            "/data/data/2022G//JetMET/ce3c86bb-65a5-40a6-b45e-38e2f81390b8.root",
+            "/data/data/2022G//JetMET/94ed13e0-de57-485a-a3a3-db9ba3fe6641.root",
+            "/data/data/2022G//JetMET/9e1ac36d-4556-4793-9d90-0a5b7df61b93.root",
+            "/data/data/2022G//JetMET/7588b2f6-08f8-46d1-839b-740997c8772b.root",
+            "/data/data/2022G//JetMET/95e2b395-b071-4f82-ad02-bc671571926e.root",
+            "/data/data/2022G//JetMET/ba510510-433f-4ad4-b895-a9099470dbd1.root",
+            "/data/data/2022G//JetMET/edb4cbbf-0c1f-4198-a3d0-8cf7e0f702f1.root",
+            "/data/data/2022G//JetMET/4d52e4c9-8060-446d-aedb-af74b470079d.root",
+            "/data/data/2022G//JetMET/e29eb6fe-703e-4070-94f9-b0ff023c3e53.root",
+            "/data/data/2022G//JetMET/6f320f66-03d5-44d3-a8bc-eff0cbab7de1.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____7_": {
+        "files": [
+            "/data/data/2022G//JetMET/c6eb55e7-b090-42d8-85e4-0cd328ef1008.root",
+            "/data/data/2022G//JetMET/09a646a4-c447-4699-8b78-5c261c9190c8.root",
+            "/data/data/2022G//JetMET/48aea373-a275-4a85-86a3-d26260541626.root",
+            "/data/data/2022G//JetMET/281272d8-88cc-4058-9f42-c11bd69b4648.root",
+            "/data/data/2022G//JetMET/86f8df45-e42d-48e0-ba37-38690b5d83f5.root",
+            "/data/data/2022G//JetMET/763b23fc-8e91-406a-b233-41daba848846.root",
+            "/data/data/2022G//JetMET/09fbdd83-9eaf-43cd-8013-be0a56cb6034.root",
+            "/data/data/2022G//JetMET/72e988e8-1361-4cf8-9ed0-47802e59aa8b.root",
+            "/data/data/2022G//JetMET/3874127d-8e4b-4f3c-9370-d2e6234ad384.root",
+            "/data/data/2022G//JetMET/0b60636c-5aa1-425f-89ab-97ef24566ff1.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____8_": {
+        "files": [
+            "/data/data/2022G//JetMET/3ba59103-1b09-4ff1-a623-33507ca3a0ee.root",
+            "/data/data/2022G//JetMET/71af6e25-7f08-4755-b4ba-c488f2bf1b54.root",
+            "/data/data/2022G//JetMET/6139c634-c18a-4eef-9b91-80b3ac0c6ab3.root",
+            "/data/data/2022G//JetMET/e0a8a761-f362-4900-a4e1-5e7cf92a5a37.root",
+            "/data/data/2022G//JetMET/0d6a1d2b-4c0b-4d8c-8194-bc1f5fdda6e8.root",
+            "/data/data/2022G//JetMET/df4f574e-bd9d-4b0d-bd83-e4162b8e9ae8.root",
+            "/data/data/2022G//JetMET/820f10f5-d48d-463a-bc72-9bd3b9b059fd.root",
+            "/data/data/2022G//JetMET/4ae04bbe-4389-4e42-91a5-370b112eb892.root",
+            "/data/data/2022G//JetMET/8f760002-2007-4dcf-ae9a-e14d3414d3f9.root",
+            "/data/data/2022G//JetMET/da111373-d8cc-4723-812e-97bd7d4b5138.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____9_": {
+        "files": [
+            "/data/data/2022G//JetMET/665573ca-d43e-4de7-95f3-c4d99b2dfa54.root",
+            "/data/data/2022G//JetMET/63340a59-c34d-4ef7-8f9e-381426fd7158.root",
+            "/data/data/2022G//JetMET/0f73c3a2-1d47-4e7b-8228-44e7a6990208.root",
+            "/data/data/2022G//JetMET/3252af08-8c1d-45b9-be7a-0cf21d822a46.root",
+            "/data/data/2022G//JetMET/0fc6af1b-fc4a-417e-9009-192aa0ea78c9.root",
+            "/data/data/2022G//JetMET/ebd27f94-a398-4db9-9517-d514ee4538b1.root",
+            "/data/data/2022G//JetMET/29680045-1f95-4eb5-9aad-7a5dc869107d.root",
+            "/data/data/2022G//JetMET/779306f2-bc03-422e-bc68-5e6ad9c6c3fa.root",
+            "/data/data/2022G//JetMET/cddd55cb-0d84-4dff-b458-c64a6e91a1d7.root",
+            "/data/data/2022G//JetMET/55a26e59-af97-4fa3-8c14-8fd048b0b5f7.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____10_": {
+        "files": [
+            "/data/data/2022G//JetMET/416a8fa2-ba94-469e-a4f0-c222c7388871.root",
+            "/data/data/2022G//JetMET/e1baf0d3-c82d-4430-9c5d-6975b5fca465.root",
+            "/data/data/2022G//JetMET/6f1b3bf8-f8f1-4022-8f39-b8146db4963e.root",
+            "/data/data/2022G//JetMET/809d0a69-fe70-41a7-8d9d-1025718e4caa.root",
+            "/data/data/2022G//JetMET/8a461c56-5bc4-4d61-92bf-cabf62854bd9.root",
+            "/data/data/2022G//JetMET/fa0700ff-a9f4-43ba-80df-4583d86e8f39.root",
+            "/data/data/2022G//JetMET/221a27c6-65d3-4c28-9946-57e4cbc2092a.root",
+            "/data/data/2022G//JetMET/ad3f17c3-fe64-4742-b0f7-e3b6dbb51561.root",
+            "/data/data/2022G//JetMET/4d279a0d-70c5-40eb-a214-f4a0eb5d7776.root",
+            "/data/data/2022G//JetMET/8f46f109-3cd1-400a-8cf4-63dec41503f0.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____11_": {
+        "files": [
+            "/data/data/2022G//JetMET/8d198a97-8098-4f58-9508-3447b3cc4840.root",
+            "/data/data/2022G//JetMET/042516d6-854a-45c6-9f6c-28a08e0fae64.root",
+            "/data/data/2022G//JetMET/5af8c849-47a7-42f1-9733-98e268b9327a.root",
+            "/data/data/2022G//JetMET/d7326082-2a46-413c-8e7a-d03ee76ae963.root",
+            "/data/data/2022G//JetMET/40afe510-e386-40e6-acc8-e986fb2741d1.root",
+            "/data/data/2022G//JetMET/c7b7bac5-713e-4500-81d0-932979e47d47.root",
+            "/data/data/2022G//JetMET/a6619c86-af90-46ab-b2c6-6280a5bf2e7a.root",
+            "/data/data/2022G//JetMET/6f955205-08d8-4f67-8113-039d68804f96.root",
+            "/data/data/2022G//JetMET/0f5c95c2-78c0-4ff9-8b7b-eed79875c8ad.root",
+            "/data/data/2022G//JetMET/874469ae-7207-4be2-976e-d644867f8992.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____12_": {
+        "files": [
+            "/data/data/2022G//JetMET/ddbccd80-460a-41dd-ac09-75d97dfd558c.root",
+            "/data/data/2022G//JetMET/9e09ba8d-9e21-4e14-9685-98c2fe65b184.root",
+            "/data/data/2022G//JetMET/071250de-c31d-46de-b81e-fc3b50bd9b09.root",
+            "/data/data/2022G//JetMET/5a42ca91-c5f4-4091-9b12-cf671928328e.root",
+            "/data/data/2022G//JetMET/e5102eba-02d3-4b5c-9865-c237f61863b5.root",
+            "/data/data/2022G//JetMET/6247bae5-947e-43e6-9ee3-f64bf92b23ba.root",
+            "/data/data/2022G//JetMET/b86fd688-97b1-44fc-8fe1-a9c5e163e4bd.root",
+            "/data/data/2022G//JetMET/b57862ab-47df-4739-90c0-9d3c5a3017d7.root",
+            "/data/data/2022G//JetMET/37ba213e-a4ba-4c0c-8fb9-aa9b15ebf884.root",
+            "/data/data/2022G//JetMET/b6285a92-e65a-400a-b186-c6c617450259.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____13_": {
+        "files": [
+            "/data/data/2022G//JetMET/73a15d2a-d268-44a1-ba53-41cec6107f3a.root",
+            "/data/data/2022G//JetMET/359d871c-7a11-4dac-84a3-2afe92948dd7.root",
+            "/data/data/2022G//JetMET/875087d4-cb62-43ac-8039-a4e0d14cf844.root",
+            "/data/data/2022G//JetMET/82733244-8c08-405e-9400-9dba34270169.root",
+            "/data/data/2022G//JetMET/de186cad-6405-4530-87cf-427f1c7b7957.root",
+            "/data/data/2022G//JetMET/2ab580a2-13fa-477f-b5c8-63c88c2d5c1e.root",
+            "/data/data/2022G//JetMET/d0f7df46-eb30-4352-a147-86f9db28a1f8.root",
+            "/data/data/2022G//JetMET/94d68c99-5ea0-46d4-8601-7cef1bdc46ff.root",
+            "/data/data/2022G//JetMET/ebdd74b9-dfd3-4dd3-b6ec-004a943a001a.root",
+            "/data/data/2022G//JetMET/fb145f8b-070f-4da4-a469-0e7fbc52b7e4.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____14_": {
+        "files": [
+            "/data/data/2022G//JetMET/cd56dd13-5b59-401a-ae46-4301d5ec9489.root",
+            "/data/data/2022G//JetMET/686c6b65-b919-4c39-9924-76298bcde094.root",
+            "/data/data/2022G//JetMET/948348c8-9440-481e-88ba-d3e2dff4800d.root",
+            "/data/data/2022G//JetMET/a4b27937-d0a7-4733-9f5d-7b0712cf1f4c.root",
+            "/data/data/2022G//JetMET/f4763362-1f4d-40d9-b9eb-2dfb33915298.root",
+            "/data/data/2022G//JetMET/815510b0-ee66-4482-95b4-9928e6a1557f.root",
+            "/data/data/2022G//JetMET/56a4d324-5325-4ff0-8b06-bd6aa41e1711.root",
+            "/data/data/2022G//JetMET/55ccecf4-b525-4aab-8ddf-2d71c384c607.root",
+            "/data/data/2022G//JetMET/abcdcbf2-649d-4d4f-b203-3af919ba7b92.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____15_": {
+        "files": [
+            "/data/data/2022F//JetMET/e9381e52-74be-434c-bb2b-1c60d5a418b3.root",
+            "/data/data/2022F//JetMET/696dd932-46dd-48b8-ad00-906e61e2f81b.root",
+            "/data/data/2022F//JetMET/729f9abb-336e-4025-824f-c930b6addef3.root",
+            "/data/data/2022F//JetMET/ad37c7b5-8dc9-4ada-a79e-2a750abd5570.root",
+            "/data/data/2022F//JetMET/072d8798-7709-4c43-8685-ca8caf326ba6.root",
+            "/data/data/2022F//JetMET/8446da53-62e3-4209-8807-195fa00b0cfc.root",
+            "/data/data/2022F//JetMET/d40fdc0a-927d-4d05-8fe1-dec4c0ab8691.root",
+            "/data/data/2022F//JetMET/d88302ec-81a3-4eec-b32c-fff0454ffa4c.root",
+            "/data/data/2022F//JetMET/9f1d8d26-1f79-4537-a70f-e2ad1e0e8618.root",
+            "/data/data/2022F//JetMET/9c4909fc-42c2-40e7-8fbc-53f8d1cce76a.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____16_": {
+        "files": [
+            "/data/data/2022F//JetMET/4f2a0ad8-67a5-46f1-acb0-1389cd2cdb07.root",
+            "/data/data/2022F//JetMET/95f6fe27-89b8-41b2-b4bb-d3a3f05eafdb.root",
+            "/data/data/2022F//JetMET/785d016b-f9d5-4192-afe8-7ae60d1fcde9.root",
+            "/data/data/2022F//JetMET/8ff2551e-c97d-478d-aa7f-63cff17f9d07.root",
+            "/data/data/2022F//JetMET/a375289c-ee6b-4d54-849e-4e08d14293d6.root",
+            "/data/data/2022F//JetMET/7b6bb344-5207-4e1d-b394-1f6300738355.root",
+            "/data/data/2022F//JetMET/1762d737-f99c-4b54-9fb0-a69db9cf6d8a.root",
+            "/data/data/2022F//JetMET/d6f65b59-55d2-429e-a1fa-77186e5ff49a.root",
+            "/data/data/2022F//JetMET/33f5d46a-78b9-40b0-bca6-f7278af2fd22.root",
+            "/data/data/2022F//JetMET/2add8a93-e389-43af-b8f4-6ecfd0d63a6d.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____17_": {
+        "files": [
+            "/data/data/2022F//JetMET/b69c8ded-9362-474a-97b4-4b6632225350.root",
+            "/data/data/2022F//JetMET/2ccbf41a-e4bd-414d-869c-09df613cfabe.root",
+            "/data/data/2022F//JetMET/0b36ba9c-8bdd-4861-8707-e44082ba3f96.root",
+            "/data/data/2022F//JetMET/372a4ec9-4957-430b-aa22-284f6a481dce.root",
+            "/data/data/2022F//JetMET/135b5dd7-a8a1-447e-9795-9c79c5e5d7d7.root",
+            "/data/data/2022F//JetMET/7374c531-acf5-404c-a59a-fdaa50c6c642.root",
+            "/data/data/2022F//JetMET/40b08b1a-9f03-458e-a6f8-d43bc29aca28.root",
+            "/data/data/2022F//JetMET/66b46e9b-d8d6-4073-be2d-d67198d5ce1b.root",
+            "/data/data/2022F//JetMET/149d0657-11e3-4695-89ff-c6b427194b3c.root",
+            "/data/data/2022F//JetMET/8709330a-33aa-45f9-afff-3117eaee70fc.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____18_": {
+        "files": [
+            "/data/data/2022F//JetMET/711ab9da-b40d-437c-b15f-84265a18e6b4.root",
+            "/data/data/2022F//JetMET/dccd2694-8fca-4f1c-89ce-8f2b031c960f.root",
+            "/data/data/2022F//JetMET/b0d3c3aa-d2b5-4c60-aa8f-c23ede04ba28.root",
+            "/data/data/2022F//JetMET/b35f5bb2-6883-4493-ba9b-1a820f901de4.root",
+            "/data/data/2022F//JetMET/46bde3ab-6e58-43d1-8226-e0082045e954.root",
+            "/data/data/2022F//JetMET/20ce5f72-4ec9-4468-8297-33e9daaac4c8.root",
+            "/data/data/2022F//JetMET/8b0efa15-8385-4ea3-b297-28362d0f4f09.root",
+            "/data/data/2022F//JetMET/874add9a-d62e-4394-ac98-1739aaf4adde.root",
+            "/data/data/2022F//JetMET/1958dc81-9f78-43a4-b84c-336bb5eaae26.root",
+            "/data/data/2022F//JetMET/576ba4e9-d31b-40d4-bafa-9011316aa2ee.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____19_": {
+        "files": [
+            "/data/data/2022F//JetMET/0322fd06-e650-4321-9a67-4c231c6d323d.root",
+            "/data/data/2022F//JetMET/3e7009e9-116e-4f99-a801-46398af6ef93.root",
+            "/data/data/2022F//JetMET/2bfab918-bf92-40c9-ac27-5abee09dec43.root",
+            "/data/data/2022F//JetMET/6c9e9208-700b-4ec3-9316-253d59ee5125.root",
+            "/data/data/2022F//JetMET/fa363935-40f5-4f12-8f17-d32124c7c76e.root",
+            "/data/data/2022F//JetMET/93e9873a-b741-4d61-ad72-ef8f67bfc98e.root",
+            "/data/data/2022F//JetMET/be0c4d49-879d-4153-9ffc-346114db8fdd.root",
+            "/data/data/2022F//JetMET/b704ea47-ccee-4b90-9d65-c7b10df87e4e.root",
+            "/data/data/2022F//JetMET/e4e5553a-a5b0-4bb0-8979-5b4102c7b853.root",
+            "/data/data/2022F//JetMET/16ed789d-738e-4254-94fb-912489c508fe.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____20_": {
+        "files": [
+            "/data/data/2022F//JetMET/b16e882c-d17d-4a67-b131-796baddbb727.root",
+            "/data/data/2022F//JetMET/3b398b19-4bd0-4171-b6cf-01c438ffa3f4.root",
+            "/data/data/2022F//JetMET/eb1b6e8c-dc2e-45ca-a644-69bb9acd1e12.root",
+            "/data/data/2022F//JetMET/05370af7-df4c-4975-bc74-694cdd747ff2.root",
+            "/data/data/2022F//JetMET/761f04d8-2473-44e6-a459-424287f86b81.root",
+            "/data/data/2022F//JetMET/91284d99-34f0-4008-84e5-5914a339e5a9.root",
+            "/data/data/2022F//JetMET/35396d70-b85d-4a46-8afe-89407d30b745.root",
+            "/data/data/2022F//JetMET/85f23bf4-2f7e-4493-8403-9de68a16e703.root",
+            "/data/data/2022F//JetMET/9dfe1787-ad5a-4a8f-bf0a-eabde0720e51.root",
+            "/data/data/2022F//JetMET/636f0b29-2aaf-4d5d-a79d-7c00f6b70368.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____21_": {
+        "files": [
+            "/data/data/2022F//JetMET/ad9df180-a2f9-407a-b739-9e948e6e5d04.root",
+            "/data/data/2022F//JetMET/421e09ec-e330-49a8-8b1a-746611990bdc.root",
+            "/data/data/2022F//JetMET/b02e0a4c-dbde-4ef3-8e79-1d39958db024.root",
+            "/data/data/2022F//JetMET/21b7565a-359f-41f8-b03b-430fd63abf20.root",
+            "/data/data/2022F//JetMET/7c934bef-b466-455a-9a62-145063a05465.root",
+            "/data/data/2022F//JetMET/4e73521d-3b28-47f0-8ef6-8c7d56f1ad73.root",
+            "/data/data/2022F//JetMET/4322f5eb-60bd-4aed-8daa-f863506dfc01.root",
+            "/data/data/2022F//JetMET/f0d8091e-1ef9-48de-afdd-479fcd5f0e45.root",
+            "/data/data/2022F//JetMET/ece204be-4bf4-4ae8-bed0-87db2738c710.root",
+            "/data/data/2022F//JetMET/124eeef6-cb52-48b8-a8ab-b0295060d3d2.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____22_": {
+        "files": [
+            "/data/data/2022F//JetMET/876301e9-4847-4abd-b6ab-e835f9be61a0.root",
+            "/data/data/2022F//JetMET/3eec12fc-f156-43b4-99d1-e17e81412c22.root",
+            "/data/data/2022F//JetMET/cd51da7d-da35-4c4f-816d-7a6c35e8eea9.root",
+            "/data/data/2022F//JetMET/67782999-d0b3-4489-84d5-56e7ff1ba56a.root",
+            "/data/data/2022F//JetMET/756ce542-81dd-45e7-ad3b-26739829592b.root",
+            "/data/data/2022F//JetMET/269102ec-f940-4439-9699-e9e6775f52e6.root",
+            "/data/data/2022F//JetMET/65f193fd-eae2-4348-a185-fee918fc9477.root",
+            "/data/data/2022F//JetMET/af5ed205-4a85-41d4-b807-247c22eb1469.root",
+            "/data/data/2022F//JetMET/8bb7b367-eacb-40af-b059-607251551a9b.root",
+            "/data/data/2022F//JetMET/ece5f021-c527-49b4-a16a-de046a6e2d75.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____23_": {
+        "files": [
+            "/data/data/2022F//JetMET/fd310627-3f1f-4bfc-809f-31a83a5b3282.root",
+            "/data/data/2022F//JetMET/574be6d3-7681-4c13-81c8-3e3caede0a2c.root",
+            "/data/data/2022F//JetMET/15938953-5dfc-4d2a-9054-977d8d9e60d1.root",
+            "/data/data/2022F//JetMET/9ef2b35e-09f3-4a49-8ef3-3201e6657fcb.root",
+            "/data/data/2022F//JetMET/1d1f040a-a9bf-461e-a03f-3d0fca2c99c8.root",
+            "/data/data/2022F//JetMET/efb9c29a-e473-4b76-afb4-61eb27c26b50.root",
+            "/data/data/2022F//JetMET/3aaaefd0-dae8-4b8a-ad26-ea37ae62d974.root",
+            "/data/data/2022F//JetMET/63cd8368-cc83-400a-8578-035b385cfb6d.root",
+            "/data/data/2022F//JetMET/5ee022bc-4c31-4a79-86b2-1c9e3900c28c.root",
+            "/data/data/2022F//JetMET/92a7c04f-a54a-429e-ba66-07913cff5af5.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____24_": {
+        "files": [
+            "/data/data/2022F//JetMET/e5136507-d911-413b-82b0-49944d577769.root",
+            "/data/data/2022F//JetMET/818bbec5-0743-46aa-98f5-9414c95f2fc1.root",
+            "/data/data/2022F//JetMET/5c7226f3-cfdc-4461-8cc3-f855f5d00338.root",
+            "/data/data/2022F//JetMET/a4a17865-ef9b-4754-b79d-9870152dc9e3.root",
+            "/data/data/2022F//JetMET/4c3444e4-b180-471a-bd6a-eb4ba90e34a0.root",
+            "/data/data/2022F//JetMET/5cc1b4e4-afb8-427e-a9e6-3a4a354dbc3c.root",
+            "/data/data/2022F//JetMET/3e04b92b-b21d-4bd4-bee7-9e422d42f3cd.root",
+            "/data/data/2022F//JetMET/e0be5eb3-e84d-48cc-89f9-9148bbcf0b1b.root",
+            "/data/data/2022F//JetMET/17f3ace9-24db-4618-9c39-5c95f51398a0.root",
+            "/data/data/2022F//JetMET/fb6642e1-0170-4c74-b6a0-83f866266023.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____25_": {
+        "files": [
+            "/data/data/2022F//JetMET/268d57f8-d739-4db5-9f29-611dbdb17207.root",
+            "/data/data/2022F//JetMET/b2d38695-23bc-4204-beb5-a37fb2b2fa77.root",
+            "/data/data/2022F//JetMET/e8baf785-5252-4cdd-8974-c37cecb37cae.root",
+            "/data/data/2022F//JetMET/2d847f1b-d91b-4b8c-9e94-a20a328b95ef.root",
+            "/data/data/2022F//JetMET/d204f58e-8481-4f7c-b9f6-e76a80a01b2b.root",
+            "/data/data/2022F//JetMET/dbfa6e94-a884-4926-a75d-2869febeb33c.root",
+            "/data/data/2022F//JetMET/5ac8fb88-059d-410f-a99e-8b7ece563710.root",
+            "/data/data/2022F//JetMET/a08998dd-301f-40d2-a893-6f4083bdaf88.root",
+            "/data/data/2022F//JetMET/193a1e05-b7d0-4dc0-8fff-b3e096df44a9.root",
+            "/data/data/2022F//JetMET/8da8b018-472d-4b0c-815f-043d6b91417d.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____26_": {
+        "files": [
+            "/data/data/2022F//JetMET/e8cfc352-7ba4-4ad9-8349-1c3e40d5aabb.root",
+            "/data/data/2022F//JetMET/cd6a825c-aeb7-4bde-920f-65840639c419.root",
+            "/data/data/2022F//JetMET/b2c01f18-dad0-4fc9-b61e-93640f73a172.root",
+            "/data/data/2022F//JetMET/0e11c3c9-98df-4738-b03b-fd71c2381687.root",
+            "/data/data/2022F//JetMET/b5ebf109-8818-4e70-b6d8-383dc1fdac97.root",
+            "/data/data/2022F//JetMET/37893ba0-a1fd-49a0-aab3-be611e59818f.root",
+            "/data/data/2022F//JetMET/517f97e8-6fd5-448c-892d-378cf4b23807.root",
+            "/data/data/2022F//JetMET/d931e06a-a442-4e35-a6e9-3d4f6dbbba8a.root",
+            "/data/data/2022F//JetMET/36354734-9e8f-44c9-ae85-51cc550c59c6.root",
+            "/data/data/2022F//JetMET/98e74eb5-b823-4af5-a0bb-8ef4cd283594.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____27_": {
+        "files": [
+            "/data/data/2022F//JetMET/26eb0b1d-90ba-468f-9cfd-2ebcd5e3294c.root",
+            "/data/data/2022F//JetMET/cc3bd382-a62f-4d25-ac31-b72c3711d867.root",
+            "/data/data/2022F//JetMET/9762ab4b-05fa-4aea-8db7-270797c97c2c.root",
+            "/data/data/2022F//JetMET/23e5be80-90b7-461c-9cf2-6535161fb63e.root",
+            "/data/data/2022F//JetMET/e548a2cb-c183-4600-9d29-e02f674df9bc.root",
+            "/data/data/2022F//JetMET/5d008dc6-ded3-4ae5-8161-9b8b02ac0d4d.root",
+            "/data/data/2022F//JetMET/b21805d1-f40a-4ff8-9d8c-0d90c28679c8.root",
+            "/data/data/2022F//JetMET/855182cd-89bb-4fb0-bfb9-2b178ca34993.root",
+            "/data/data/2022F//JetMET/48036ca6-55a9-4606-ad49-8645a9764e15.root",
+            "/data/data/2022F//JetMET/4b68d75b-53da-4c05-b4ef-ce88eba2a7be.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____28_": {
+        "files": [
+            "/data/data/2022F//JetMET/58851db8-8325-4d57-86ac-839d607259e3.root",
+            "/data/data/2022F//JetMET/f9a30264-7369-4e5b-a2be-9f35ac7dc599.root",
+            "/data/data/2022F//JetMET/e65668c0-8063-46e9-a815-468073b80aee.root",
+            "/data/data/2022F//JetMET/ba1991bd-3d0b-4d91-a655-bdf51466e6f1.root",
+            "/data/data/2022F//JetMET/896e2e92-fb0f-4172-971f-a5bad2fd8c6e.root",
+            "/data/data/2022F//JetMET/f6a9a806-59a3-4f41-8ab2-0acd17048453.root",
+            "/data/data/2022F//JetMET/eb9b809f-2d1d-4a43-b847-4b7ebb1a9a09.root",
+            "/data/data/2022F//JetMET/87cf2695-c45e-4631-be31-e383c302aeb7.root",
+            "/data/data/2022F//JetMET/b379dd20-d3f8-4a92-88e8-347097ec8268.root",
+            "/data/data/2022F//JetMET/273c613b-bb9e-4d22-a549-4e09f28b6f2a.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____29_": {
+        "files": [
+            "/data/data/2022F//JetMET/0c630d01-f08d-41cc-8fee-0e11e1e9e387.root",
+            "/data/data/2022F//JetMET/4f921963-f50e-4c0a-b8f8-9df1465c65c6.root",
+            "/data/data/2022F//JetMET/a018793c-92b5-4f85-a579-3ebeec87117c.root",
+            "/data/data/2022F//JetMET/692745d7-e6c6-4e24-a0ee-e68525ddee67.root",
+            "/data/data/2022F//JetMET/8eadf408-c2af-4501-a851-0862ba283b3d.root",
+            "/data/data/2022F//JetMET/7c7ddc89-c033-4603-84fb-3fb365ef81a3.root",
+            "/data/data/2022F//JetMET/232ef8ee-4a6a-4156-ba76-0c20e6906aee.root",
+            "/data/data/2022F//JetMET/892cbf62-ce91-4928-9a9d-1b7ebd2c576f.root",
+            "/data/data/2022F//JetMET/261584d4-cacd-4330-b872-2bf782dc31b6.root",
+            "/data/data/2022F//JetMET/ff7399b3-671f-4cb2-ab1f-fd996a89d30c.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____30_": {
+        "files": [
+            "/data/data/2022F//JetMET/8efea81b-525d-44fd-ae52-4326169e852e.root",
+            "/data/data/2022F//JetMET/a1ff7369-531e-42cd-99fc-67601c1b1b92.root",
+            "/data/data/2022F//JetMET/f30a58dc-2fd2-433b-be9f-3c13e9762f92.root",
+            "/data/data/2022F//JetMET/af8467a5-8610-4344-9750-13d6c0b209e2.root",
+            "/data/data/2022F//JetMET/45cc06fa-1201-4dec-9521-07aa5a365381.root",
+            "/data/data/2022F//JetMET/8839477f-8976-4d9d-a83f-b5dbdb60109e.root",
+            "/data/data/2022F//JetMET/ec2a7eb8-d0e8-4c26-a668-2aa977894d34.root",
+            "/data/data/2022F//JetMET/c1cfb236-d18e-455e-9f91-604a4d2bfcac.root",
+            "/data/data/2022F//JetMET/79981693-0be9-4d5e-82fc-871aba440dd4.root",
+            "/data/data/2022F//JetMET/a33aff6c-68e0-4a5f-9450-e0b60d4205f5.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____31_": {
+        "files": [
+            "/data/data/2022F//JetMET/9b544172-06fe-4cdc-bfb4-7d2960aead4c.root",
+            "/data/data/2022F//JetMET/0011d613-1a0c-4735-b383-8aba294f4d88.root",
+            "/data/data/2022F//JetMET/e9e16362-7af2-400f-a458-806c06bcb726.root",
+            "/data/data/2022F//JetMET/3c5bb24a-dbea-4157-b7d1-bc5e61c041bf.root",
+            "/data/data/2022F//JetMET/639848c9-1350-46a7-b158-71f22433a100.root",
+            "/data/data/2022F//JetMET/b6c6452d-bd37-4b71-9d55-5df3fddfb11e.root",
+            "/data/data/2022F//JetMET/a92916b0-2ade-409a-8e00-b1fc88688054.root",
+            "/data/data/2022F//JetMET/cefc7513-9937-45ff-80c2-c62742e65d2a.root",
+            "/data/data/2022F//JetMET/40cf193a-c62a-4ba1-81d8-d66c964d352b.root",
+            "/data/data/2022F//JetMET/a067de22-8ea0-4c51-a396-b8d5be57c92c.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____32_": {
+        "files": [
+            "/data/data/2022F//JetMET/0c091f2d-e506-4be3-bb37-10955cbbd42b.root",
+            "/data/data/2022F//JetMET/5270b1db-9b1b-4a09-9e5c-bfbdd98b13d3.root",
+            "/data/data/2022F//JetMET/4f1ce0e0-0e84-4415-9a04-006f0a3f198f.root",
+            "/data/data/2022F//JetMET/ea18e4d1-de44-4357-b67f-a4d6c6013989.root",
+            "/data/data/2022F//JetMET/862553f6-8625-4d00-8507-28a5956e8fcd.root",
+            "/data/data/2022F//JetMET/61bd7cc2-eef0-4a67-8f6d-c4de56038b84.root",
+            "/data/data/2022F//JetMET/6511ce86-0885-4b02-b8ae-e0e78b690440.root",
+            "/data/data/2022F//JetMET/56fe5c2a-2d3f-4a01-afe1-a2e45859454e.root",
+            "/data/data/2022F//JetMET/d27aa0c0-698c-4065-b5bf-bc6e7b8b283b.root",
+            "/data/data/2022F//JetMET/8c437720-9335-4302-a27a-19e31d3db216.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____33_": {
+        "files": [
+            "/data/data/2022F//JetMET/eafafc57-57ca-4ec9-8df8-93abd88075a5.root",
+            "/data/data/2022F//JetMET/12a4a2f1-83f6-46b9-a671-c303ca817179.root",
+            "/data/data/2022F//JetMET/c86b4bb5-ca49-4585-8147-e0f11cc60a0c.root",
+            "/data/data/2022F//JetMET/bab22c14-9b7b-47e6-a568-5eaa2a15dae2.root",
+            "/data/data/2022F//JetMET/686c6cae-25f4-491a-a6d4-6c7e49c13df2.root",
+            "/data/data/2022F//JetMET/c2578b28-8d52-4019-b4e7-6317138e1c53.root",
+            "/data/data/2022F//JetMET/a7179f69-3f39-4591-a02b-91c977f59d3e.root",
+            "/data/data/2022F//JetMET/2b8e2f33-0628-4649-8aa0-0d74d1272e2b.root",
+            "/data/data/2022F//JetMET/b8338308-92b6-492d-b6c2-305aa1b9ae85.root",
+            "/data/data/2022F//JetMET/9294b8d7-d741-4f41-a4c5-908adf4f763a.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____34_": {
+        "files": [
+            "/data/data/2022F//JetMET/4d00e717-6e6f-498c-9661-6eebec5b4e99.root",
+            "/data/data/2022F//JetMET/298d687c-1021-4e3d-9b16-df7dc781fe76.root",
+            "/data/data/2022F//JetMET/a6bba659-fb0f-4a32-a382-54d29aed91f9.root",
+            "/data/data/2022F//JetMET/fbf28bc3-2a07-488c-addc-2c35b4d9241e.root",
+            "/data/data/2022F//JetMET/106aef52-a8c2-4718-a059-52610c1f9285.root",
+            "/data/data/2022F//JetMET/b3aaa84d-4686-4617-9338-305dff29cf34.root",
+            "/data/data/2022F//JetMET/8b3b990c-e684-4229-89e2-2f2a6b307d90.root",
+            "/data/data/2022F//JetMET/b0fcee88-9927-446e-b204-4c037aa85b07.root",
+            "/data/data/2022F//JetMET/efb59fa2-7b02-478d-8404-59969db3ac1a.root",
+            "/data/data/2022F//JetMET/f18899fb-c559-4620-b10f-ccb3990a4865.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____35_": {
+        "files": [
+            "/data/data/2022F//JetMET/fd61329d-6afe-4217-aad5-c716f33e5c2f.root",
+            "/data/data/2022F//JetMET/e103ace2-db7e-4eab-9cba-2c4b1676041b.root",
+            "/data/data/2022F//JetMET/48a5ae0c-4e3d-4586-9f65-bfe11d502697.root",
+            "/data/data/2022F//JetMET/7addad1e-11b4-47f7-955e-68ced6f2d37b.root",
+            "/data/data/2022F//JetMET/1b05de16-da43-4a96-9c5b-9a98a6a4f8d5.root",
+            "/data/data/2022F//JetMET/95a11d94-8278-46b9-80ff-854215f66b73.root",
+            "/data/data/2022F//JetMET/34e7af9a-1ee7-4ac0-945f-0a2387bd6e76.root",
+            "/data/data/2022F//JetMET/8541b763-aa03-444e-9f19-a6caf9862bd8.root",
+            "/data/data/2022F//JetMET/4edd7af0-2c53-4294-8518-2075b2b5ee48.root",
+            "/data/data/2022F//JetMET/7e496542-c774-4aa6-8a36-dbced0a4a0aa.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____36_": {
+        "files": [
+            "/data/data/2022F//JetMET/1f67e968-7212-4258-a34c-db5f70e23aa7.root",
+            "/data/data/2022F//JetMET/843391e1-073d-451d-b401-87374856befd.root",
+            "/data/data/2022F//JetMET/82ca59ac-3719-48ea-8ff7-41f30a2fca4f.root",
+            "/data/data/2022F//JetMET/96e2e6cc-9868-4307-99cb-68df9548f386.root",
+            "/data/data/2022F//JetMET/8495798a-5993-4bb1-8ac9-925982b32eb1.root",
+            "/data/data/2022F//JetMET/2aa3836c-f3e6-4682-b694-745b1db75b82.root",
+            "/data/data/2022F//JetMET/9117ae6d-f20b-45fb-a0d3-8cef156fa433.root",
+            "/data/data/2022F//JetMET/ffbb66a6-03ec-4493-9c3d-6235591c74ad.root",
+            "/data/data/2022F//JetMET/87b1edcc-5765-4ad9-8362-e59023bd874d.root",
+            "/data/data/2022F//JetMET/581e1550-afac-4a24-bd21-43fa480458d4.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____37_": {
+        "files": [
+            "/data/data/2022F//JetMET/690af689-9981-4e82-893c-0bd373e34aa0.root",
+            "/data/data/2022F//JetMET/c37cc0af-8d3b-4889-bb60-3d5f8757986a.root",
+            "/data/data/2022F//JetMET/4a76788a-3e21-4473-a058-7b70b3db4b85.root",
+            "/data/data/2022F//JetMET/6ac45192-d4d2-47fd-a696-e8d4968fc0e7.root",
+            "/data/data/2022F//JetMET/ae0da06e-af49-4830-9c49-895e1fcba096.root",
+            "/data/data/2022F//JetMET/7456ed62-cfed-4bbd-851d-a466ce6fb230.root",
+            "/data/data/2022F//JetMET/6e8d21d2-e09b-4104-ae61-2122177def4f.root",
+            "/data/data/2022F//JetMET/cf0091a1-2edc-4f15-add3-0fa36e8b80a9.root",
+            "/data/data/2022F//JetMET/540e8a39-da72-4479-8c8b-1b89dde8c5a3.root",
+            "/data/data/2022F//JetMET/f3033ad5-b77c-460b-be39-ed6e2ef4b396.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____38_": {
+        "files": [
+            "/data/data/2022F//JetMET/1e26f44d-b1ee-4492-8f8a-225409cece2c.root",
+            "/data/data/2022F//JetMET/fdfb47fd-cc6b-4263-8afe-b7b6af954ba1.root",
+            "/data/data/2022F//JetMET/55ea8c4b-6e4f-4e0a-af74-d4cb1e6b0fb2.root",
+            "/data/data/2022F//JetMET/3bf71dd0-4634-4706-bf9b-05c2473cbb95.root",
+            "/data/data/2022F//JetMET/9b8b137e-b138-45fe-a82a-14cd97563d2c.root",
+            "/data/data/2022F//JetMET/f311c6ac-ce1a-4ea8-9eba-6ed438840022.root",
+            "/data/data/2022F//JetMET/92a2bbe4-26cb-4f00-be34-7b1f536f1ef1.root",
+            "/data/data/2022F//JetMET/1b86ec1f-42d4-40ff-a3b4-96157c2583c7.root",
+            "/data/data/2022F//JetMET/635c5f41-b821-4982-82fa-73849e5e9b78.root",
+            "/data/data/2022F//JetMET/87a702af-ad62-4a29-b53c-59f841cdddee.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____39_": {
+        "files": [
+            "/data/data/2022F//JetMET/d1c41588-9f9b-4660-a0b6-30de0aee29c6.root",
+            "/data/data/2022F//JetMET/5171ab73-7ef1-4fe2-9a77-6c51b1faa257.root",
+            "/data/data/2022F//JetMET/63e0ab6f-7629-4fdb-9769-6ef67c6e3985.root",
+            "/data/data/2022F//JetMET/389fe945-d86a-4b24-a873-177b4bbd27b5.root",
+            "/data/data/2022F//JetMET/f4340b15-4a4c-445b-9fd0-2a704c659a19.root",
+            "/data/data/2022F//JetMET/e1e3c107-7855-4216-a74b-24635568c4bb.root",
+            "/data/data/2022F//JetMET/7553783d-1834-4410-b504-e4d7131c2dfe.root",
+            "/data/data/2022F//JetMET/b68fa3ec-4236-440b-8ed3-28c687a56f0f.root",
+            "/data/data/2022F//JetMET/23ac0ad4-86f1-46b4-834f-adaa35d8460b.root",
+            "/data/data/2022F//JetMET/4bb84970-aa81-469a-a256-0f1bfb166826.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____40_": {
+        "files": [
+            "/data/data/2022F//JetMET/62c21799-714a-40f8-a343-28a2d9896417.root",
+            "/data/data/2022F//JetMET/5c8dc2f3-5bd3-4a50-8cc1-bc5a5d32daa4.root",
+            "/data/data/2022F//JetMET/118163e9-cc10-4fee-811c-ee02008f1ac0.root",
+            "/data/data/2022F//JetMET/36cb4ec9-9836-4851-9640-8b7902494f9d.root",
+            "/data/data/2022F//JetMET/01ed0683-b6d2-494f-b8b0-07774ecbd7ca.root",
+            "/data/data/2022F//JetMET/296a92ef-acf5-4eb6-8f93-cc43e24aa8f6.root",
+            "/data/data/2022F//JetMET/ca07b59d-7176-4fbc-8b15-14890ed72fce.root",
+            "/data/data/2022F//JetMET/a260f60f-185f-4747-910a-3953eb5e9389.root",
+            "/data/data/2022F//JetMET/ab5ccb8e-2a87-4d27-99e9-7c8022d43bd0.root",
+            "/data/data/2022F//JetMET/0f4512a4-f1b2-46b2-a5bb-9dd0ab5ab693.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____41_": {
+        "files": [
+            "/data/data/2022F//JetMET/9f33eccd-89b9-42c3-b891-205f0db087dd.root",
+            "/data/data/2022F//JetMET/6a9901a9-01fd-4fbe-8285-dd29b4bb58da.root",
+            "/data/data/2022F//JetMET/ce4d7d38-bff5-47fa-8b4f-5d82da16d6cd.root",
+            "/data/data/2022F//JetMET/9819efa1-764e-4e50-a290-2d7c501fb3ce.root",
+            "/data/data/2022F//JetMET/757326bf-9341-4963-a98d-ae85ac460356.root",
+            "/data/data/2022F//JetMET/f9207c94-0e25-4e98-a8c6-3dee14b14744.root",
+            "/data/data/2022F//JetMET/44ac64a6-421f-4cdb-8b8c-e6321f0592be.root",
+            "/data/data/2022F//JetMET/60c938b3-4fdd-4f12-ab3e-f532ee1a8193.root",
+            "/data/data/2022F//JetMET/e7898c06-209f-40d8-b401-f7ec56425048.root",
+            "/data/data/2022F//JetMET/c1df515a-d18e-476a-9ae8-911c1f3a9d76.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____42_": {
+        "files": [
+            "/data/data/2022F//JetMET/85136bdd-c13f-461d-9599-91b5fcac763d.root",
+            "/data/data/2022F//JetMET/eb968014-334a-40c2-ba62-ba2e0006426a.root",
+            "/data/data/2022F//JetMET/483cee03-09d6-4e01-92fd-c4c1882c05cc.root",
+            "/data/data/2022F//JetMET/aa65e045-bc6b-435f-b236-9c6ffa1f1bc7.root",
+            "/data/data/2022F//JetMET/dde31b13-3037-4fd1-bceb-adac9ca06398.root",
+            "/data/data/2022F//JetMET/0e54daab-b12c-4d7e-b5c4-c227fc6a29be.root",
+            "/data/data/2022F//JetMET/b1b2d986-364f-4103-9887-4cbb49ad3b3b.root",
+            "/data/data/2022F//JetMET/6bf04da5-8536-4f0b-b3f9-3aaf7be195da.root",
+            "/data/data/2022F//JetMET/6b9cc492-0f69-44e1-85e4-a46fdd8e9d12.root",
+            "/data/data/2022F//JetMET/1696a74b-4a24-4381-8d76-359c810632f4.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____43_": {
+        "files": [
+            "/data/data/2022F//JetMET/31c164ef-2d3b-4cbd-a022-47a34018cdfa.root",
+            "/data/data/2022F//JetMET/348d1894-1ae3-4001-ab4d-49ba786c667f.root",
+            "/data/data/2022F//JetMET/5065306f-354d-4cbf-913c-c3646ed32ead.root",
+            "/data/data/2022F//JetMET/57e9c87a-10e8-4347-a1d7-06f66a504d0e.root",
+            "/data/data/2022F//JetMET/a2bbae81-34f7-4159-ab61-8149bcf7929b.root",
+            "/data/data/2022F//JetMET/1a6f83db-e2d4-4532-82ca-e1711837dd4f.root",
+            "/data/data/2022F//JetMET/0f4f5ad2-c00a-417d-b24c-b977667b0d00.root",
+            "/data/data/2022F//JetMET/5f9ba120-3dd1-4b93-a479-d2c1b18f7854.root",
+            "/data/data/2022F//JetMET/1ee3bc7f-ad0f-4b43-80d1-f8da21802be1.root",
+            "/data/data/2022F//JetMET/c93b84a8-90c5-408c-a3b0-62a3e602eaec.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____44_": {
+        "files": [
+            "/data/data/2022F//JetMET/05ca2a5b-1f7b-4b5e-b123-aa4a0a551d6a.root",
+            "/data/data/2022F//JetMET/641e6c9f-eda1-49b3-a9a1-a65f3bfa4d88.root",
+            "/data/data/2022F//JetMET/49cbc8e1-1221-4fcf-92a7-34354ff7f125.root",
+            "/data/data/2022F//JetMET/2e49956b-e1b8-413f-b29a-29e3ca6dc845.root",
+            "/data/data/2022F//JetMET/fe721cf7-9284-4d06-87e5-81c1bad082a2.root",
+            "/data/data/2022F//JetMET/1feda021-5eb5-4ddc-8822-a5f2691d13f8.root",
+            "/data/data/2022F//JetMET/3eca335f-7b72-4be5-9d21-5532a0bcbc1c.root",
+            "/data/data/2022F//JetMET/de6309c7-603d-4ff2-ae43-7c6d4df74b5c.root",
+            "/data/data/2022F//JetMET/d81bb31a-4be7-456d-a069-4eaf5bf468fd.root",
+            "/data/data/2022F//JetMET/9510ab95-1be6-4904-9b75-ccf9bb40ab1c.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____45_": {
+        "files": [
+            "/data/data/2022F//JetMET/2d184b50-b089-4bb4-a557-4a3ee2c278eb.root",
+            "/data/data/2022F//JetMET/76fce21f-0d76-45f5-a123-7f00e5dfee36.root",
+            "/data/data/2022F//JetMET/d8abfc1f-978b-41c0-9e9d-cadd5b09e49c.root",
+            "/data/data/2022F//JetMET/83913bdb-afae-486b-b137-767bda4aba50.root",
+            "/data/data/2022F//JetMET/10458d9d-6eb6-4f9c-82c2-40bb2eee1cff.root",
+            "/data/data/2022F//JetMET/cd7d1975-f349-4c6c-805b-72e830125c19.root",
+            "/data/data/2022F//JetMET/e00df419-4778-4d45-a460-5b659bed00c9.root",
+            "/data/data/2022F//JetMET/d9908111-63de-48bc-9e9e-6c3eae72ba42.root",
+            "/data/data/2022F//JetMET/2ca061a9-52ce-4e17-a623-0d87ed352b3c.root",
+            "/data/data/2022F//JetMET/e106c318-752f-437f-97fd-d66ea5ba5ab2.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____46_": {
+        "files": [
+            "/data/data/2022F//JetMET/f805f03f-c272-49e3-b1f7-61d9a9616229.root",
+            "/data/data/2022F//JetMET/d0998e4c-0205-4766-bd44-1ef86bbf04e5.root",
+            "/data/data/2022F//JetMET/189245d3-28c8-40b1-98ef-9f4073861875.root",
+            "/data/data/2022F//JetMET/128418ac-37c4-434c-9f57-b81050ecd7f1.root",
+            "/data/data/2022F//JetMET/4c154553-4902-43cc-a301-83b9a223a331.root",
+            "/data/data/2022F//JetMET/02380a46-c43e-44f7-a4ec-ba29bdf25167.root",
+            "/data/data/2022F//JetMET/6f9955a0-4338-42e0-a168-4b7b76f77894.root",
+            "/data/data/2022F//JetMET/284f17c9-f6de-4ff0-bacd-98754a7eef0d.root",
+            "/data/data/2022F//JetMET/8dc20f17-6ea7-4b82-a261-01c303af9044.root",
+            "/data/data/2022F//JetMET/acc0d00c-e5ea-4e1f-b64c-a721218674d6.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____47_": {
+        "files": [
+            "/data/data/2022F//JetMET/9bf2e1b2-074f-4cc9-9f7e-460c39e7d06e.root",
+            "/data/data/2022F//JetMET/dea5c5a3-9b08-46d8-aa9e-3ebc558609c9.root",
+            "/data/data/2022F//JetMET/428420b1-88da-4f9b-822b-b9ba9f4c9b08.root",
+            "/data/data/2022F//JetMET/871303ad-6ac7-4b55-b40b-a827d7978f73.root",
+            "/data/data/2022F//JetMET/1007f123-bdf8-421b-a7ec-45b295170a3e.root",
+            "/data/data/2022F//JetMET/71295470-b26f-425b-8b3d-9f9e8582355c.root",
+            "/data/data/2022F//JetMET/5a8f62ff-10cf-40aa-bd29-651b5b9f3a49.root",
+            "/data/data/2022F//JetMET/d74aa1d3-8585-418a-9a8c-5fceeec02063.root",
+            "/data/data/2022F//JetMET/fcae3aea-af9f-41ab-b5d9-e0e01b3860bb.root",
+            "/data/data/2022F//JetMET/bd6ebbdd-956b-49fb-a0b6-ef4729b1e3c8.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____48_": {
+        "files": [
+            "/data/data/2022F//JetMET/270ab87a-ffaa-4771-a2a0-c450994e52e1.root",
+            "/data/data/2022F//JetMET/71a64e0e-3d71-40fb-a69d-e9943ded6bbe.root",
+            "/data/data/2022F//JetMET/c7d124b9-35d2-4dec-a5a8-ba3c4b003b1b.root",
+            "/data/data/2022F//JetMET/557c4a59-0536-4cd1-b9d2-246726914c1b.root",
+            "/data/data/2022F//JetMET/cabd2630-19f6-4ef9-be7f-9af4ad14bdc6.root",
+            "/data/data/2022F//JetMET/c3e783f9-bd1e-4784-9c17-25e0df03b8f1.root",
+            "/data/data/2022F//JetMET/9cf0754a-7b89-4127-a3f5-42b926a77548.root",
+            "/data/data/2022F//JetMET/8d5cd851-d6e6-44d2-a61a-18a62a8adb33.root",
+            "/data/data/2022F//JetMET/db737582-554f-49a1-b3d5-86bbde474b9f.root",
+            "/data/data/2022F//JetMET/4d03eb1e-e766-4c48-82c1-838da75b7d4f.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____49_": {
+        "files": [
+            "/data/data/2022F//JetMET/4f87e828-2169-4eb9-8506-5b081cb52c7e.root",
+            "/data/data/2022F//JetMET/b6243c83-8d52-49e1-81ac-d1895a75a3d1.root",
+            "/data/data/2022F//JetMET/fb5858d2-e729-49d2-b544-621ababbd0e6.root",
+            "/data/data/2022F//JetMET/706d77b5-d650-4e77-9edf-beb2237e646b.root",
+            "/data/data/2022F//JetMET/0754c1fc-4769-418a-a8db-22950f9b1701.root",
+            "/data/data/2022F//JetMET/163f6b15-c587-46e5-b942-4619ff78cbac.root",
+            "/data/data/2022F//JetMET/9db356c2-83b9-456d-93ff-bb927719c5f2.root",
+            "/data/data/2022F//JetMET/6dda8a5f-fbc7-4eef-9357-db0ebccea615.root",
+            "/data/data/2022F//JetMET/0005f8b5-d8bb-40e1-8b4a-ef54043af759.root",
+            "/data/data/2022F//JetMET/8c57df57-8301-4277-929e-79ee457f7169.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____50_": {
+        "files": [
+            "/data/data/2022F//JetMET/65660e86-b33d-4640-b23c-1da810900069.root",
+            "/data/data/2022F//JetMET/c2e565a1-7c82-4c2e-817d-15b8632aa9fa.root",
+            "/data/data/2022F//JetMET/ba6d8727-ffdf-4466-b531-be25fdf65927.root",
+            "/data/data/2022F//JetMET/b84de116-9c31-4e11-9885-8ec2a1c4711b.root",
+            "/data/data/2022F//JetMET/ad87860e-6766-49c9-b6cc-47a02bbbfdc4.root",
+            "/data/data/2022F//JetMET/267aab08-2b35-4505-931c-18358cbe90ac.root",
+            "/data/data/2022F//JetMET/83dbc2d7-1ce8-41b1-8acf-e11cfb80c8e3.root",
+            "/data/data/2022F//JetMET/e4cd02b5-595c-4c05-b2c1-d92e9cdcd352.root",
+            "/data/data/2022F//JetMET/f7d45d4f-3fc2-4579-b8cb-41670419b2b7.root",
+            "/data/data/2022F//JetMET/e0f746bd-735c-4255-a086-faefbb9f5b28.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____51_": {
+        "files": [
+            "/data/data/2022F//JetMET/e9643c7e-35c4-4536-ab24-976de014f036.root",
+            "/data/data/2022F//JetMET/f8629b2c-d8da-4faa-a3bc-43eed3ed10e5.root",
+            "/data/data/2022F//JetMET/c14809ac-348e-43ed-9299-43918eea98cc.root",
+            "/data/data/2022F//JetMET/b1c16889-ab04-419a-be9e-19897a67808c.root",
+            "/data/data/2022F//JetMET/959df58b-cb61-4b39-aa40-11776a201d1e.root",
+            "/data/data/2022F//JetMET/8be17555-ed9d-4e77-822f-25c868b2380c.root",
+            "/data/data/2022F//JetMET/15542b5c-491d-4d81-a4f4-6298156fdabf.root",
+            "/data/data/2022F//JetMET/82273bc7-9722-412f-a820-41011ca1b253.root",
+            "/data/data/2022F//JetMET/7e8d35c2-b397-4e03-b540-44f4de64e71c.root",
+            "/data/data/2022F//JetMET/f470c030-6b2a-4c0a-a48c-0d62eb5db67d.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____52_": {
+        "files": [
+            "/data/data/2022F//JetMET/8bd2bd8d-2eeb-4fb2-9f7a-5f7d42da4ee1.root",
+            "/data/data/2022F//JetMET/0eb146f9-3c86-4d1a-aae0-e4c0d63b4daf.root",
+            "/data/data/2022F//JetMET/483b3fa6-f5fc-4508-8c7d-13bb305b0293.root",
+            "/data/data/2022F//JetMET/d981307a-ada4-47e1-97df-6be51d017ce1.root",
+            "/data/data/2022F//JetMET/07dc2b6e-e55c-43f6-963f-a90f065e7c30.root",
+            "/data/data/2022F//JetMET/8de54ecc-d9b8-4c8a-a566-a5f61225af75.root",
+            "/data/data/2022F//JetMET/e85caf64-ee9d-4048-b6dc-a79b23e111be.root",
+            "/data/data/2022F//JetMET/57b964ec-fe9a-465a-bea6-33d7bd4f0627.root",
+            "/data/data/2022F//JetMET/e0d99e0b-8048-4a53-b856-1f75599022e7.root",
+            "/data/data/2022F//JetMET/0b4c5190-fb37-4613-910d-2c06d94b0d0d.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____53_": {
+        "files": [
+            "/data/data/2022F//JetMET/95e1dfde-847b-4137-8de4-b3ca0446eda0.root",
+            "/data/data/2022F//JetMET/58cc5e3f-e6ce-41c4-ae1d-7c5a942ee1b0.root",
+            "/data/data/2022F//JetMET/78fb835c-1e21-40dc-b1ca-b476d2c1d140.root",
+            "/data/data/2022F//JetMET/a4c63ee4-4601-46fc-81ac-dc6c43fbf513.root",
+            "/data/data/2022F//JetMET/d35ef541-72ad-432d-87b7-0edd6b5dc82f.root",
+            "/data/data/2022F//JetMET/7c8972eb-c36f-415b-bd80-9a114761fba7.root",
+            "/data/data/2022F//JetMET/567952ac-2117-40c4-bace-46c8052a72ad.root",
+            "/data/data/2022F//JetMET/c25a1903-8bf0-46aa-aa84-7ed5b6c2f6ea.root",
+            "/data/data/2022F//JetMET/f14f10dc-a919-41c9-bbe8-41e6bf4fb0f7.root",
+            "/data/data/2022F//JetMET/f2750daf-f514-4569-b322-53b82fbd315b.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____54_": {
+        "files": [
+            "/data/data/2022F//JetMET/4baa573f-e1d1-41c7-8eb6-887a5077ff97.root",
+            "/data/data/2022F//JetMET/082b777b-bdaa-4336-805b-d13c13953c9c.root",
+            "/data/data/2022F//JetMET/e7b37704-2464-4cde-b778-6ed8f5ea632f.root",
+            "/data/data/2022F//JetMET/75d49ab0-7bd1-44a0-bb79-907c777ebb86.root",
+            "/data/data/2022F//JetMET/58b2323a-a8d5-4163-af73-eb4bea2c7b53.root",
+            "/data/data/2022F//JetMET/4f7c596c-ae49-4ee3-98cd-e0facf8079fd.root",
+            "/data/data/2022F//JetMET/0a65bfeb-9204-463b-844e-c348f5e54bf9.root",
+            "/data/data/2022F//JetMET/c2f025df-3b89-44af-8871-17059b6266b9.root",
+            "/data/data/2022F//JetMET/ba878226-50e1-4d0c-a9cc-082beec185d4.root",
+            "/data/data/2022F//JetMET/86e0e0ae-0f86-4cd6-ab1c-052722197454.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____55_": {
+        "files": [
+            "/data/data/2022F//JetMET/58ecb6eb-a06b-4434-aee2-81c5c2d230dc.root",
+            "/data/data/2022F//JetMET/50569f88-eb4a-4d37-b507-1a669914f04e.root",
+            "/data/data/2022F//JetMET/7c44fdfb-ee87-410f-a8cd-042520b68b24.root",
+            "/data/data/2022F//JetMET/1f38a939-c71a-4497-9c13-9602751d2aef.root",
+            "/data/data/2022F//JetMET/9defecad-3f6b-4041-8646-bc7dc9f0e53e.root",
+            "/data/data/2022F//JetMET/4a1c3ab6-0b54-4a43-b3bf-bcc2b0b95223.root",
+            "/data/data/2022F//JetMET/096c6c4a-021e-4e97-aeac-e6a824ad59ec.root",
+            "/data/data/2022F//JetMET/fdfba81c-eec2-4340-920a-fa0bcfc0cc9e.root",
+            "/data/data/2022F//JetMET/e5e47052-90cb-4918-8477-369f84b4a53a.root",
+            "/data/data/2022F//JetMET/fed75992-36b7-4982-a752-7c7e87f8f5b2.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____56_": {
+        "files": [
+            "/data/data/2022F//JetMET/15db17a4-246a-42f7-a501-b379a3020696.root",
+            "/data/data/2022F//JetMET/39728a07-eb10-4db0-ad98-85fde2ad75c5.root",
+            "/data/data/2022F//JetMET/9aa203e0-8eca-43e9-b51f-d12b9698c190.root",
+            "/data/data/2022F//JetMET/1bbc105d-685e-430f-9842-b9d862689a15.root",
+            "/data/data/2022F//JetMET/9c398c53-ade7-48e7-98e8-6d28b39d2c92.root",
+            "/data/data/2022F//JetMET/05e9feb8-2df5-4ccd-81fa-8af9b8edfaf4.root",
+            "/data/data/2022F//JetMET/af313522-c6fd-41b9-92b4-4e074ca05245.root",
+            "/data/data/2022F//JetMET/f876c5e5-0d2c-44e6-be11-7e5ec9840313.root",
+            "/data/data/2022F//JetMET/79a89e2c-ad94-417a-b68c-fbe0888a300c.root",
+            "/data/data/2022F//JetMET/cb0bd403-343e-4c96-b4ac-da87a3769e93.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____57_": {
+        "files": [
+            "/data/data/2022F//JetMET/4b7e0ee5-21e6-445c-884c-dbb09643ee9c.root",
+            "/data/data/2022F//JetMET/1e9a6d1b-fa76-4209-86ca-494cb0fbbc29.root",
+            "/data/data/2022F//JetMET/a385df82-6728-4ba9-a625-5eae8b3e83fa.root",
+            "/data/data/2022F//JetMET/5a03ef71-546b-4b99-9d87-878810a7c4ec.root",
+            "/data/data/2022F//JetMET/192c3b59-95e6-4915-a36b-13530d49fc39.root",
+            "/data/data/2022F//JetMET/b510f780-b711-42f0-870a-581636b8168d.root",
+            "/data/data/2022F//JetMET/dc317c06-b17a-4e8e-a10b-d4b31c7c3cb5.root",
+            "/data/data/2022F//JetMET/6bc090b6-9cde-469a-bca9-256f34ac0526.root",
+            "/data/data/2022F//JetMET/a48253b6-67f0-4660-82ee-eb33ebbad73f.root",
+            "/data/data/2022F//JetMET/6409590b-924f-4f3d-bc1f-36ebc997afca.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____58_": {
+        "files": [
+            "/data/data/2022F//JetMET/cc9b3586-845b-49eb-8ed3-77530c18565c.root",
+            "/data/data/2022F//JetMET/49377814-8151-4201-a73f-4c8572767915.root",
+            "/data/data/2022F//JetMET/e1d2ff23-cb39-4ff4-8ca2-9f6fdbab2411.root",
+            "/data/data/2022F//JetMET/5d1d0dd3-f872-4d12-b9ac-3d8a3659423e.root",
+            "/data/data/2022F//JetMET/1226b444-af49-4fcf-8400-d361809bf93a.root",
+            "/data/data/2022F//JetMET/85421c9d-3110-42bc-8db7-c5f25554176f.root",
+            "/data/data/2022F//JetMET/6be01f9b-0f61-4814-938d-6b2aebe18fbf.root",
+            "/data/data/2022F//JetMET/d0c1c347-dc21-4107-93d7-620ae914b06e.root",
+            "/data/data/2022F//JetMET/30331bff-c252-438d-9cb4-bf70716fa89c.root",
+            "/data/data/2022F//JetMET/9c3f5bfc-623e-4232-91ab-ec1fce66333c.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____59_": {
+        "files": [
+            "/data/data/2022F//JetMET/7309d8e6-7d91-4934-926e-3b0ffe66e86c.root",
+            "/data/data/2022F//JetMET/7cf73efc-2475-4f2f-a0ac-0f274aea6263.root",
+            "/data/data/2022F//JetMET/fef49e4e-c584-40cb-a5e3-808b9cd5e834.root",
+            "/data/data/2022F//JetMET/f749c348-e270-434e-8a50-2c170192a376.root",
+            "/data/data/2022F//JetMET/0290b2a7-4e14-43f1-9291-e16e4e351669.root",
+            "/data/data/2022F//JetMET/bd64bd63-120d-4606-b9c4-40d5f444b046.root",
+            "/data/data/2022F//JetMET/8b75b618-0986-4dbd-89ac-22dee160dc0e.root",
+            "/data/data/2022F//JetMET/fa15bafa-b8c8-4b1e-83b9-1999edefaeb3.root",
+            "/data/data/2022F//JetMET/a0d9dcb7-447a-415f-bd30-b980fac1e59e.root",
+            "/data/data/2022F//JetMET/325c09f9-4e17-424a-9739-c2574bb1a032.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____60_": {
+        "files": [
+            "/data/data/2022F//JetMET/948d2544-0256-4d19-ab66-322648135065.root",
+            "/data/data/2022F//JetMET/4e16dba8-cc2f-4bbc-a7d5-2917c0744075.root",
+            "/data/data/2022F//JetMET/a2546b54-62fa-4049-bb87-6e2dbdd585c8.root",
+            "/data/data/2022F//JetMET/e463ea86-e933-4724-9e18-88cce5447117.root",
+            "/data/data/2022F//JetMET/8c0783dd-b48e-4272-91c9-60807d23e78b.root",
+            "/data/data/2022F//JetMET/b358591e-e54d-4371-9da0-0824accc98e7.root",
+            "/data/data/2022F//JetMET/02fa70ed-c6cf-4669-b3aa-5ced7e92fe2f.root",
+            "/data/data/2022F//JetMET/299de2fb-6a0e-4291-b440-9bf5bfa857e1.root",
+            "/data/data/2022F//JetMET/a1b77500-2f22-48f4-a8bb-6366888a4428.root",
+            "/data/data/2022F//JetMET/98836496-a37e-4f30-9e05-9dbdb92e3ef2.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____61_": {
+        "files": [
+            "/data/data/2022F//JetMET/45fc1226-5c02-4802-af4d-8983396e6016.root",
+            "/data/data/2022F//JetMET/c0d56bbe-da02-4043-ac29-0b194ac1d8fe.root",
+            "/data/data/2022F//JetMET/f8414369-1a13-4265-995b-13606e3d8953.root",
+            "/data/data/2022F//JetMET/a9a5d220-8a94-4e6e-a894-28e3666555e7.root",
+            "/data/data/2022F//JetMET/3e9ac60b-805e-45ad-bfdd-e4fabb896df5.root",
+            "/data/data/2022F//JetMET/fe3c90bc-9d69-4912-aab6-db820175f9eb.root",
+            "/data/data/2022F//JetMET/6b7a65ee-728f-4db7-ab4a-4511f63f719e.root",
+            "/data/data/2022F//JetMET/73f307cb-f599-4ff1-becb-f25dbc1dbc0e.root",
+            "/data/data/2022F//JetMET/c08d0b44-7371-48bb-af9e-9b769a18e051.root",
+            "/data/data/2022F//JetMET/165242d3-9e43-4af4-ae86-68cab366b834.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____62_": {
+        "files": [
+            "/data/data/2022F//JetMET/801a4889-5410-4ecb-923e-6f0b47e51eae.root",
+            "/data/data/2022F//JetMET/eea801e3-37e5-472a-9267-6edf88861520.root",
+            "/data/data/2022F//JetMET/abe47109-f60c-489b-bd28-0fb5ddca5561.root",
+            "/data/data/2022F//JetMET/051f75ce-00bf-4ddd-aeb6-3b9271b0601d.root",
+            "/data/data/2022F//JetMET/337e244a-d244-48e7-aa30-a91a8d70b160.root",
+            "/data/data/2022F//JetMET/d28a14cd-3a8f-4f23-9709-070f544ab802.root",
+            "/data/data/2022F//JetMET/abcb9172-1728-480c-9eae-9124b23f928b.root",
+            "/data/data/2022F//JetMET/39b759ac-bf64-43ab-b362-065692a74eba.root",
+            "/data/data/2022F//JetMET/0eff2730-8e11-48f2-a180-be1c732cfe43.root",
+            "/data/data/2022F//JetMET/541f0f70-3192-411a-a870-2278d2765580.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____63_": {
+        "files": [
+            "/data/data/2022F//JetMET/ad6da223-a9aa-4402-8824-5227cc58de20.root",
+            "/data/data/2022F//JetMET/fff7f72e-f31a-48b2-b521-4f342b88923d.root",
+            "/data/data/2022F//JetMET/b938b8ad-6685-4fb3-81c1-30693d28888f.root",
+            "/data/data/2022F//JetMET/a3b23279-3009-4f73-9690-8c3eed06f5f2.root",
+            "/data/data/2022F//JetMET/1cf91af1-ead1-4f65-96e3-3d657212bc52.root",
+            "/data/data/2022F//JetMET/365869b0-6f97-45a8-9186-f0b5a234b98b.root",
+            "/data/data/2022F//JetMET/726a3a67-a92d-4ff2-8ff0-878c413b30dd.root",
+            "/data/data/2022F//JetMET/055971ed-b201-4f3c-8a83-be540327ac94.root",
+            "/data/data/2022F//JetMET/cf15a7c5-70bd-4a5a-b37d-6b93975d1f2a.root",
+            "/data/data/2022F//JetMET/311c2a9d-5192-4b99-8201-f543b9eb57ae.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____64_": {
+        "files": [
+            "/data/data/2022F//JetMET/d581cd30-20ca-4ea0-9175-bc4995dac069.root",
+            "/data/data/2022F//JetMET/99b111fb-5b7f-4f4f-a9ba-cdc6277269c7.root",
+            "/data/data/2022F//JetMET/caefe49c-7f18-4b1c-8435-44428c3e02e0.root",
+            "/data/data/2022F//JetMET/4534b67b-d83d-4397-af8a-9bf3e6db1227.root",
+            "/data/data/2022F//JetMET/1d6c1546-2f90-4673-bf2e-5342fa358276.root",
+            "/data/data/2022F//JetMET/0c509f0b-5c83-4fd6-ac91-ba8afa168d76.root",
+            "/data/data/2022F//JetMET/07b22e1b-98f6-4a08-bac9-17f84cf9ebc8.root",
+            "/data/data/2022F//JetMET/48df0889-f615-4cb0-9f39-dfe10e2a7073.root",
+            "/data/data/2022F//JetMET/7a424388-d7b7-485c-955f-2d0362a15fd6.root",
+            "/data/data/2022F//JetMET/344e4670-a0b3-469a-a9ae-782e3c8cfc57.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____65_": {
+        "files": [
+            "/data/data/2022F//JetMET/01e39e98-a1b0-4ae5-8d6d-13f95f963627.root",
+            "/data/data/2022F//JetMET/bc8e606d-eb94-417e-bc47-13dee6e6f336.root",
+            "/data/data/2022F//JetMET/ac6c92e0-6817-40b0-8092-391767e29c12.root",
+            "/data/data/2022F//JetMET/3e328194-00a6-47b2-9080-ce280bdf24ad.root",
+            "/data/data/2022F//JetMET/151c4970-8cd9-4fcd-a7c1-f2e64c5d5ebb.root",
+            "/data/data/2022F//JetMET/3d0ed66f-6058-4268-a5c3-55eaf91863cb.root",
+            "/data/data/2022F//JetMET/8b87533c-bbff-4cde-8c1e-d2eeccb53a00.root",
+            "/data/data/2022F//JetMET/35e1d48b-59c2-4743-8b87-100d3be65e45.root",
+            "/data/data/2022F//JetMET/0ff20ca2-4cfd-4656-b9c9-77fd6831c221.root",
+            "/data/data/2022F//JetMET/a90277a9-7ba1-447b-97f3-c925b2197cc8.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____66_": {
+        "files": [
+            "/data/data/2022F//JetMET/d7bcc317-316a-4e7b-9288-f7d38fd1ed18.root",
+            "/data/data/2022F//JetMET/b5d46926-04cb-4c28-9290-657160d81ef9.root",
+            "/data/data/2022F//JetMET/46427783-a9ca-40b4-804c-a1730bf6b562.root",
+            "/data/data/2022F//JetMET/25138abb-e70d-4698-bee1-b93bfed7fcc8.root",
+            "/data/data/2022F//JetMET/b0f51ee7-821f-41c8-aaa8-89c94e512843.root",
+            "/data/data/2022F//JetMET/f5b23fd8-0d8a-4814-98cc-715682423ead.root",
+            "/data/data/2022F//JetMET/5f67e79f-fc11-4cb9-b6bc-8ad504a09f30.root",
+            "/data/data/2022F//JetMET/1b2f1e9b-267b-415a-ae19-e08e612e680e.root",
+            "/data/data/2022F//JetMET/18ccfa73-9140-44b1-8270-7a82699cedcd.root",
+            "/data/data/2022F//JetMET/35df87e9-f7ec-4814-a413-c4f2c815a186.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____67_": {
+        "files": [
+            "/data/data/2022F//JetMET/94806bff-a738-4f26-a323-7692c5dfb094.root",
+            "/data/data/2022F//JetMET/1ef823c2-57f3-4221-907e-c35d637703cb.root",
+            "/data/data/2022F//JetMET/5ba39e91-c84f-44f0-a6d6-84f4685e209e.root",
+            "/data/data/2022F//JetMET/1935c31e-b280-4685-b07b-265016c1d1f4.root",
+            "/data/data/2022F//JetMET/df6b6e0c-0864-49a1-ad54-33902502002b.root",
+            "/data/data/2022F//JetMET/34096fc9-52d8-40a8-a68d-f4b23c82e947.root",
+            "/data/data/2022F//JetMET/93dbbd22-2c88-48c7-a214-368c34de5e2b.root",
+            "/data/data/2022F//JetMET/6cdb2033-0904-46fd-aa37-49f6d779e0df.root",
+            "/data/data/2022F//JetMET/7f936503-3760-4ca8-b193-79681de33c65.root",
+            "/data/data/2022F//JetMET/f6679e1c-0a1f-4f90-a8b8-773d2f075d0f.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____68_": {
+        "files": [
+            "/data/data/2022F//JetMET/c63c3389-592e-46f2-b000-001449934e06.root",
+            "/data/data/2022F//JetMET/69af6cae-f58d-4049-9388-1cfea5617f37.root",
+            "/data/data/2022F//JetMET/57f34902-ac30-4552-8ff3-148969fc2ab9.root",
+            "/data/data/2022F//JetMET/a3927520-3176-42cf-b090-dcbd5732e24d.root",
+            "/data/data/2022F//JetMET/3fac2a52-e036-4607-bfae-3e32b1ab8daf.root",
+            "/data/data/2022F//JetMET/5bac4636-6490-4bfd-bc4d-289a960abf70.root",
+            "/data/data/2022F//JetMET/0385ea04-03c0-4588-a5bb-9c9bc79e3bac.root",
+            "/data/data/2022F//JetMET/43183470-2771-4351-89b6-b352c8714d32.root",
+            "/data/data/2022F//JetMET/fb87e5cc-1e42-4a80-a7bf-0233419690b5.root",
+            "/data/data/2022F//JetMET/0fb88dd7-e9b1-4843-9d8e-56e26c4bb1ec.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____69_": {
+        "files": [
+            "/data/data/2022F//JetMET/95f7723c-270c-417c-aa37-23db647d1a84.root",
+            "/data/data/2022F//JetMET/7ec448b5-68a6-4207-bb70-d7d272492aa6.root",
+            "/data/data/2022F//JetMET/f6145d62-329e-435c-a426-710e02b9770c.root",
+            "/data/data/2022F//JetMET/a0ea71b0-f529-43d0-bd97-ceea3e28c771.root",
+            "/data/data/2022F//JetMET/efef680a-ef1a-427a-97e6-4e456351c39d.root",
+            "/data/data/2022F//JetMET/33c7547b-684c-4a3c-bf80-e779ba23534c.root",
+            "/data/data/2022F//JetMET/7da57cfb-5248-4cd9-96ff-9731d379962d.root",
+            "/data/data/2022F//JetMET/781d28f3-4238-4f08-a40d-3de728b32347.root",
+            "/data/data/2022F//JetMET/718133d6-e194-48a7-8c3d-60e9e2c924c8.root",
+            "/data/data/2022F//JetMET/c65c8d31-fddc-4050-821b-e4793e0356a7.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____70_": {
+        "files": [
+            "/data/data/2022F//JetMET/13ac4438-0dd0-463d-a3b5-81ce2dfc857d.root",
+            "/data/data/2022F//JetMET/08379df7-03d4-4b64-9588-cd0f4af15cc8.root",
+            "/data/data/2022F//JetMET/b9a8eb4d-0c66-4e44-b72f-0f38c1ac7a0b.root",
+            "/data/data/2022F//JetMET/8968adf6-dbd5-4073-8ee0-0213e1b50405.root",
+            "/data/data/2022F//JetMET/5a4c38e9-6aae-456b-b8d3-d4d8482e3212.root",
+            "/data/data/2022F//JetMET/c6b668a8-7639-47b1-bb07-b3f2c0dfca84.root",
+            "/data/data/2022F//JetMET/fe4c1638-df3a-4330-87d2-3cb95c7a5549.root",
+            "/data/data/2022F//JetMET/4288a0bf-d4ed-470a-bfd9-1fe436a792c8.root",
+            "/data/data/2022F//JetMET/1e8b8d6f-738c-49b5-8a4f-5c6f5b34c020.root",
+            "/data/data/2022F//JetMET/12b4c31e-21aa-4d69-807b-0280a2f851c9.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____71_": {
+        "files": [
+            "/data/data/2022F//JetMET/c8835a49-db19-4a13-a072-c42c5d7ca68f.root",
+            "/data/data/2022F//JetMET/e56aa14d-197c-483a-b45d-ca61e544b5d7.root",
+            "/data/data/2022F//JetMET/f9651b82-2ff8-456b-a859-e2bad0f9f47e.root",
+            "/data/data/2022F//JetMET/567f8db1-bfe0-4eab-87be-c9b176dd9f97.root",
+            "/data/data/2022F//JetMET/85ac357d-b127-4c3a-80c4-b0088c87cc71.root",
+            "/data/data/2022F//JetMET/58c73415-c3ee-47c0-8e5c-3e2e739cff03.root",
+            "/data/data/2022F//JetMET/3f0f0f90-db4f-4c4c-935f-a7f2bfc924cf.root",
+            "/data/data/2022F//JetMET/8e307e6a-dc99-40b7-84d4-c5a0fd3c6caf.root",
+            "/data/data/2022F//JetMET/1ae05308-215c-4a0c-91e5-63c20d295140.root",
+            "/data/data/2022F//JetMET/ba879c5e-de67-406e-9de9-7b2cfbb09fc3.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____72_": {
+        "files": [
+            "/data/data/2022F//JetMET/bdcc057b-60a8-4ba5-b998-74be812cd066.root",
+            "/data/data/2022F//JetMET/cfca87be-c16d-4f7c-ad96-175680dfd190.root",
+            "/data/data/2022F//JetMET/29bdab0a-04ca-49d8-aed6-b4070bfff46a.root",
+            "/data/data/2022F//JetMET/1de172fe-5b32-4de4-b7f6-726dd5814620.root",
+            "/data/data/2022F//JetMET/f1f6a633-7428-422d-98fb-3b46ba099706.root",
+            "/data/data/2022F//JetMET/7a6a76a2-1c7c-4f92-b99f-834bdc2924c7.root",
+            "/data/data/2022F//JetMET/f839a8cf-2e3e-4b8d-b847-bc15d7c24aa0.root",
+            "/data/data/2022F//JetMET/979ad350-5737-47b8-94bc-ed7bf2f13b70.root",
+            "/data/data/2022F//JetMET/f4a39ec0-5617-4933-95d4-d9e7d57cfa6e.root",
+            "/data/data/2022F//JetMET/f0c373b3-6b09-433c-8041-6f3207c804bf.root"
+        ],
+        "xs": -1
+    },
+    "JetMET____73_": {
+        "files": [
+            "/data/data/2022F//JetMET/38438a80-1739-4f16-ba64-9bd36b888c90.root",
+            "/data/data/2022F//JetMET/20a85a3a-0a17-4a34-953e-b268a5bd988d.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____18_": {
+        "files": [
+            "/data/data/2022F//EGamma/aaad4008-bc1c-483e-99d6-190c54065790.root",
+            "/data/data/2022F//EGamma/98c8ecb3-f9e3-44ba-a988-fe5b7d988226.root",
+            "/data/data/2022F//EGamma/ee55f766-a943-41d9-9a15-9735b965aae2.root",
+            "/data/data/2022F//EGamma/f11bd1fa-5439-4ae8-9f04-ac98bd0d6f3a.root",
+            "/data/data/2022F//EGamma/4fd2751a-23dc-4110-899f-42b2225d49e0.root",
+            "/data/data/2022F//EGamma/ff5c8990-2a2f-48a6-82d0-7378c2d91072.root",
+            "/data/data/2022F//EGamma/f84b539b-41a3-43a8-8223-e3be0083993b.root",
+            "/data/data/2022F//EGamma/ec4295a3-f525-4ade-bb3f-9ccdb1f2e6c5.root",
+            "/data/data/2022F//EGamma/bd942770-6ee1-42de-9393-ebbf9ec3600b.root",
+            "/data/data/2022F//EGamma/a8f57eae-d7cc-4e4c-ad89-39ccef6a3a98.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____19_": {
+        "files": [
+            "/data/data/2022F//EGamma/2d52729f-bddd-47b8-b936-15910892c0e8.root",
+            "/data/data/2022F//EGamma/84d36d1b-df2b-4c7e-8cad-9afcf5fbfff0.root",
+            "/data/data/2022F//EGamma/d9c1cd85-8c6e-435a-a467-4feeafcece9f.root",
+            "/data/data/2022F//EGamma/c690d076-e355-4fff-b541-b47d92709571.root",
+            "/data/data/2022F//EGamma/745bac36-3dc9-436d-8085-07e7594645a9.root",
+            "/data/data/2022F//EGamma/a83afc16-b2a9-4ccc-b0c0-f8aa1c3f68ad.root",
+            "/data/data/2022F//EGamma/d46f2dd4-576c-49bb-a2f5-fc6a9c5fbb44.root",
+            "/data/data/2022F//EGamma/56e00ef2-6b08-4973-b639-c44333962f90.root",
+            "/data/data/2022F//EGamma/7ce04998-f5ec-41be-99a9-05da133c44cc.root",
+            "/data/data/2022F//EGamma/08f95793-6d99-4afa-9701-8816739a81e1.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____20_": {
+        "files": [
+            "/data/data/2022F//EGamma/a92d0cee-01d9-437c-8dcb-434a81a6282a.root",
+            "/data/data/2022F//EGamma/e409657c-ceb2-4abd-9d1a-68fbe623e42d.root",
+            "/data/data/2022F//EGamma/1b81fc1e-0dce-46aa-8a72-8304c2ac982b.root",
+            "/data/data/2022F//EGamma/d3f203e6-6c76-42de-a2bf-48ce0f4ee2b3.root",
+            "/data/data/2022F//EGamma/8641f6ee-3a04-4242-a8cd-b5d83af612bf.root",
+            "/data/data/2022F//EGamma/8137015c-d86e-47a2-9bfe-478501fdfc97.root",
+            "/data/data/2022F//EGamma/9a911cfe-540d-44ce-8877-6f6710891891.root",
+            "/data/data/2022F//EGamma/89f1ee5a-489c-4035-aae1-7b6f88e34dff.root",
+            "/data/data/2022F//EGamma/ce83a820-4a44-493d-9984-42ddf06236db.root",
+            "/data/data/2022F//EGamma/6ee6d322-6569-4cb3-a529-bc688506a4eb.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____21_": {
+        "files": [
+            "/data/data/2022F//EGamma/45b57fe2-dd86-4084-9bef-cdbeeec97d0b.root",
+            "/data/data/2022F//EGamma/1970c5fa-5bba-4c28-8619-a0e000c8195d.root",
+            "/data/data/2022F//EGamma/d8bc9dd9-d1af-400f-a4fd-d2c4c98bdaeb.root",
+            "/data/data/2022F//EGamma/18f6e373-8321-426e-aed7-b826bb0b2c46.root",
+            "/data/data/2022F//EGamma/7d56a258-8a2e-469c-9bb1-48147242bc65.root",
+            "/data/data/2022F//EGamma/e9a00437-1ce4-4d2b-95ca-0e7806d9b482.root",
+            "/data/data/2022F//EGamma/878841c5-3373-4431-8a33-f159ded4db02.root",
+            "/data/data/2022F//EGamma/1e8943fa-c357-4ec9-8b5c-64dc28436553.root",
+            "/data/data/2022F//EGamma/3967d1f3-a097-4ff3-be93-2e40a22ba72c.root",
+            "/data/data/2022F//EGamma/bc360146-8a16-4d78-93b0-924940edb182.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____22_": {
+        "files": [
+            "/data/data/2022F//EGamma/75098089-4a98-44fb-b7a9-5389d67f40d4.root",
+            "/data/data/2022F//EGamma/f5df6f48-6df3-4b6a-aeef-a9bad107948e.root",
+            "/data/data/2022F//EGamma/eacaa1cc-5781-4db5-ac1f-0f778ff53b59.root",
+            "/data/data/2022F//EGamma/0f8beecc-5016-4c5e-8e77-054e038e4ebc.root",
+            "/data/data/2022F//EGamma/5450a261-cfb4-45bd-a843-8400c2ec8093.root",
+            "/data/data/2022F//EGamma/eff00f50-919e-4001-9e91-49ff4eb7a379.root",
+            "/data/data/2022F//EGamma/1464842e-3b44-43b0-822b-d4337a97ab32.root",
+            "/data/data/2022F//EGamma/31bf30de-56ff-4ae3-bcef-0b0b8eb4dd76.root",
+            "/data/data/2022F//EGamma/d36894b9-941d-4dfa-a9f4-a2e3651333a2.root",
+            "/data/data/2022F//EGamma/e19f87d5-067f-48ba-adbf-19f91bbf754f.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____23_": {
+        "files": [
+            "/data/data/2022F//EGamma/f39550b8-2f3d-4f80-a57c-b1958646d5d6.root",
+            "/data/data/2022F//EGamma/b324a433-334e-431f-be68-048455b56cb6.root",
+            "/data/data/2022F//EGamma/ad68f55f-dee4-42d4-8bf2-21c28b6bc29d.root",
+            "/data/data/2022F//EGamma/2466a74d-19ad-45c0-b31d-05771e79b52a.root",
+            "/data/data/2022F//EGamma/17e8fe5f-3717-49a2-b991-e59686f0b7f8.root",
+            "/data/data/2022F//EGamma/f16106b2-3668-479e-bbe6-acece0912f56.root",
+            "/data/data/2022F//EGamma/b6ea787f-8665-429c-9e12-d32f226c0d8e.root",
+            "/data/data/2022F//EGamma/4afbee03-c92c-4ee2-a8a5-9580a4e9cb4d.root",
+            "/data/data/2022F//EGamma/98e4de5d-3ce1-4d46-8bd8-ac7a7c8d5f78.root",
+            "/data/data/2022F//EGamma/4ece9d2f-3d64-484a-8016-09fb0e31f7bc.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____24_": {
+        "files": [
+            "/data/data/2022F//EGamma/764bc8f7-dd22-489e-b44a-3b10d23f06a0.root",
+            "/data/data/2022F//EGamma/a8f96491-59bf-49ef-b42c-c70f09679dcb.root",
+            "/data/data/2022F//EGamma/317b217a-28f2-4211-944f-2450a5b5c7c6.root",
+            "/data/data/2022F//EGamma/fdfff090-ccf8-495a-a502-71f8187eb403.root",
+            "/data/data/2022F//EGamma/fd36c6c5-db95-49d7-9832-fec1e4e175a8.root",
+            "/data/data/2022F//EGamma/e5ff45c0-829b-4c0c-bd35-474d39265e2c.root",
+            "/data/data/2022F//EGamma/d841c8eb-d981-4a06-b885-81427e4e40f9.root",
+            "/data/data/2022F//EGamma/257856da-8d9f-4213-8ef1-a4ad9be7afe1.root",
+            "/data/data/2022F//EGamma/d851be73-017e-4036-bc39-5c390165f121.root",
+            "/data/data/2022F//EGamma/587d49c7-c5d1-4576-9e3c-9c017fd61a28.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____25_": {
+        "files": [
+            "/data/data/2022F//EGamma/6fd1dc94-4ee8-4a34-965f-b2426f5785a4.root",
+            "/data/data/2022F//EGamma/d969b8d1-d5a5-4419-a00a-2179d6a02707.root",
+            "/data/data/2022F//EGamma/22b13506-3ae1-4479-9404-198c72fb4d24.root",
+            "/data/data/2022F//EGamma/a82c5309-3769-4c55-b377-be980c0d13fa.root",
+            "/data/data/2022F//EGamma/14ccc715-082b-494e-80cc-bc1fe4fd840e.root",
+            "/data/data/2022F//EGamma/8a6a18c6-3d1f-439b-ba7a-17b4bf08e7b1.root",
+            "/data/data/2022F//EGamma/03ea3f16-62e4-4414-ac11-585bf622f88f.root",
+            "/data/data/2022F//EGamma/c1a303a7-2209-4fda-a296-23ba3c312ffc.root",
+            "/data/data/2022F//EGamma/755e3c8e-93ac-44dd-a340-6738c51e7c58.root",
+            "/data/data/2022F//EGamma/69156778-3be8-425e-8d1d-eb1e91c30be5.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____26_": {
+        "files": [
+            "/data/data/2022F//EGamma/e08e5a25-6d87-490b-b828-f9a59e6cb838.root",
+            "/data/data/2022F//EGamma/6817a41b-783d-4272-802d-4eb5ac4e848f.root",
+            "/data/data/2022F//EGamma/5b44727a-aa86-4935-9dd5-332e1780a823.root",
+            "/data/data/2022F//EGamma/0a3dd7de-4a6a-40d8-afd5-97056d17ab41.root",
+            "/data/data/2022F//EGamma/a6aebfe6-0dc1-4985-9fa2-ad0787abc70f.root",
+            "/data/data/2022F//EGamma/3ef13a4f-d89c-410a-856e-7c69708cd1e9.root",
+            "/data/data/2022F//EGamma/b49b73c5-290b-4601-89c6-201c936744db.root",
+            "/data/data/2022F//EGamma/a4b6bea3-6642-4bee-8a9f-553f8bd2a177.root",
+            "/data/data/2022F//EGamma/563d49e2-b088-4e46-8046-338b22b53397.root",
+            "/data/data/2022F//EGamma/5a76a84d-939b-430d-b19f-134dce6818e5.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____27_": {
+        "files": [
+            "/data/data/2022F//EGamma/80efa838-0b45-4307-a0a6-09f5ba6d3ded.root",
+            "/data/data/2022F//EGamma/99bf7683-d317-4bf7-8f93-6a3f0781f286.root",
+            "/data/data/2022F//EGamma/6e73e603-694c-4cf1-963c-7cf02c69c850.root",
+            "/data/data/2022F//EGamma/d83804fa-aa7b-4175-beb7-b10dac84b336.root",
+            "/data/data/2022F//EGamma/50eafd8e-f9d0-4aaf-a6a4-8d493146306f.root",
+            "/data/data/2022F//EGamma/69350aef-9e27-4822-9b8d-c75a09c971d8.root",
+            "/data/data/2022F//EGamma/9a9d2553-dca9-46fb-b9a3-2da2ccb267dd.root",
+            "/data/data/2022F//EGamma/aac27692-4444-4f42-a149-c87182855596.root",
+            "/data/data/2022F//EGamma/2a90389e-e42b-4a7d-8d79-f1d341c60d09.root",
+            "/data/data/2022F//EGamma/b7a59f08-a0f2-40fe-8fc7-d9cc01f371bc.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____28_": {
+        "files": [
+            "/data/data/2022F//EGamma/d57e9a60-70c1-4b3f-a252-598195df8af6.root",
+            "/data/data/2022F//EGamma/327508e6-f593-4cc2-837d-ed51a48f2b8b.root",
+            "/data/data/2022F//EGamma/c8db876f-f0e5-4f3a-ab5b-019203c2dfb7.root",
+            "/data/data/2022F//EGamma/aa4729f1-a870-40fc-8020-b3ae0f00fe92.root",
+            "/data/data/2022F//EGamma/56eae3a0-8478-4f5a-b053-b684a91e1e4a.root",
+            "/data/data/2022F//EGamma/9e5686ea-650a-4093-bddf-721b126eeb55.root",
+            "/data/data/2022F//EGamma/41cab116-b9a4-47f4-91cf-a7ddc596135b.root",
+            "/data/data/2022F//EGamma/d9709cac-d41b-4e36-b773-6146453bfef1.root",
+            "/data/data/2022F//EGamma/34bd160d-91bd-4ad5-a976-04f60402c091.root",
+            "/data/data/2022F//EGamma/659d41c2-87d1-46bc-b673-7172f480aa41.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____29_": {
+        "files": [
+            "/data/data/2022F//EGamma/3b2ae99d-00ba-44fa-aca0-68877e51e6b6.root",
+            "/data/data/2022F//EGamma/29444725-7d7f-4940-9aa6-9982a7b92ed9.root",
+            "/data/data/2022F//EGamma/e652a92a-34e8-43f1-bd69-e64fd02c7177.root",
+            "/data/data/2022F//EGamma/c5b7238e-ca8f-4470-925b-c96109573f7a.root",
+            "/data/data/2022F//EGamma/feb17191-0de3-4aa6-9b54-995d58461177.root",
+            "/data/data/2022F//EGamma/5c77ce4f-4e35-4214-a8be-b2a8285d8382.root",
+            "/data/data/2022F//EGamma/daf5d8a8-bfce-40f9-be4e-e163c782b631.root",
+            "/data/data/2022F//EGamma/afda4b06-0258-4d5d-8406-2dd87622346e.root",
+            "/data/data/2022F//EGamma/c734376c-28bf-40a3-8d92-271a54ae881f.root",
+            "/data/data/2022F//EGamma/62cd1297-00c8-4579-b14d-d3631cb54175.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____30_": {
+        "files": [
+            "/data/data/2022F//EGamma/ef82395a-2881-4592-82f4-345f3286dea3.root",
+            "/data/data/2022F//EGamma/4dd73622-2153-40d6-b319-7214b283a0be.root",
+            "/data/data/2022F//EGamma/14ed5ac4-0db6-46df-a440-477839b3cedf.root",
+            "/data/data/2022F//EGamma/5ca386f4-2f79-4c48-8bd4-19a1d29328ed.root",
+            "/data/data/2022F//EGamma/2283873e-849a-470d-9f98-22e7101eb07c.root",
+            "/data/data/2022F//EGamma/605ab7bd-6a7b-4998-a19d-fe3a37976b77.root",
+            "/data/data/2022F//EGamma/b959fa7f-8382-42b4-b550-98e54dcdb899.root",
+            "/data/data/2022F//EGamma/f665ef1f-24ef-4e67-99a9-14e0967260f2.root",
+            "/data/data/2022F//EGamma/526e0e45-e517-4ef3-93f6-277e074df907.root",
+            "/data/data/2022F//EGamma/1fa0273f-6b54-4276-97d6-141c42132423.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____31_": {
+        "files": [
+            "/data/data/2022F//EGamma/0713f6b5-66ed-49d1-9621-478c699171f5.root",
+            "/data/data/2022F//EGamma/1b27e0a7-9517-49b4-bbf3-572872fbe581.root",
+            "/data/data/2022F//EGamma/e063491f-f0f4-4efc-85f8-9c14b5b4c187.root",
+            "/data/data/2022F//EGamma/bef1674a-9757-4e0b-9776-cb70e718a0ab.root",
+            "/data/data/2022F//EGamma/f5167f01-09b8-4bfb-bc40-602826492ea2.root",
+            "/data/data/2022F//EGamma/afb44f38-f89a-4435-be60-c241b3707c73.root",
+            "/data/data/2022F//EGamma/45bc9844-5373-4375-99dc-2cfb79c0dba5.root",
+            "/data/data/2022F//EGamma/9a778563-9df9-4090-b304-758457a07a64.root",
+            "/data/data/2022F//EGamma/ec51939d-5fa7-42c9-bb70-ee67bf97142d.root",
+            "/data/data/2022F//EGamma/ecfbd453-3088-414e-a1f9-d51b73d82a12.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____32_": {
+        "files": [
+            "/data/data/2022F//EGamma/8fe5f4a3-3878-4842-b7f1-2079111d278f.root",
+            "/data/data/2022F//EGamma/572f3527-34b7-4ced-90d9-aca9dccb3dc1.root",
+            "/data/data/2022F//EGamma/d4bd16ca-3666-4c1a-9702-82d624975172.root",
+            "/data/data/2022F//EGamma/9e0d0e9f-3c11-436d-b894-5943a445bc3b.root",
+            "/data/data/2022F//EGamma/dec1af23-c502-41a7-a873-23a1a42ba1a6.root",
+            "/data/data/2022F//EGamma/3aec3139-0e7e-47c2-b4a8-4ab2649ddb0f.root",
+            "/data/data/2022F//EGamma/d8b736a2-21e4-4fd8-8a6e-5634fc95adab.root",
+            "/data/data/2022F//EGamma/7d8b5a8d-d0b7-4b2a-9b22-d959b2b3022a.root",
+            "/data/data/2022F//EGamma/887a745a-d007-4165-9997-6976216e3863.root",
+            "/data/data/2022F//EGamma/8c4f4e3d-b0a5-41c7-b30b-cf24a097c850.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____33_": {
+        "files": [
+            "/data/data/2022F//EGamma/c46f22b7-b7d5-4c12-9122-54b1715d4d53.root",
+            "/data/data/2022F//EGamma/e6a48944-cff6-455c-9351-c2acd1c35af9.root",
+            "/data/data/2022F//EGamma/55688a2d-a3fc-485c-b07a-595eebbd3429.root",
+            "/data/data/2022F//EGamma/d5ec4083-d3fb-42fa-83b7-069fcc6d2eff.root",
+            "/data/data/2022F//EGamma/e5fd959b-7b94-4a19-ab6d-0cc8a511acc8.root",
+            "/data/data/2022F//EGamma/0f9eaac4-c232-4b63-b2f7-69fe0da70a79.root",
+            "/data/data/2022F//EGamma/f8e23fdf-ad18-47f1-8792-afc479bdc5c0.root",
+            "/data/data/2022F//EGamma/5bb4a9a1-0192-46dc-a5b5-eb69954c5c8c.root",
+            "/data/data/2022F//EGamma/96fc9d8b-1649-4484-b0da-3b1f304fd440.root",
+            "/data/data/2022F//EGamma/4eecd548-d344-4fbe-b3f9-ee6cfe316924.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____34_": {
+        "files": [
+            "/data/data/2022F//EGamma/41ba3d7e-c05b-4a0e-ab1e-d6bd18b8f39b.root",
+            "/data/data/2022F//EGamma/79d2471e-37e9-426e-8bdc-9e122848c41e.root",
+            "/data/data/2022F//EGamma/40944190-f528-4a47-a80d-30dfd0624da3.root",
+            "/data/data/2022F//EGamma/7841bc72-080a-488d-ac54-521727099de1.root",
+            "/data/data/2022F//EGamma/40c1fe66-363f-4452-a301-9f8e956fad7c.root",
+            "/data/data/2022F//EGamma/a901f10d-f5c3-4854-a410-0eb3ff536829.root",
+            "/data/data/2022F//EGamma/3000bf2d-35be-410b-8970-4c968291d142.root",
+            "/data/data/2022F//EGamma/95dddfc6-188e-40c1-be3e-6c64bef74aab.root",
+            "/data/data/2022F//EGamma/2fd88b00-890b-4016-9b2b-ec34ac51bc79.root",
+            "/data/data/2022F//EGamma/6d66331b-0499-4fc2-b1b8-26ecbf457618.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____35_": {
+        "files": [
+            "/data/data/2022F//EGamma/ebd820f4-1313-41b2-a810-16dadf8c14a7.root",
+            "/data/data/2022F//EGamma/642409a3-9c24-46ac-ab3a-d6a6799540b8.root",
+            "/data/data/2022F//EGamma/b201582a-8910-4d8a-9539-85d1dc043a1c.root",
+            "/data/data/2022F//EGamma/5e82c797-bef1-47d4-b86e-2ff40c6c1246.root",
+            "/data/data/2022F//EGamma/af9e8bc7-f7bd-41fc-9567-8192c459c80d.root",
+            "/data/data/2022F//EGamma/274cdb63-e6a9-4ba4-8fa9-512bd560686d.root",
+            "/data/data/2022F//EGamma/6f304b26-c46a-480e-b301-a47317536bf0.root",
+            "/data/data/2022F//EGamma/ad1959f1-0b73-4a6a-aaa7-7e8acadc1332.root",
+            "/data/data/2022F//EGamma/bc82a41c-ec38-413c-ac51-81a1135e296d.root",
+            "/data/data/2022F//EGamma/0de789e8-e9c1-41ad-9a44-ffcc3540af2a.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____36_": {
+        "files": [
+            "/data/data/2022F//EGamma/dd11e265-b160-4712-a250-2ef71c9d290a.root",
+            "/data/data/2022F//EGamma/1dfe9cf4-4ab8-45b1-ab83-9146efeff871.root",
+            "/data/data/2022F//EGamma/34922c61-d0ea-40d7-8a50-010964dc9e73.root",
+            "/data/data/2022F//EGamma/41469f0f-f2e6-4621-86af-b11a9851c49e.root",
+            "/data/data/2022F//EGamma/960adfbc-0902-4822-bc08-dfd938441a2e.root",
+            "/data/data/2022F//EGamma/1917ba95-a67d-40d7-9a37-4d510aeb7820.root",
+            "/data/data/2022F//EGamma/672b5420-31f6-4ac9-ae20-34d646688133.root",
+            "/data/data/2022F//EGamma/3a23a505-2ad8-4a91-9592-8b5fa53fc4e1.root",
+            "/data/data/2022F//EGamma/97af0947-7459-47fd-9021-315aa1dd1263.root",
+            "/data/data/2022F//EGamma/1b15963f-faab-4aad-9aaf-fe916e725bab.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____37_": {
+        "files": [
+            "/data/data/2022F//EGamma/f8d29f69-97cc-4de0-bc71-b06becc2cf3f.root",
+            "/data/data/2022F//EGamma/f6ab6859-f28c-4a16-81ab-c030f7f0c2bf.root",
+            "/data/data/2022F//EGamma/07c41d5d-de3c-4a0f-b0c9-a7ccecbb8f70.root",
+            "/data/data/2022F//EGamma/ef7723c9-a6cd-485f-8d70-716e2c64c250.root",
+            "/data/data/2022F//EGamma/0e057638-04ff-4c63-8c17-9a1effedac06.root",
+            "/data/data/2022F//EGamma/b5fe30c8-2ed9-4990-b487-deb7ce1382c7.root",
+            "/data/data/2022F//EGamma/7a842bfd-b33f-4fc9-a16a-e435814206a4.root",
+            "/data/data/2022F//EGamma/73861347-fce4-4c2e-86fb-861163c310e8.root",
+            "/data/data/2022F//EGamma/daa1dad8-6d8b-4b6f-b1dc-dc6ba9cb801b.root",
+            "/data/data/2022F//EGamma/c0a1dac9-3791-408e-b3ca-b54cf4ec9118.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____38_": {
+        "files": [
+            "/data/data/2022F//EGamma/c1bcc4e2-3a52-42ec-b235-44a665f31fc7.root",
+            "/data/data/2022F//EGamma/5ba0d54e-5380-454f-91f8-52243db57d32.root",
+            "/data/data/2022F//EGamma/5cbcee31-493a-4c75-96df-146fa316745f.root",
+            "/data/data/2022F//EGamma/adee6511-db1a-42ce-8d89-ea8ae563c842.root",
+            "/data/data/2022F//EGamma/1d5ac346-c90f-4061-982b-9b417560dd33.root",
+            "/data/data/2022F//EGamma/8297a07c-1e4f-4661-8623-5ac2156a9430.root",
+            "/data/data/2022F//EGamma/686092d5-0fdb-45f6-8dc7-0f65e3b26065.root",
+            "/data/data/2022F//EGamma/24cbe6f1-6572-48fd-8dae-dc63cbee1fe0.root",
+            "/data/data/2022F//EGamma/abc8241d-9baa-4621-99ad-68d1c3cb1dd1.root",
+            "/data/data/2022F//EGamma/709d1820-ddf9-4a79-aaea-0a73c9a2d1de.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____39_": {
+        "files": [
+            "/data/data/2022F//EGamma/38a46ae5-8a99-4851-ae6a-67c9cb45f912.root",
+            "/data/data/2022F//EGamma/5bff1340-db5f-4bda-bd61-c3f532512f87.root",
+            "/data/data/2022F//EGamma/33614d7f-b625-4bb7-b38e-091b0175123a.root",
+            "/data/data/2022F//EGamma/d75c30d4-22a0-4f1b-a963-8acc9b412849.root",
+            "/data/data/2022F//EGamma/d31f17e8-210c-4a07-94ac-b80547641fcf.root",
+            "/data/data/2022F//EGamma/dfa2d3e7-951b-4ec0-85e6-20d02b844ea5.root",
+            "/data/data/2022F//EGamma/1ca1568c-8207-424b-87aa-5d4ac9226a7b.root",
+            "/data/data/2022F//EGamma/95ec3f65-8deb-4630-9d08-2c60c841ff79.root",
+            "/data/data/2022F//EGamma/cc54e6e9-d637-4e0e-bf31-4c9ab6652a27.root",
+            "/data/data/2022F//EGamma/3460b29a-7442-475f-a5b2-654944313421.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____40_": {
+        "files": [
+            "/data/data/2022F//EGamma/9ae3ecd7-9dfa-4039-aaed-ea67bd339a5b.root",
+            "/data/data/2022F//EGamma/7bad43d2-fe6c-489b-9e91-dbac4bb74351.root",
+            "/data/data/2022F//EGamma/e06544fc-259f-4dc9-be9e-0fcae1c1cdc9.root",
+            "/data/data/2022F//EGamma/c0b101d3-d56e-4418-9b7c-6e271af84f33.root",
+            "/data/data/2022F//EGamma/8edb4ea4-f5ec-479d-9cbb-0c7bbe775891.root",
+            "/data/data/2022F//EGamma/9dbc174e-64d4-4441-a061-a9c47fa1752b.root",
+            "/data/data/2022F//EGamma/246e20bd-a925-4291-92ac-c12feb470e58.root",
+            "/data/data/2022F//EGamma/c1ceb453-0611-4bba-ba4c-6664894b95ee.root",
+            "/data/data/2022F//EGamma/1e7a1e38-db05-4dc2-ab0b-19eb079636ee.root",
+            "/data/data/2022F//EGamma/052912d0-c508-422b-a7e8-6280097728bc.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____41_": {
+        "files": [
+            "/data/data/2022F//EGamma/1221f8bf-80b2-48d4-abfa-0a778529db35.root",
+            "/data/data/2022F//EGamma/defdb32e-fe97-4601-a6c7-e445cb3fde07.root",
+            "/data/data/2022F//EGamma/6928f35a-525b-4afc-8a48-bc20082986a5.root",
+            "/data/data/2022F//EGamma/b0bcb63e-d5f0-4591-9d02-e23631f1b2f3.root",
+            "/data/data/2022F//EGamma/6d3d8aeb-6b59-4da5-98c5-3920eb2e7338.root",
+            "/data/data/2022F//EGamma/e4576769-af6c-4e1b-a5c6-a8baa527e6c8.root",
+            "/data/data/2022F//EGamma/ac02497b-80c5-4b80-9fba-fbfa3175a764.root",
+            "/data/data/2022F//EGamma/d1a3434b-60dc-4a28-9eaa-879ed88f9410.root",
+            "/data/data/2022F//EGamma/6f7a2444-7679-4d97-b1ad-fb13af4bc33c.root",
+            "/data/data/2022F//EGamma/595f4c0c-f8b3-465f-864d-f934ef647d87.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____42_": {
+        "files": [
+            "/data/data/2022F//EGamma/6d41bbbb-2a80-4d85-bae8-00fe18fdc7cc.root",
+            "/data/data/2022F//EGamma/b6c4fc7a-305d-48e6-b08b-cd5982f5f11b.root",
+            "/data/data/2022F//EGamma/80d13d80-7bf0-44dc-91c3-682a95af2eb1.root",
+            "/data/data/2022F//EGamma/d32fa758-791e-448c-9184-4497a68c8baf.root",
+            "/data/data/2022F//EGamma/5f5febd2-77fa-4c7e-ac5a-beac788d5c8e.root",
+            "/data/data/2022F//EGamma/5bbf7d32-4885-4da2-a5f2-e25276c80c12.root",
+            "/data/data/2022F//EGamma/82621fab-21d9-47f4-911b-27e946efaff6.root",
+            "/data/data/2022F//EGamma/a15eff67-7993-416f-b57e-c8ee0a050e91.root",
+            "/data/data/2022F//EGamma/4b2b3695-4e93-4d9b-8608-c80fe697d228.root",
+            "/data/data/2022F//EGamma/556052c9-45a0-4e29-a92d-1a350f1c7dee.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____43_": {
+        "files": [
+            "/data/data/2022F//EGamma/807a24d4-290f-4333-8bfb-7a075dc2ff33.root",
+            "/data/data/2022F//EGamma/8878bc0a-b0bf-4d25-a532-36853aa629a5.root",
+            "/data/data/2022F//EGamma/ccbc9274-6f08-4a33-969b-b9647c38a0b1.root",
+            "/data/data/2022F//EGamma/2f6c184c-a5c2-469b-8786-e74a20bebfa3.root",
+            "/data/data/2022F//EGamma/78e15232-28f0-4498-9107-fe9ae504d695.root",
+            "/data/data/2022F//EGamma/29ab5667-d191-4024-b1ef-2b051d8018bb.root",
+            "/data/data/2022F//EGamma/58642d02-254a-47cd-9941-2c04d8f502be.root",
+            "/data/data/2022F//EGamma/b9f339be-3634-438f-a20e-6fcf2a3dbd1f.root",
+            "/data/data/2022F//EGamma/ebb3f837-f04e-4411-8f76-cce664649490.root",
+            "/data/data/2022F//EGamma/2fc29b6b-67f7-4ff9-87d2-d1a4e9c54185.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____44_": {
+        "files": [
+            "/data/data/2022F//EGamma/9ccbdf9a-2109-4c7d-a149-d4e6a6bfacf9.root",
+            "/data/data/2022F//EGamma/85b0a09c-7604-492a-9ff7-f049c6c53b02.root",
+            "/data/data/2022F//EGamma/8c76b8aa-db0c-4515-aa32-26d0c3f96c90.root",
+            "/data/data/2022F//EGamma/563da7fe-2b95-4973-a3fe-26d66d26bc9d.root",
+            "/data/data/2022F//EGamma/93dd95f8-d5e7-44f6-9cd0-97736f11ee26.root",
+            "/data/data/2022F//EGamma/2db8b97b-12e9-40aa-a734-ac26e1abd171.root",
+            "/data/data/2022F//EGamma/00ffed00-f0e9-42fa-bf89-823e937748fe.root",
+            "/data/data/2022F//EGamma/52d6094f-e3ba-46b3-b545-261466bfbc70.root",
+            "/data/data/2022F//EGamma/19e18263-3778-431d-89ec-3716b3e06afc.root",
+            "/data/data/2022F//EGamma/1fe3569a-94f0-4e6d-9c51-42260885a486.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____45_": {
+        "files": [
+            "/data/data/2022F//EGamma/1e3173d3-c9dd-4d8a-bdee-d1524c5c225a.root",
+            "/data/data/2022F//EGamma/6a9adec5-e769-4b36-8adc-460b750152c2.root",
+            "/data/data/2022F//EGamma/bb9c1f4e-7b8d-4b5f-92ac-25a8e56b4c93.root",
+            "/data/data/2022F//EGamma/157232da-e48c-4f63-b6e3-d1e7ed6de28f.root",
+            "/data/data/2022F//EGamma/be8f828e-55e9-4964-b6f2-45f50cf5dee4.root",
+            "/data/data/2022F//EGamma/e529cc3e-8f5b-4546-8dfb-1ec01fe6bd53.root",
+            "/data/data/2022F//EGamma/997313a8-a5a3-4c97-ab89-95d54d2ecbef.root",
+            "/data/data/2022F//EGamma/84c4a035-63ee-4614-bc27-cb46b676d9f8.root",
+            "/data/data/2022F//EGamma/dee58ffe-df3b-4d27-a12b-aa29b87b8c64.root",
+            "/data/data/2022F//EGamma/b8145dee-2296-4d39-a86a-1d68473e852b.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____46_": {
+        "files": [
+            "/data/data/2022F//EGamma/51ae7597-866f-44e8-8054-a3481c6bc537.root",
+            "/data/data/2022F//EGamma/5824bc53-3093-4cad-b196-f35508538914.root",
+            "/data/data/2022F//EGamma/4974ede7-10af-46ef-843c-1563260ed597.root",
+            "/data/data/2022F//EGamma/b9a925f6-9e4a-46b2-9271-ec62150a17db.root",
+            "/data/data/2022F//EGamma/3231dc5a-d107-4922-b731-77733a568f9a.root",
+            "/data/data/2022F//EGamma/ee5d4ae2-d01f-4ee3-b524-1f05ac8b9586.root",
+            "/data/data/2022F//EGamma/d97096d9-1051-452f-b0bd-c580cbcc589d.root",
+            "/data/data/2022F//EGamma/775d2ac9-38f7-464c-9883-f98fad45499c.root",
+            "/data/data/2022F//EGamma/8c76cc8f-790f-472b-8e84-5099091272c5.root",
+            "/data/data/2022F//EGamma/9914c8a8-ff7b-45d5-905a-cf7cf3070d11.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____47_": {
+        "files": [
+            "/data/data/2022F//EGamma/09d9cb5e-176b-458f-8028-daedffaf49e5.root",
+            "/data/data/2022F//EGamma/6cb08eb6-dbd1-4c66-a1c0-e9d44332bdcb.root",
+            "/data/data/2022F//EGamma/b7fbac0d-7fd6-4f5a-961e-eaff70ec3462.root",
+            "/data/data/2022F//EGamma/6fdf144d-a6db-4b5d-bba1-c7c99e1766ff.root",
+            "/data/data/2022F//EGamma/5c9874a0-46c3-4086-b01d-7df4ce7b411e.root",
+            "/data/data/2022F//EGamma/08a40c33-8857-40c9-819a-a696f512016a.root",
+            "/data/data/2022F//EGamma/ab4202fb-b583-415b-b3d2-92b8a149c889.root",
+            "/data/data/2022F//EGamma/2a26fc24-99e8-48d1-9c9f-9d48e8f3b6b5.root",
+            "/data/data/2022F//EGamma/0bbeeb35-9245-444b-8077-668647ec5fb0.root",
+            "/data/data/2022F//EGamma/bc5356d8-ec76-46aa-bc91-9fefa1371f48.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____48_": {
+        "files": [
+            "/data/data/2022F//EGamma/8ce77dc3-7053-4167-aba3-8c97bb510bd5.root",
+            "/data/data/2022F//EGamma/8e489893-d931-497d-9f30-4d24da351283.root",
+            "/data/data/2022F//EGamma/dc75b034-87a0-40dc-8a10-44d2e52f2afa.root",
+            "/data/data/2022F//EGamma/a17bfd55-2d97-49db-a9a9-6a663ecef3ec.root",
+            "/data/data/2022F//EGamma/c6fc57fc-877b-4a85-9139-8454d98617f5.root",
+            "/data/data/2022F//EGamma/9dc1dc37-3dcf-41c9-9f26-4032e3111e4b.root",
+            "/data/data/2022F//EGamma/d5c599a9-d2e2-4931-ac38-e245bfb67a9b.root",
+            "/data/data/2022F//EGamma/27001477-abf8-4e80-894b-0376843f7351.root",
+            "/data/data/2022F//EGamma/8d7fcbfc-d64e-4965-9f5c-2feda1d0b931.root",
+            "/data/data/2022F//EGamma/1c1136fe-0d97-4174-ab7b-95d2cda31634.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____49_": {
+        "files": [
+            "/data/data/2022F//EGamma/c2f861f3-2311-4f04-a40a-8b7888c8fbde.root",
+            "/data/data/2022F//EGamma/6beaecea-925b-4b18-a3b2-9009bf4ae4ae.root",
+            "/data/data/2022F//EGamma/2335bede-4254-40ca-8c64-ebfd8281ef81.root",
+            "/data/data/2022F//EGamma/9d839c85-f9b5-487e-b08e-27ef4760c04f.root",
+            "/data/data/2022F//EGamma/7180bb31-010a-4548-ac97-e01bc31e12d0.root",
+            "/data/data/2022F//EGamma/4f6a90b6-1ae1-4235-a34e-d5bb8a145456.root",
+            "/data/data/2022F//EGamma/de97dda2-e0dc-4d6a-95f8-3efb6b5e5c1b.root",
+            "/data/data/2022F//EGamma/5d4f28e0-f226-4be3-9812-d684219046cf.root",
+            "/data/data/2022F//EGamma/2a8c99e6-a4d6-4806-8451-a55e7a5fd3f2.root",
+            "/data/data/2022F//EGamma/9135f83b-7e47-4e84-8d22-ac79359a3b7d.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____50_": {
+        "files": [
+            "/data/data/2022F//EGamma/afb8353a-0252-4a9f-a406-11f23e186343.root",
+            "/data/data/2022F//EGamma/abec0e83-16c0-4f52-88fc-ad6dd1f2fae8.root",
+            "/data/data/2022F//EGamma/a890c683-c012-435e-b9d5-3ce08eed1537.root",
+            "/data/data/2022F//EGamma/af2cadbe-b170-4051-b970-aa446191ed1e.root",
+            "/data/data/2022F//EGamma/bfe15547-5fb1-4437-8abc-c9a7a1bc62ef.root",
+            "/data/data/2022F//EGamma/b87ba35e-1200-4e48-a7b1-68a0d944941d.root",
+            "/data/data/2022F//EGamma/44000fc8-82c8-4807-b98a-b75f4fb75748.root",
+            "/data/data/2022F//EGamma/02968a34-5c9f-4542-b46b-97d2463d9476.root",
+            "/data/data/2022F//EGamma/a2f13db8-c522-4375-bcca-cd53f81477cd.root",
+            "/data/data/2022F//EGamma/7c232cf2-abca-4c61-9510-bcbb85a4ef0c.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____51_": {
+        "files": [
+            "/data/data/2022F//EGamma/0f71e7ff-f109-48d0-b7c2-dd9aaaadb4ed.root",
+            "/data/data/2022F//EGamma/f658b31f-61c6-436f-a646-f69ddb5ee3a1.root",
+            "/data/data/2022F//EGamma/96ca346a-b529-4895-9229-cf15aa5efc67.root",
+            "/data/data/2022F//EGamma/56ded1e8-4d02-4644-85e6-9073fa2a41c6.root",
+            "/data/data/2022F//EGamma/6b76dc36-3e24-4f71-96ce-626e2e9a64ef.root",
+            "/data/data/2022F//EGamma/d2c5e80f-e656-4674-a8b2-adf46f5f0a86.root",
+            "/data/data/2022F//EGamma/6554edce-72ee-4414-8732-648a8ccf9089.root",
+            "/data/data/2022F//EGamma/501d59a0-47f9-4a76-9fe2-a87e5708ef1d.root",
+            "/data/data/2022F//EGamma/9e279dca-9839-48e9-9a86-9f4258481a80.root",
+            "/data/data/2022F//EGamma/da72eb6f-6e00-4969-bed8-db018d3e08c1.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____52_": {
+        "files": [
+            "/data/data/2022F//EGamma/f8d5249b-2f36-44f4-9433-10a90e648d2d.root",
+            "/data/data/2022F//EGamma/90ff12eb-9167-400c-b457-ccb3a3fa9489.root",
+            "/data/data/2022F//EGamma/18f01e33-8b4f-46f9-b91f-a354ffd11b6d.root",
+            "/data/data/2022F//EGamma/d9f5cbd1-37c0-450a-ad4a-8ef08a6104dc.root",
+            "/data/data/2022F//EGamma/19c6502b-1d22-4744-8dba-4087f81e6f9d.root",
+            "/data/data/2022F//EGamma/5d619682-409d-457e-b47e-45581b6d8989.root",
+            "/data/data/2022F//EGamma/93049fa7-aeeb-429b-ad88-1c709846a0db.root",
+            "/data/data/2022F//EGamma/f57d6259-26b5-411c-9789-383395f34a45.root",
+            "/data/data/2022F//EGamma/3aed984f-155e-40f4-8e3e-f470db77b986.root",
+            "/data/data/2022F//EGamma/b097241c-18d7-4bfd-ab7b-73dd6668b429.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____53_": {
+        "files": [
+            "/data/data/2022F//EGamma/25a6671c-0ffd-40af-b3b5-82070c71604b.root",
+            "/data/data/2022F//EGamma/39a084d4-251e-4b33-b9f3-1d89e345bfb5.root",
+            "/data/data/2022F//EGamma/d33bba01-f918-42f6-ab17-0aa46c0ee82f.root",
+            "/data/data/2022F//EGamma/8cbda48a-bc88-4d23-8ce0-d396750c8a4e.root",
+            "/data/data/2022F//EGamma/5cffa47e-f215-4cf4-8149-797dfc3c9766.root",
+            "/data/data/2022F//EGamma/0959e7f2-fa8b-4ee4-afc2-c0e30bca0c61.root",
+            "/data/data/2022F//EGamma/011c89b1-c75e-45a3-a6d1-bbdd3c4c9492.root",
+            "/data/data/2022F//EGamma/0d3d5ed2-5efb-4353-acb6-c983fbc2f352.root",
+            "/data/data/2022F//EGamma/748b254a-9cee-458c-ab69-c5e62e9598e6.root",
+            "/data/data/2022F//EGamma/dd635332-a106-44ca-a441-05c3685de1f2.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____54_": {
+        "files": [
+            "/data/data/2022F//EGamma/528c32ea-cb79-457b-90da-ccc0c6eccdd3.root",
+            "/data/data/2022F//EGamma/c94d3bdf-2573-46c6-a3b8-c6b1f51e268a.root",
+            "/data/data/2022F//EGamma/336f8b4b-a44d-4881-a159-1c650391751f.root",
+            "/data/data/2022F//EGamma/ef1605c7-5349-4970-a6f5-4f984611d66c.root",
+            "/data/data/2022F//EGamma/d5d7ae00-2508-4e3f-bf75-0d3895018f29.root",
+            "/data/data/2022F//EGamma/cbe6d6c0-c32a-4da3-9bb9-e831cc8b388f.root",
+            "/data/data/2022F//EGamma/3e8a57a2-1f37-4da5-ba40-9d4587741380.root",
+            "/data/data/2022F//EGamma/ab8ba6ea-b7f0-416b-9930-ebea3aa797a6.root",
+            "/data/data/2022F//EGamma/e3d38fde-325a-40cc-82ce-6e6f3eaed52f.root",
+            "/data/data/2022F//EGamma/3cab8878-0b8a-4935-85b2-51a7907cd70b.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____55_": {
+        "files": [
+            "/data/data/2022F//EGamma/5458f069-ed3b-466f-91f0-33f2e6b1051a.root",
+            "/data/data/2022F//EGamma/bd8c98d1-a2ef-4198-b6ea-67f1d827c49d.root",
+            "/data/data/2022F//EGamma/b8cba108-d2ec-4f3a-893e-9a75f03ccd9c.root",
+            "/data/data/2022F//EGamma/71413018-3096-4951-beab-c01f436a23ca.root",
+            "/data/data/2022F//EGamma/e4822f06-5595-4a25-8bfd-c18bdd83c8f0.root",
+            "/data/data/2022F//EGamma/f3349c07-5105-4b3a-bbb3-b41df08014ff.root",
+            "/data/data/2022F//EGamma/77859f0c-ca23-4bc0-9e40-3287a5cf983d.root",
+            "/data/data/2022F//EGamma/78e70550-14a8-428d-9608-60834831ec32.root",
+            "/data/data/2022F//EGamma/4f76cce9-6dc7-44a4-88cc-f606dd9fd7ff.root",
+            "/data/data/2022F//EGamma/f3823451-7b8e-4049-84aa-485acf6856f0.root"
+        ],
+        "xs": -1
+    },
+    "EGamma____56_": {
+        "files": [
+            "/data/data/2022F//EGamma/c22bc116-644a-4716-a801-5bc3b895d056.root",
+            "/data/data/2022F//EGamma/92ea1ea4-583f-4c5a-9d7f-8fe6f9122e8e.root",
+            "/data/data/2022F//EGamma/71e8e457-d586-43c7-babc-a0ea5c929582.root",
+            "/data/data/2022F//EGamma/f3fc9828-aa25-4122-bf23-96fd1d0fad9b.root",
+            "/data/data/2022F//EGamma/cbf7eb78-1605-44d4-b398-dcfd9f93eba9.root"
+        ],
+        "xs": -1
+    }
+}
