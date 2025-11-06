@@ -4,75 +4,52 @@ import awkward as ak
 
 ######
 ## Electron
-## Electron_cutBased Int_t cut-based ID Fall17 V2
+## cut-based ID RunIII Winter22
 ## (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
-## https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
+## https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun3
+## https://twiki.cern.ch/twiki/bin/view/CMS/EgammaRunIIIRecommendations
 ######
 
-
 def isLooseElectron(e, year):
-    
-    if '2016' in year:
-        year='2016'
+
+    if '2022' in year:
+        year='2022'
 
     pt=e.pt
     eta=e.eta+e.deltaEtaSC
-    #dxy=e.dxy
-    #dz=e.dz
+    #dxy=e.dxy ## (abs(dxy) < 0.05), (abs(dxy) < 0.1)
+    #dz=e.dz ## (abs(dz) < 0.1), (abs(dz) < 0.2)
     loose_id=e.cutBased
     
     mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2016":
+    if year == "2022":
         mask = (
             (pt > 10)
             & (abs(eta) < 1.4442)
-#            & (abs(dxy) < 0.05)
-#            & (abs(dz) < 0.1)
             & (loose_id >= 1)
         ) | (
             (pt > 10)
             & (abs(eta) > 1.5660)
             & (abs(eta) < 2.5)
-#            & (abs(dxy) < 0.1)
-#            & (abs(dz) < 0.2)
-            & (loose_id >= 1)
-        )
-    elif year == "2017":
-        mask = (
-            (pt > 10)
-            & (abs(eta) < 1.4442)
-#            & (abs(dxy) < 0.05)
-#            & (abs(dz) < 0.1)
-            & (loose_id >= 1)
-        ) | (
-            (pt > 10)
-            & (abs(eta) > 1.5660)
-            & (abs(eta) < 2.5)
-#            & (abs(dxy) < 0.1)
-#            & (abs(dz) < 0.2)
             & (loose_id >= 1)
         )
     elif year == "2018":
         mask = (
             (pt > 10)
             & (abs(eta) < 1.4442)
-#            & (abs(dxy) < 0.05)
-#            & (abs(dz) < 0.1)
             & (loose_id >= 1)
         ) | (
             (pt > 10)
             & (abs(eta) > 1.5660)
             & (abs(eta) < 2.5)
-#            & (abs(dxy) < 0.1)
-#            & (abs(dz) < 0.2)
             & (loose_id >= 1) # original is 2
         )
     return mask
 
 
 def isTightElectron(e, year):
-    if '2016' in year:
-        year='2016'
+    if '2022' in year:
+        year='2022'
 
     pt=e.pt
     eta=e.eta+e.deltaEtaSC
@@ -81,7 +58,7 @@ def isTightElectron(e, year):
     tight_id=e.cutBased
     
     mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2016":  # Trigger: HLT_Ele27_WPTight_Gsf_v
+    if year == "2022":  
         mask = (
             (pt > 40)
             & (abs(eta) < 1.4442)
@@ -96,22 +73,7 @@ def isTightElectron(e, year):
 #            & (abs(dz) < 0.2)
             & (tight_id == 4)
         )
-    elif year == "2017":  # Trigger: HLT_Ele35_WPTight_Gsf_v
-        mask = (
-            (pt > 40)
-            & (abs(eta) < 1.4442)
-#            & (abs(dxy) < 0.05)
-#            & (abs(dz) < 0.1)
-            & (tight_id == 4)
-        ) | (
-            (pt > 40)
-            & (abs(eta) > 1.5660)
-            & (abs(eta) < 2.4)
-#            & (abs(dxy) < 0.1)
-#            & (abs(dz) < 0.2)
-            & (tight_id == 4)
-        )
-    elif year == "2018":  # Trigger: HLT_Ele32_WPTight_Gsf_v
+    elif year == "2018":  
         mask = (
             (pt > 40)
             & (abs(eta) < 1.4442)
@@ -131,10 +93,12 @@ def isTightElectron(e, year):
 
 #######
 ## Muon
-## Muon ID WPs:
-## https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2#Muon_selectors_Since_9_4_X
-## Muon isolation WPs:
-## https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonSelection#Muon_Isolation
+## slimmedMuons after basic selection (pt > 15 || (pt > 3 && (passed('CutBasedIdLoose') || passed('SoftCutBasedId') || 
+##                                    passed('SoftMvaId') || passed('CutBasedIdGlobalHighPt') || passed('CutBasedIdTrkHighPt'))))
+## Muon POG Recommendations:
+## https://muon-wiki.docs.cern.ch/guidelines/recommendations/#medium-muon-id
+## pfIsoId: (1=PFIsoVeryLoose, 2=PFIsoLoose, 3=PFIsoMedium, 4=PFIsoTight, 5=PFIsoVeryTight, 6=PFIsoVeryVeryTight)
+## pfRelIso...
 #######
 
 def isLooseMuon(mu, year):
@@ -154,6 +118,8 @@ def isLooseMuon(mu, year):
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2022":
         mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal  #& (iso >= 2)
+    else:
+        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal
     return mask
 
 
@@ -171,13 +137,15 @@ def isTightMuon(mu, year):
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2022":
         mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & (iso < 0.1)
+    else:
+        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & (iso < 0.1)
     return mask
 
 
 def isSoftMuon(mu, year):
     
-    if '2016' in year:
-        year='2016'
+    if '2022' in year:
+        year='2022'
         
     pt=mu.pt
     eta=mu.eta
@@ -185,7 +153,7 @@ def isSoftMuon(mu, year):
     loose_id=mu.tightId
     
     mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2016":
+    if year == "2022":
         mask = (pt > 5) & (abs(eta) < 2.4) & tight_id & (iso > 0.15)
     elif year == "2017":
         mask = (pt > 5) & (abs(eta) < 2.4) & tight_id & (iso > 0.15)
@@ -195,7 +163,7 @@ def isSoftMuon(mu, year):
 
 
 ######
-## Tau
+## Tau  ## NOT UPDATED FOR RUN3
 ## https://twiki.cern.ch/twiki/bin/viewauth/CMS/TauIDRecommendationForRun2
 ## The decayModeFindingNewDMs: recommended for use with DeepTauv2p1, where decay
 ## modes 5 and 6 should be explicitly rejected.
@@ -216,8 +184,8 @@ def isSoftMuon(mu, year):
 
 def isLooseTau(tau, year):
     
-    if '2016' in year:
-        year='2016'
+    if '2022' in year:
+        year='2022'
         
     pt = tau.pt
     eta = tau.eta
@@ -231,7 +199,7 @@ def isLooseTau(tau, year):
         decayModeDMs=~np.isnan(ak.ones_like(pt))
 
     mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2016":
+    if year == "2022":
         mask = (
             (pt > 20)
             & (abs(eta) < 2.3)
@@ -269,31 +237,24 @@ def isLooseTau(tau, year):
 
 ######
 ## Photon
-## https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2
-## Photon_cutBased Int_t cut-based ID bitmap, Fall17V2,
+## https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun3
+## cut-based ID bitmap, RunIIIWinter22V1
 ## (0:fail, 1:loose, 2:medium, 3:tight)
-## Note: Photon IDs are integers, not bit masks
+## Note: Photon IDs are Unsigned integers, not bit masks
 ######
 
 
 def isLoosePhoton(pho, year):
     
-    if '2016' in year:
-        year='2016'
+    if '2022' in year:
+        year='2022'
 
     pt=pho.pt
     eta=pho.eta
     loose_id=pho.cutBased
     
     mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2016":
-        mask = (
-            (pt > 20)
-            & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660))
-            & (abs(eta) < 2.5)
-            & (loose_id >= 1)
-        )
-    elif year == "2017":
+    if year == "2022":
         mask = (
             (pt > 20)
             & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660))
@@ -311,18 +272,16 @@ def isLoosePhoton(pho, year):
 
 
 def isTightPhoton(pho, year):
-    if '2016' in year:
-        year='2016'
+    if '2022' in year:
+        year='2022'
 
     pt=pho.pt
     eta=pho.eta
     tight_id=pho.cutBased
     
     mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2016":
+    if year == "2022":
         mask = (pt > 200) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
-    elif year == "2017":
-        mask = (pt > 230) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
     elif year == "2018":
         mask = (pt > 230) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
     return mask&(pho.electronVeto)&(pho.isScEtaEB) #tight photons are barrel only
@@ -330,82 +289,67 @@ def isTightPhoton(pho, year):
 
 ######
 ## Fatjet
-## https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+## https://twiki.cern.ch/twiki/bin/view/CMS/JetID13p6TeV
 ## Tight working point including lepton veto (TightLepVeto)
 ######
 
 
-#def isGoodAK15(fj):
-#    
-#    pt=fj.pt
-#    eta=fj.eta
-#    jet_id=fj.jetId
-#    nhf=fj.neHEF
-#    chf=fj.chHEF
-#    
-#    mask = (
-#        (pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6 ) & (nhf < 0.8) & (chf > 0.1)
-#    )
-#    return mask
-#
+def isGoodAK15(fj):
+    
+    pt=fj.pt
+    eta=fj.eta
+    jet_id=fj.jetId
+    nhf=fj.neHEF
+    chf=fj.chHEF
+    
+    mask = (
+        (pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6 ) & (nhf < 0.8) & (chf > 0.1)
+    )
+    return mask
+
 
 ######
 ## Jet
-## https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
-## Tight working point including lepton veto (TightLepVeto)
+## slimmedJetsPuppi, i.e. ak4 PFJets Puppi with JECs applied, after basic selection (pt > 15)
 ##
-## For Jet ID flags, bit1 is Loose (always false in 2017 since it does not
-## exist), bit2 is Tight, bit3 is TightLepVeto. The POG recommendation is to
-## use Tight Jet ID as the standard Jet ID.
-######
-## PileupJetID
-## https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL
-## Using Loose Pileup ID
+## https://twiki.cern.ch/twiki/bin/view/CMS/JetID13p6TeV
+## Jet ID flag: bit2 is tight, bit3 is tightLepVeto
 ##
-## Note: There is a bug in 2016 UL in which bit values for Loose and Tight Jet
-## Pileup IDs are accidentally flipped relative to 2017 UL and 2018 UL.
-##
-## For 2016 UL,
-## Jet_puId = (passtightID*4 + passmediumID*2 + passlooseID*1).
-##
-## For 2017 UL and 2018 UL,
-## Jet_puId = (passlooseID*4 + passmediumID*2 + passtightID*1).
+## https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDRun3
+## Default AK4 jets arre PUPPI jets.
+## Analyses mainly using low pT (<50 GeV) jets or forward jets will profit the most from the PU JetID.
+## Note that PileUpJetID should only be applied to JEC corrected jets with pT < 50 GeV and not applied above.
 ######
 
 
 def isGoodAK4(j, year):
-    if '2016' in year:
-        year='2016'
+    if '2022' in year:
+        year='2022'
     
     pt=j.pt
     eta=j.eta
     jet_id=j.jetId
-    pu_id=j.puId
+    #pu_id=j.puId
     nhf=j.neHEF
     chf=j.chHEF
     
     mask = (pt > 30) & (abs(eta) < 2.4) & ((jet_id & 6) == 6)
-    if year == "2016":
-        mask = ((pt >= 50) & mask) | ((pt < 50) & mask & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1)
-    elif year == "2017":
-        mask = ((pt >= 50) & mask) | ((pt < 50) & mask & ((pu_id & 4) == 4))# & (nhf < 0.8) & (chf > 0.1)
-    elif year == "2018":
-        mask = ((pt >= 50) & mask) | ((pt < 50) & mask & ((pu_id & 4) == 4))# & (nhf < 0.8) & (chf > 0.1)
+    if year == "2022":
+        mask = ((pt >= 50) & mask) | ((pt < 50) & mask) # & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1)
+
     return mask
 
 
 
-
-
 ids = {}
-#ids["isLooseElectron"] = isLooseElectron
-#ids["isTightElectron"] = isTightElectron
+ids["isLooseElectron"] = isLooseElectron
+ids["isTightElectron"] = isTightElectron
 ids["isLooseMuon"] = isLooseMuon
 ids["isTightMuon"] = isTightMuon
-ids["isSoftMuon"] = isSoftMuon
+#ids["isSoftMuon"] = isSoftMuon
 #ids["isLooseTau"] = isLooseTau
-#ids["isLoosePhoton"] = isLoosePhoton
-#ids["isTightPhoton"] = isTightPhoton
-#ids["isGoodAK4"] = isGoodAK4
-#ids["isGoodAK15"] = isGoodAK15
+ids["isLoosePhoton"] = isLoosePhoton
+ids["isTightPhoton"] = isTightPhoton
+ids["isGoodAK4"] = isGoodAK4
+ids["isGoodAK15"] = isGoodAK15
 save(ids, "data/ids.coffea")
