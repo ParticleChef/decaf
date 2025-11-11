@@ -11,15 +11,20 @@ processes =	{
 	#'SingleElectron':('SingleElectron','Data',1),
 	#'SinglePhoton':('SinglePhoton','Data',1),
 	#'SingleMuon':('SingleMuon','Data',1),
-	'Muon': ('Muon', 'Data', 1),
+	#'Muon': ('Muon', 'Data', 1),
 	
 	#2022pre
 	# W->lnu
-	'WtoLNu-2Jets_TuneCP5_13p6TeV_amcatnloFXFX-pythia8' : ('WtoLNu-2Jets', 'MC', 62390.),
+	#'WtoLNu-2Jets_TuneCP5_13p6TeV_amcatnloFXFX-pythia8' : ('WtoLNu-2Jets', 'MC', 62390.),
 	# DY->2L
-	'DYto2L-2Jets_MLL-50_TuneCP5_13p6TeV_amcatnloFXFX-pythia8' : ('DYto2L-2Jets', 'MC', 6688.),
+	#'DYto2L-2Jets_MLL-50_TuneCP5_13p6TeV_amcatnloFXFX-pythia8' : ('DYto2L-2Jets', 'MC', 6688.),
+    'DYto2L-2Jets_MLL-50_PTLL-400to600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8' : ('', 'MC', 0.4969),
 	
 	# inclusive NLO V+jets 
+    'WtoLNu-2Jets_PTLNu-200to400_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8':('WtoLNu-2Jets_PTLNu-200to400_1J', 'MC', 757.7),
+    'WtoLNu-2Jets_PTLNu-400to600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8':('WtoLNu-2Jets_PTLNu-400to600_1J', 'MC', 757.7),
+    'WtoLNu-2Jets_PTLNu-200to400_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8':('WtoLNu-2Jets_PTLNu-200to400_2J', 'MC', 757.7),
+    'WtoLNu-2Jets_PTLNu-400to600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8':('WtoLNu-2Jets_PTLNu-400to600_2J', 'MC', 757.7),
 #	'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8':('ZJets_nlo','MC',6025.2),
 #	'DYJetsToNuNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8':('ZtoNuNu_nlo','MC',11433.),
 #	'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8':('WJets_nlo','MC',61527.),
@@ -70,22 +75,22 @@ processes =	{
 	## NLO Z->nunu
 
 	## QCD
-	#'QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8'	  :('QCD_Pt_1000to1400', 'MC', 7.482),
-	#'QCD_Pt_120to170_TuneCP5_13TeV_pythia8'		:('QCD_Pt_120to170', 'MC', 407500),
-	#'QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8'	  :('QCD_Pt_1400to1800', 'MC', 0.1259),
-	#'QCD_Pt_15to30_TuneCP5_13TeV_pythia8'		  :('QCD_Pt_15to30', 'MC', 1246000000.0),
-	#'QCD_Pt_170to300_TuneCP5_13TeV_pythia8'		:('QCD_Pt_170to300', 'MC', 103600),
-	#'QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8'	  :('QCD_Pt_1800to2400', 'MC', 0.08748),
-	#'QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8'	  :('QCD_Pt_2400to3200', 'MC', 0.005236),
-	#'QCD_Pt_300to470_TuneCP5_13TeV_pythia8'		:('QCD_Pt_300to470', 'MC', 6831),
-	#'QCD_Pt_30to50_TuneCP5_13TeV_pythia8'		  :('QCD_Pt_30to50', 'MC', 106800000),
-	#'QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8'	   :('QCD_Pt_3200toInf', 'MC', 0.0001351),
-	#'QCD_Pt_470to600_TuneCP5_13TeV_pythia8'		:('QCD_Pt_470to600', 'MC', 551.3),
-	#'QCD_Pt_50to80_TuneCP5_13TeV_pythia8'		  :('QCD_Pt_50to80', 'MC', 15690000),
-	#'QCD_Pt_600to800_TuneCP5_13TeV_pythia8'		:('QCD_Pt_600to800', 'MC', 156.5),
-	#'QCD_Pt_800to1000_TuneCP5_13TeV_pythia8'	   :('QCD_Pt_800to1000', 'MC', 26.15),
-	#'QCD_Pt_80to120_TuneCP5_13TeV_pythia8'		 :('QCD_Pt_80to120', 'MC', 2341000),
-	#
+	#'QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8'	  :('QCD_PT-1000to1400', 'MC', 7.482),
+	#'QCD_PT-120to170_TuneCP5_13p6TeV_pythia8'		:('QCD_PT-120to170', 'MC', 407500),
+	#'QCD_PT-1400to1800_TuneCP5_13p6TeV_pythia8'	  :('QCD_PT-1400to1800', 'MC', 0.1259),
+	#'QCD_PT-15to30_TuneCP5_13p6TeV_pythia8'		  :('QCD_PT-15to30', 'MC', 1246000000.0),
+	#'QCD_PT-170to300_TuneCP5_13p6TeV_pythia8'		:('QCD_PT-170to300', 'MC', 103600),
+	#'QCD_PT-1800to2400_TuneCP5_13p6TeV_pythia8'	  :('QCD_PT-1800to2400', 'MC', 0.08748),
+	#'QCD_PT-2400to3200_TuneCP5_13p6TeV_pythia8'	  :('QCD_PT-2400to3200', 'MC', 0.005236),
+	#'QCD_PT-300to470_TuneCP5_13p6TeV_pythia8'		:('QCD_PT-300to470', 'MC', 6831),
+	#'QCD_PT-30to50_TuneCP5_13p6TeV_pythia8'		  :('QCD_PT-30to50', 'MC', 106800000),
+	#'QCD_PT-3200toInf_TuneCP5_13p6TeV_pythia8'	   :('QCD_PT-3200toInf', 'MC', 0.0001351),
+	#'QCD_PT-470to600_TuneCP5_13p6TeV_pythia8'		:('QCD_PT-470to600', 'MC', 551.3),
+	#'QCD_PT-50to80_TuneCP5_13p6TeV_pythia8'		  :('QCD_PT-50to80', 'MC', 15690000),
+	#'QCD_PT-600to800_TuneCP5_13p6TeV_pythia8'		:('QCD_PT-600to800', 'MC', 156.5),
+	#'QCD_PT-800to1000_TuneCP5_13p6TeV_pythia8'	   :('QCD_PT-800to1000', 'MC', 26.15),
+	#'QCD_PT-80to120_TuneCP5_13p6TeV_pythia8'		 :('QCD_PT-80to120', 'MC', 2341000),
+	
 	## Single tops
 	#'ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8'					 :('ST_s-channel_4f_leptonDecays', 'MC', 6.96),
 	#'ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8'	:('ST_t-channel_antitop_4f_InclusiveDecays', 'MC', 80.95),
@@ -95,9 +100,9 @@ processes =	{
 
 
 	## ttbar
-	#'TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8'		   :('TTTo2L2Nu', 'MC', 88.3419),
-	#'TTToHadronic_TuneCP5_13TeV-powheg-pythia8'		:('TTToHadronic', 'MC', 377.9607),
-	#'TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8'	:('TTToSemiLeptonic', 'MC', 365.4574),
+    'TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8'          :('TTto2L2Nu', 'MC', 88.3419),
+	'TTto4Q_TuneCP5_13p6TeV_powheg-pythia8'		        :('TTto4Q', 'MC', 377.9607),
+	'TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8'	        :('TTtoLNu2Q', 'MC', 365.4574),
 
 	#	# regular dibosons
 	#'WW_TuneCP5_13TeV-pythia8'	 :('WW_TuneCP5_13TeV-pythia8', 'MC', 119.),

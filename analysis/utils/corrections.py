@@ -169,11 +169,14 @@ for year in ['2016postVFP', '2016preVFP', '2017','2018']:
 ####
 
 def get_photon_id_sf(year, wp, eta, pt, phi):
+    
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/photon.json.gz')
+
     flateta, counts = ak.flatten(eta), ak.num(eta)
     pt  = ak.where((pt<20.),ak.full_like(pt,20.),pt)
     flatpt = ak.flatten(pt)
     flatphi = ak.flatten(phi)
+
     yr = {
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
@@ -188,6 +191,7 @@ def get_photon_id_sf(year, wp, eta, pt, phi):
         sf_nominal = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt, flatphi)
         sf_up = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfup", wp, flateta, flatpt, flatphi)
         sf_down = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfdown", wp, flateta, flatpt, flatphi)
+    
     return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 ####
@@ -198,10 +202,13 @@ def get_photon_id_sf(year, wp, eta, pt, phi):
 ####
 
 def get_ele_veto_id_sf (year, eta, pt, phi):
+    
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+    
     pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
     flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
     flateta, counts = ak.flatten(eta), ak.num(eta)
+    
     yr = {
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
@@ -216,13 +223,17 @@ def get_ele_veto_id_sf (year, eta, pt, phi):
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt, flatphi)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Veto", flateta, flatpt, flatphi)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Veto", flateta, flatpt, flatphi)
+    
     return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 def get_ele_loose_id_sf (year, eta, pt, phi):
+    
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+    
     pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
     flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
     flateta, counts = ak.flatten(eta), ak.num(eta)
+    
     yr = {
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
@@ -237,13 +248,18 @@ def get_ele_loose_id_sf (year, eta, pt, phi):
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt, flatphi)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Loose", flateta, flatpt, flatphi)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Loose", flateta, flatpt, flatphi)
+    
     return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
+
 def get_ele_medium_id_sf (year, eta, pt, phi):
+    
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+    
     pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
     flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
     flateta, counts = ak.flatten(eta), ak.num(eta)
+    
     yr = {
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
@@ -258,13 +274,18 @@ def get_ele_medium_id_sf (year, eta, pt, phi):
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt, flatphi)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Medium", flateta, flatpt, flatphi)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Medium", flateta, flatpt, flatphi)
+    
     return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
+
 def get_ele_tight_id_sf (year, eta, pt, phi):
+    
     evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+    
     pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
     flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
     flateta, counts = ak.flatten(eta), ak.num(eta)
+    
     yr = {
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
@@ -279,7 +300,141 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt, flatphi)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Tight", flateta, flatpt, flatphi)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Tight", flateta, flatpt, flatphi)
+    
     return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
+
+
+####
+# Electron Reco scale factor
+# jsonPOG: https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/EGM
+# twiki: https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammSFandSSRun3
+####
+
+def get_ele_reco_sf_below20(year, eta, pt, phi):
+
+    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+    
+    pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
+    pt = ak.where((pt>19.99), ak.full_like(pt,19.99), pt)
+
+    flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+    
+    yr = {
+        '2022pre' : '2022Re-recoBCD',
+        '2022post': '2022Re-recoE+PromptFG',
+        '2023pre' : '2023PromptC',
+        '2023post': '2023PromptD'
+    }
+    if '2022' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "RecoBelow20", flateta, flatpt)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "RecoBelow20", flateta, flatpt)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "RecoBelow20", flateta, flatpt)
+    if '2023' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "RecoBelow20", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "RecoBelow20", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "RecoBelow20", flateta, flatpt, flatphi)
+    
+    return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
+
+
+def get_ele_reco_sf_20to75(year, eta, pt, phi):
+
+    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+    
+    pt = ak.where((pt<20.), ak.full_like(pt,20.), pt)
+    pt = ak.where((pt>74.99), ak.full_like(pt,74.99), pt)
+
+    flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+    
+    yr = {
+        '2022pre' : '2022Re-recoBCD',
+        '2022post': '2022Re-recoE+PromptFG',
+        '2023pre' : '2023PromptC',
+        '2023post': '2023PromptD'
+    }
+    if '2022' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Reco20to75", flateta, flatpt)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Reco20to75", flateta, flatpt)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Reco20to75", flateta, flatpt)
+    if '2023' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Reco20to75", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Reco20to75", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Reco20to75", flateta, flatpt, flatphi)
+    
+    return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
+
+
+def get_ele_reco_sf_Above75(year, eta, pt, phi):
+
+    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'/electron.json.gz')
+    
+    pt = ak.where((pt<75.), ak.full_like(pt,75.), pt)
+
+    flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+    
+    yr = {
+        '2022pre' : '2022Re-recoBCD',
+        '2022post': '2022Re-recoE+PromptFG',
+        '2023pre' : '2023PromptC',
+        '2023post': '2023PromptD'
+    }
+    if '2022' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "RecoAbove75", flateta, flatpt)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "RecoAbove75", flateta, flatpt)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "RecoAbove75", flateta, flatpt)
+    if '2023' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "RecoAbove75", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "RecoAbove75", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "RecoAbove75", flateta, flatpt, flatphi)
+    
+    return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
+
+
+
+###
+# V+jets NLO k-factors
+# Combination of NNLO QCD and NLO EWK
+###
+def get_nnlo_nlo_wjet(channel, mass):
+    # The W background K factors and uncertainties for electron and muon channel.
+    # Combination of NNLO QCD and NLO EWK is done with additive + mixed term approach.
+    # Provided by AN2024_075_v11.
+    kfactors = {
+        "electron": [
+            (120, 200, 1.143),
+            (200, 400, 1.217),
+            (400, 800, 1.215),
+            (800, 1500, 1.214),
+            (1500, 2500, 1.168),
+            (2500, 4000, 1.148),
+            (4000, 6000, 1.102),
+            (6000, 8000, 1.084),
+        ],
+        "muon": [
+            (120, 200, 1.112),
+            (200, 400, 1.165),
+            (400, 800, 1.161),
+            (800, 1500, 1.152),
+            (1500, 2500, 1.100),
+            (2500, 4000, 1.084),
+            (4000, 6000, 1.050),
+            (6000, 8000, 1.040),
+        ],
+    }
+
+    edges = np.array([low for low, _, _ in kfactors[channel]] + [8000])
+    values = np.array([v for _, _, v in kfactors[channel]])
+
+    m = ak.to_numpy(ak.flatten(mass))
+    m = np.clip(m, edges[0], edges[-1] - 1e-6)
+
+    k = np.interp(m, edges[:-1], values)
+    return ak.unflatten(k, ak.num(mass, axis=-1))
+
+
 
 ###
 # MET trigger efficiency SFs, 2017/18 from monojet. Depends on recoil.
@@ -304,31 +459,6 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
 #        ak.zeros_like(met)
 #    )
 #    return weight
-
-#def get_ele_loose_id_sf (year, eta, pt):
-#    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'_UL/electron.json.gz')
-#
-#    flateta, counts = ak.flatten(eta), ak.num(eta)
-#    
-#    pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
-#    flatpt = ak.flatten(pt)
-#    
-#    weight = evaluator["UL-Electron-ID-SF"].evaluate(year, "sf", "Loose", flateta, flatpt)
-#
-#    return ak.unflatten(weight, counts=counts)
-#
-#def get_ele_tight_id_sf (year, eta, pt):
-#    evaluator = correctionlib.CorrectionSet.from_file('data/EGammaSF/'+year+'_UL/electron.json.gz')
-#
-#    flateta, counts = ak.flatten(eta), ak.num(eta)
-#    
-#    pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
-#    flatpt = ak.flatten(pt)
-#    
-#    weight = evaluator["UL-Electron-ID-SF"].evaluate(year, "sf", "Tight", flateta, flatpt)
-#    
-#    return ak.unflatten(weight, counts=counts)
-#
 
 ####
 # Electron Trigger weight
@@ -357,58 +487,7 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
 #    )
 #    return weight
 
-####
-# Electron Reco scale factor
-# root files: https://twiki.cern.ch/twiki/bin/view/CMS/EgammaUL2016To2018
-# Code Copy from previous correctionsUL.py file
-####
 
-#def get_ele_reco_sf_below20(year, eta, pt):
-#    ele_reco_files_below20 = {
-#        '2016postVFP': "data/ElectronRecoSF/egammaEffi_ptBelow20.txt_EGM2D_UL2016postVFP.root:EGamma_SF2D",
-#        '2016preVFP': "data/ElectronRecoSF/egammaEffi_ptBelow20.txt_EGM2D_UL2016preVFP.root:EGamma_SF2D",
-#        '2017': "data/ElectronRecoSF/egammaEffi_ptBelow20.txt_EGM2D_UL2017.root:EGamma_SF2D",
-#        '2018': "data/ElectronRecoSF/egammaEffi_ptBelow20.txt_EGM2D_UL2018.root:EGamma_SF2D"
-#    }
-#
-#    corr = convert.from_uproot_THx(ele_reco_files_below20[year])
-#    evaluator = corr.to_evaluator()
-#    
-#    eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
-#    eta = ak.where((eta<2.399), ak.full_like(eta,-2.399), eta)
-#    flateta, counts = ak.flatten(eta), ak.num(eta)
-#    
-#    pt = ak.where((pt<10.), ak.full_like(pt,10.), pt)
-#    pt = ak.where((pt>19.99), ak.full_like(pt,19.99), pt)
-#    flatpt = ak.flatten(pt)
-#    
-#    weight = evaluator.evaluate(flateta, flatpt)
-#    return ak.unflatten(weight, counts=counts)
-#    #get_ele_reco_err_below20[year]=lookup_tools.dense_lookup.dense_lookup(ele_reco_hist.variances() ** 0.5, ele_reco_hist.axes)
-#
-#
-#def get_ele_reco_sf_above20(year, eta, pt):
-#    ele_reco_files_above20 = {
-#        '2016postVFP': "data/ElectronRecoSF/egammaEffi_ptAbove20.txt_EGM2D_UL2016postVFP.root:EGamma_SF2D",
-#        '2016preVFP': "data/ElectronRecoSF/egammaEffi_ptAbove20.txt_EGM2D_UL2016preVFP.root:EGamma_SF2D",
-#        '2017': "data/ElectronRecoSF/egammaEffi_ptAbove20.txt_EGM2D_UL2017.root:EGamma_SF2D",
-#        '2018': "data/ElectronRecoSF/egammaEffi_ptAbove20.txt_EGM2D_UL2018.root:EGamma_SF2D"
-#    }
-#    
-#    corr = convert.from_uproot_THx(ele_reco_files_above20[year])
-#    evaluator = corr.to_evaluator()
-#    
-#    eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
-#    eta = ak.where((eta<2.399), ak.full_like(eta,-2.399), eta)
-#    flateta, counts = ak.flatten(eta), ak.num(eta)
-#    
-#    pt = ak.where((pt<20.), ak.full_like(pt,20.), pt)
-#    pt = ak.where((pt>499.99), ak.full_like(pt,499.99), pt)
-#    flatpt = ak.flatten(pt)
-#    
-#    weight = evaluator.evaluate(flateta, flatpt)
-#    return ak.unflatten(weight, counts=counts)
-#    #get_ele_reco_err_above20[year]=lookup_tools.dense_lookup.dense_lookup(ele_reco_hist.variances() ** 0.05, ele_reco_hist.axes)
     
 
 ####
@@ -457,11 +536,6 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
 #
 #    return corrected_pt, corrected_phi
 
-
-####
-# Jet
-# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME
-####
 
 
 ###
@@ -849,51 +923,56 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
 #        np.nan_to_num(light_down_correlated, nan=1.), \
 #        np.nan_to_num(light_up_uncorrelated, nan=1.), \
 #        np.nan_to_num(light_down_uncorrelated, nan=1.)
-#
-#jec_name_map = {
-#    'JetPt': 'pt',
-#    'JetMass': 'mass',
-#    'JetEta': 'eta',
-#    'JetA': 'area',
-#    'ptGenJet': 'pt_gen',
-#    'ptRaw': 'pt_raw',
-#    'massRaw': 'mass_raw',
-#    'Rho': 'event_rho',
-#    'METpt': 'pt',
-#    'METphi': 'phi',
-#    'JetPhi': 'phi',
-#    'UnClusteredEnergyDeltaX': 'MetUnclustEnUpDeltaX',
-#    'UnClusteredEnergyDeltaY': 'MetUnclustEnUpDeltaY',
-#}
-#
-#def jet_factory_factory(files):
-#    ext = extractor()
-#    directory='data/jerc'
-#    for filename in files:
-#        ext.add_weight_sets([f"* * {directory+'/'+filename}"])
-#    ext.finalize()
-#    jec_stack = JECStack(ext.make_evaluator())
-#    return CorrectedJetsFactory(jec_name_map, jec_stack)
-#
-#jet_factory = {
-#    "2016preVFPmc": jet_factory_factory(
-#        files=[
-#            "Summer19UL16APV_V7_MC_L1FastJet_AK4PFchs.jec.txt",
-#            "Summer19UL16APV_V7_MC_L2Relative_AK4PFchs.jec.txt",
-#            "Summer19UL16APV_V7_MC_UncertaintySources_AK4PFchs.junc.txt",
-#            "Summer19UL16APV_V7_MC_Uncertainty_AK4PFchs.junc.txt",
+
+jec_name_map = {
+    'JetPt': 'pt',
+    'JetMass': 'mass',
+    'JetEta': 'eta',
+    'JetA': 'area',
+    'ptGenJet': 'pt_gen',
+    'ptRaw': 'pt_raw',
+    'massRaw': 'mass_raw',
+    'Rho': 'event_rho',
+    'METpt': 'pt',
+    'METphi': 'phi',
+    'JetPhi': 'phi',
+    'UnClusteredEnergyDeltaX': 'MetUnclustEnUpDeltaX',
+    'UnClusteredEnergyDeltaY': 'MetUnclustEnUpDeltaY',
+}
+
+def jet_factory_factory(files):
+    ext = extractor()
+    directory='data/JetMETCorr/2022pre'
+    for filename in files:
+        ext.add_weight_sets([f"* * {directory+'/'+filename}"])
+    ext.finalize()
+    jec_stack = JECStack(ext.make_evaluator())
+    return CorrectedJetsFactory(jec_name_map, jec_stack)
+
+jet_factory = {
+    "2022premc": jet_factory_factory(
+        files=[
+            "Summer22_22Sep2023_V2_MC_L1FastJet_AK4PFPuppi.txt",
+            "Summer22_22Sep2023_V2_MC_L2Relative_AK4PFPuppi.txt",
+#            "Summer22_22Sep2023_V2_MC_L1FastJet_AK4PFchs.jec.txt",
+#            "Summer22_22Sep2023_V2_MC_L2Relative_AK4PFchs.jec.txt",
+#            "Summer22_22Sep2023_V2_MC_UncertaintySources_AK4PFchs.junc.txt",
+#            "Summer22_22Sep2023_V2_MC_Uncertainty_AK4PFchs.junc.txt",
 #            "Summer20UL16APV_JRV3_MC_PtResolution_AK4PFchs.jr.txt",
 #            "Summer20UL16APV_JRV3_MC_SF_AK4PFchs.jersf.txt",
-#        ]
-#    ),
-#    "2016preVFPmcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL16APV_V7_MC_L1FastJet_AK4PFchs.jec.txt",
-#            "Summer19UL16APV_V7_MC_L2Relative_AK4PFchs.jec.txt",
-#            "Summer19UL16APV_V7_MC_Uncertainty_AK4PFchs.junc.txt",
-#        ]
-#    ),
-#    "2016preVFPdata": jet_factory_factory(
+        ]
+    ),
+    "2022premcNOJER": jet_factory_factory(
+        files=[
+            "Summer22_22Sep2023_V2_MC_L1FastJet_AK4PFPuppi.txt",
+            "Summer22_22Sep2023_V2_MC_L2Relative_AK4PFPuppi.txt",
+            "Summer22_22Sep2023_V2_MC_L2L3Residual_AK4PFPuppi.txt",
+            "Summer22_22Sep2023_V2_MC_L2Residual_AK4PFPuppi.txt",
+            "Summer22_22Sep2023_V2_MC_L3Absolute_AK4PFPuppi.txt",
+            "Summer22_22Sep2023_V2_MC_Uncertainty_AK4PFPuppi.txt",
+        ]
+    ),
+#    "2022predata": jet_factory_factory(
 #        files=[
 #            "Summer20UL16APV_JRV3_DATA_PtResolution_AK4PFchs.jr.txt",
 #            "Summer20UL16APV_JRV3_DATA_SF_AK4PFchs.jersf.txt",
@@ -970,7 +1049,7 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
 #            "Summer19UL18_JRV2_DATA_SF_AK4PFchs.jersf.txt",
 #        ]
 #    ),
-#}
+}
 #
 #subjet_factory = {
 #    "2016preVFPmc": jet_factory_factory(
@@ -1154,14 +1233,13 @@ corrections = {
     'get_ele_medium_id_sf':     get_ele_medium_id_sf,
     'get_ele_tight_id_sf':      get_ele_tight_id_sf,
 
+    'get_ele_reco_sf_below20':  get_ele_reco_sf_below20,
+    'get_ele_reco_sf_20to75':  get_ele_reco_sf_20to75,
+    'get_ele_reco_sf_Above75':  get_ele_reco_sf_Above75,
+
+    'get_nnlo_nlo_wjet':         get_nnlo_nlo_wjet,
 #    'get_met_trig_weight':      get_met_trig_weight,
-#    'get_ele_loose_id_sf':      get_ele_loose_id_sf,
-#    'get_ele_tight_id_sf':      get_ele_tight_id_sf,
 #    'get_ele_trig_weight':      get_ele_trig_weight,
-#    'get_ele_reco_sf_below20':  get_ele_reco_sf_below20,
-#    #'get_ele_reco_err_below20': get_ele_reco_err_below20,
-#    'get_ele_reco_sf_above20':  get_ele_reco_sf_above20,
-#    #'get_ele_reco_err_above20': get_ele_reco_err_above20,
 #    'get_pho_tight_id_sf':      get_pho_tight_id_sf,
 #    'get_pho_trig_weight':      get_pho_trig_weight,
 #    'get_met_xy_correction':    XY_MET_Correction,
@@ -1171,7 +1249,7 @@ corrections = {
 #    'get_msd_corr':             get_msd_corr,
 #    'get_btag_weight':          BTagCorrector,
 #    'get_mu_rochester_sf':      get_mu_rochester_sf,
-#    'jet_factory':              jet_factory,
+    'jet_factory':              jet_factory,
 #    'subjet_factory':           subjet_factory,
 #    'fatjet_factory':           fatjet_factory,
 #    'met_factory':              met_factory
