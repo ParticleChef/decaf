@@ -21,7 +21,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         '2022post': 26.6717,
         '2023pre': 17.794,
         '2023post': 9.451,
-        '2024': 0.0,
+        '2024':  108.95,
         '2025': 0.0
     }
     lumiMasks = {
@@ -29,7 +29,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         '2022post': LumiMask('data/lumiMask/Cert_Collisions2022_355100_362760_Golden.json'),
         '2023pre': LumiMask('data/lumiMask/Cert_Collisions2023_366442_370790_Golden.json'),
         '2023post': LumiMask('data/lumiMask/Cert_Collisions2023_366442_370790_Golden.json'),
-        '2024': None,
+        '2024': LumiMask('data/lumiMask/Cert_Collisions2024_378981_386951_Golden.json'),
         '2025': None
     }
     metFilters = {
@@ -77,7 +77,17 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'eeBadScFilter', 
                 'ecalBadCalibFilter'
         ],
-        '2024': [],
+        '2024': [
+                'goodVertices', 
+                'globalSuperTightHalo2016Filter', 
+                'HBHENoiseFilter', 
+                'HBHENoiseIsoFilter', 
+                'EcalDeadCellTriggerPrimitiveFilter', 
+                'BadPFMuonFilter', 
+                'BadPFMuonDzFilter', 
+                'eeBadScFilter', 
+                'ecalBadCalibFilter'
+        ],
         '2025': []
     }
 
@@ -91,10 +101,11 @@ class AnalysisProcessor(processor.ProcessorABC):
         self._common = common
         
         self._samples = {
-            'cat1_preselection': ('TT','EGamma','JetMET','SMS'),
-            'cat2_electron_control': ('TT','EGamma','JetMET','SMS'),
-            'cat3_muon_control': ('TT','EGamma','JetMET','SMS'),
-            'cat4_photon_control': ('TT','EGamma','JetMET','SMS'),
+            'cat1_preselection': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET'),
+            'cat2_signal_trigger': ('TT','EGamma','SMS'),
+            'cat3_electron_trigger': ('TT','JetMET','SMS'),
+            'cat4_muon_trigger': ('TT','JetMET','SMS'),
+            'cat5_photon_trigger': ('TT','JetMET','SMS'),
         }
         self._signal_triggers ={
             '2022pre': [
@@ -129,7 +140,14 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'PFMETNoMu130_PFMHTNoMu130_IDTight',
                 'PFMETNoMu140_PFMHTNoMu140_IDTight'
             ],
-            '2024': [],
+            '2024': [
+                'PFMET120_PFMHT120_IDTight',
+                'PFMET130_PFMHT130_IDTight',
+                'PFMET140_PFMHT140_IDTight',
+                'PFMETNoMu120_PFMHTNoMu120_IDTight',
+                'PFMETNoMu130_PFMHTNoMu130_IDTight',
+                'PFMETNoMu140_PFMHTNoMu140_IDTight'
+            ],
             '2025': []
         }
         self._reference_triggers = {
@@ -161,7 +179,13 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'Ele38_WPTight_Gsf',
                 'Ele40_WPTight_Gsf'
             ],
-            '2024': [],
+            '2024': [
+                'Ele30_WPTight_Gsf',
+                'Ele32_WPTight_Gsf',
+                'Ele35_WPTight_Gsf',
+                'Ele38_WPTight_Gsf',
+                'Ele40_WPTight_Gsf'
+            ],
             '2025': []
         }
         self._electron_triggers = {
@@ -221,7 +245,20 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'DoubleEle27_CaloIdL_MW',
                 'DoubleEle33_CaloIdL_MW'
             ],
-            '2024': [],
+            '2024': [
+                'Ele115_CaloIdVT_GsfTrkIdT',
+                'Ele135_CaloIdVT_GsfTrkIdT',
+                'Ele30_WPTight_Gsf',
+                'Ele32_WPTight_Gsf',
+                'Ele35_WPTight_Gsf',
+                'Ele38_WPTight_Gsf',
+                'Ele40_WPTight_Gsf',
+                'Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ',
+                'Ele23_Ele12_CaloIdL_TrackIdL_IsoVL',
+                'DoubleEle25_CaloIdL_MW',
+                'DoubleEle27_CaloIdL_MW',
+                'DoubleEle33_CaloIdL_MW'
+            ],
             '2025': []
         }
         self._muon_triggers = {
@@ -257,7 +294,14 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'Mu50',
                 'Mu55'
             ],
-            '2024': [],
+            '2024': [
+                'IsoMu20',
+                'IsoMu24',
+                'IsoMu27',
+                'IsoMu24_eta2p1',
+                'Mu50',
+                'Mu55'
+            ],
             '2025': []
         }
         self._photon_triggers = {
@@ -277,7 +321,10 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'Photon175',
                 'Photon200'
             ],
-            '2024': [],
+            '2024': [
+                'Photon175',
+                'Photon200'
+            ],
             '2025': []
         }
         self._ht_triggers = {
@@ -329,7 +376,18 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'PFHT890',
                 'PFHT1050',
             ],
-            '2024': [],
+            '2024': [
+                'PFHT180',
+                'PFHT250',
+                'PFHT350',
+                'PFHT430',
+                'PFHT510',
+                'PFHT590',
+                'PFHT680',
+                'PFHT780',
+                'PFHT890',
+                'PFHT1050',
+            ],
             '2025': []
         }
 
@@ -375,7 +433,7 @@ class AnalysisProcessor(processor.ProcessorABC):
             'j1pt': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Variable([30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200], name='j1pt', label='Leading Jet p_{T} (GeV)'),
+                hist.axis.Variable(np.arange(0,601,10), name='j1pt', label='Leading Jet p_{T} (GeV)'),
                 storage=hist.storage.Weight(),
             ),
             'j1eta': hist.Hist(
@@ -393,7 +451,7 @@ class AnalysisProcessor(processor.ProcessorABC):
             'j2pt': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Variable([30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200], name='j2pt', label='Sub-leading Jet p_{T} (GeV)'),
+                hist.axis.Variable(np.arange(0,601,10), name='j2pt', label='Sub-leading Jet p_{T} (GeV)'),
                 storage=hist.storage.Weight(),
             ),
             'j2eta': hist.Hist(
@@ -406,6 +464,18 @@ class AnalysisProcessor(processor.ProcessorABC):
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
                 hist.axis.Regular(64, -np.pi, np.pi, name='j2phi', label='Sub-leading Jet #phi'),
+                storage=hist.storage.Weight(),
+            ),
+            'ht': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Variable([300,350,400,500,600,700,800,900,1000,1200,1500,2000], name='ht', label='H_{T} (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
+            'nPV': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(100, 0, 100, name='nPV', label='Number of Primary Vertices'),
                 storage=hist.storage.Weight(),
             ),
         }
@@ -436,10 +506,18 @@ class AnalysisProcessor(processor.ProcessorABC):
         isMediumTau = self._ids['isMediumTau']
         isGoodJet = self._ids['isGoodJet']
 
+        ### read the corrections
+        get_pu_weight = self._corrections['get_pu_weight']
+        get_jec_correction = self._corrections['get_jec_correction']
+
         ### Initialize global quantities
         npv = events.PV.npvsGood
         run = events.run
-        met = events.MET
+        if '2022' in self._year or '2023' in self._year:
+            met = events.MET
+        else:
+            met = events.PuppiMET
+        calo_met = events.CaloMET
 
         ### Electrons
         e = events.Electron
@@ -451,6 +529,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         }, with_name='PolarTwoVector', behavior=vector.behavior)
         e_veto = e[e.isveto]
         e_medium = e[e.ismedium]
+        #print(e_medium.pt)
         
         ### Muons
         m = events.Muon
@@ -480,17 +559,29 @@ class AnalysisProcessor(processor.ProcessorABC):
             'phi': t.phi,
         }, with_name='PolarTwoVector', behavior=vector.behavior)
         t_medium = t[t.ismedium]
+        #print(t_medium.pt)
 
         ### Jets
         j = events.Jet
-        j['isgood'] = isGoodJet(j)
+        ### Appling JECs
+        jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, j.rho, j.area, run, isData)
+        j['pt'] = j.pt * jec_corr
+        j['mass'] = j.mass * jec_corr
+        j['isgood'] = isGoodJet(j, self._year)
         j['T'] = ak.zip({
             'r': j.pt,
             'phi': j.phi,
         }, with_name='PolarTwoVector', behavior=vector.behavior)
+        ## b-tagging
+        j['isupartL'] = (j.btagUParTAK4B>0.0246)
+        j['isupartM'] = (j.btagUParTAK4B>0.1272)
+        j['isupartT'] = (j.btagUParTAK4B>0.4648)
+        #print(j['isupartM'].pt)
         j_good = j[j.isgood]
         j1 = ak.firsts(j_good)
         j2 = ak.pad_none(j_good, target=2)[:,1]
+        b = j_good[j_good.isupartM]
+        
 
         ### Scalar HT
         scalarHT = ak.sum(j_good.pt, axis=1)
@@ -531,10 +622,22 @@ class AnalysisProcessor(processor.ProcessorABC):
         n_p_medium = ak.num(p_medium, axis=1)
         n_t_medium = ak.num(t_medium, axis=1)
         n_j_good = ak.num(j_good, axis=1)
+        n_b = ak.num(b, axis=1)
 
         ### Opening angle between jets and MET
         j1_met_dphi = np.abs(j1.delta_phi(met))
         j2_met_dphi = np.abs(j2.delta_phi(met))
+
+        ### Opening angle for third, fourth and fifth jets if present
+        j3 = ak.pad_none(j_good, target=3)[:,2]
+        j4 = ak.pad_none(j_good, target=4)[:,3]
+        j5 = ak.pad_none(j_good, target=5)[:,4]
+
+        j3_met_dphi = np.abs(j3.delta_phi(met))
+        j4_met_dphi = np.abs(j4.delta_phi(met))
+        j5_met_dphi = np.abs(j5.delta_phi(met))
+        
+        """ Define the selections """
 
         selection.add('zero_e', n_e_veto == 0)
         selection.add('zero_m', n_m_loose == 0)
@@ -542,33 +645,49 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('one_e', n_e_medium == 1)
         selection.add('one_m', n_m_medium == 1)
         selection.add('one_p', n_p_medium == 1)
+        selection.add('one_b', n_b >= 1)
         selection.add('two_j', n_j_good >= 2)
         selection.add('ht_300', scalarHT > 300)
-        selection.add('opening_angles', (j1_met_dphi > 0.5) & (j2_met_dphi > 1.5))
+        selection.add('met_250', met.pt > 250)
+        selection.add('puppi/calo', met.pt / calo_met.pt < 5)
+        selection.add('opening_angles_preselection', (j1_met_dphi > 0.5) & (j2_met_dphi > 0.15) & ak.fill_none((j3_met_dphi > 0.15), True))
 
         regions = {
             'cat1_preselection': [
                 'lumimask', 'met_filters',
-                'reference_trigger',
-                'zero_m', 'zero_t', 'one_e', 'two_j', 
-                'ht_300', 'opening_angles'
+                'signal_trigger',
+                'zero_m', 'zero_t', 'zero_e', 'two_j', 'one_b',
+                'met_250', 'puppi/calo',
+                'ht_300', 'opening_angles_preselection'
             ],
-            'cat2_electron_control': [
+            'cat2_signal_trigger': [
+                'lumimask', 'met_filters',
+                'reference_trigger',
+                'zero_m', 'zero_t', 'one_e', 'two_j',
+                'ht_300', 'opening_angles_preselection'
+            ],
+            'cat3_electron_control': [
                 'lumimask', 'met_filters', 
                 'zero_m', 'zero_t', 'one_e', 'two_j', 
-                'ht_300', 'opening_angles'
+                'ht_300', 'opening_angles_preselection'
             ],
-            'cat3_muon_control': [
+            'cat4_muon_control': [
                 'lumimask', 'met_filters', 
                 'zero_e', 'zero_t', 'one_m', 'two_j', 
-                'ht_300', 'opening_angles'
+                'ht_300', 'opening_angles_preselection'
             ],
-            'cat4_photon_control': [
+            'cat5_photon_control': [
                 'lumimask', 'met_filters', 
                 'zero_e', 'zero_m', 'one_p', 'two_j', 
-                'ht_300', 'opening_angles'
+                'ht_300', 'opening_angles_preselection'
             ]
         }
+        if not isData:
+            weights.add('genweight', events.genWeight)
+            # PU reweighting
+            pu_nom, pu_up, pu_down = get_pu_weight(self._year, events.Pileup.nTrueInt)
+            weights.add('pileup', pu_nom)
+
         def normalize(val, cut):
             if cut is None:
                 ar = ak.to_numpy(ak.fill_none(val, np.nan))
@@ -609,6 +728,8 @@ class AnalysisProcessor(processor.ProcessorABC):
                     'j2pt': j2.pt,
                     'j2eta': j2.eta,
                     'j2phi': j2.phi,
+                    'ht': scalarHT,
+                    'nPV': npv
                 }
                 for variable in output:
                     if variable not in variables:
@@ -634,7 +755,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                 fill(region, systematic)
         scale = 1
         if self._xsec[dataset] > 0:
-            scale = self._lumi * self._xsec
+            scale = self._lumi * self._xsec[dataset]
         
         for key in output:
             if key == 'sumw':

@@ -26,11 +26,62 @@ def get_pu_weight(year, trueint):
         '2022post': 'Collisions2022_359022_362760_eraEFG_GoldenJson',
         '2023pre' : 'Collisions2023_366403_369802_eraBC_GoldenJson',
         '2023post': 'Collisions2023_369803_370790_eraD_GoldenJson',
+        '2024': 'Collisions2024_378981_386951_GoldenJson'
     }
     evaluator = correctionlib.CorrectionSet.from_file('data/PUweight/'+year+'/puWeights.json.gz')
     weight = evaluator[correction[year]].evaluate(trueint, 'nominal')
+    systup = evaluator[correction[year]].evaluate(trueint, 'up')
+    systdown = evaluator[correction[year]].evaluate(trueint, 'down')
 
-    return weight
+    return weight, systup, systdown
+
+def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
+    evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jet_jerc.json.gz')
+    counts = ak.num(pt)
+    run, _ = ak.broadcast_arrays(run, pt)
+    pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
+    if year == '2022pre':
+        pass
+    elif year == '2022post':
+        pass
+    elif year == '2023pre':
+        pass
+    elif year == '2023post':
+        pass
+    if year == '2024':
+        ## DATA Correction
+        if isData:
+            jec_names = {
+                'L1FastJet' : "Summer24Prompt24_V1_DATA_L1FastJet_AK4PFPuppi",
+                'L2Relative' : "Summer24Prompt24_V1_DATA_L2Relative_AK4PFPuppi",
+                'L3Absolute' : "Summer24Prompt24_V1_DATA_L3Absolute_AK4PFPuppi",
+                'L2L3Residual' : "Summer24Prompt24_V1_DATA_L2L3Residual_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            # L2L3Residual Correction
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(run, eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
+        ## MC Correction
+        else:
+            jec_names = {
+                'L1FastJet' : "Summer24Prompt24_V1_MC_L1FastJet_AK4PFPuppi",
+                'L2Relative' : "Summer24Prompt24_V1_MC_L2Relative_AK4PFPuppi",
+                'L3Absolute' : "Summer24Prompt24_V1_MC_L3Absolute_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3
+
+    return ak.unflatten(corr, counts)
 
 ####
 # Muon ID scale factor
@@ -272,6 +323,7 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
 corrections = {}
 corrections = {
     'get_pu_weight':            get_pu_weight,
+    'get_jec_correction':       get_jec_correction,
     'get_mu_highpt_id_sf':      get_mu_highpt_id_sf,
     'get_mu_loose_iso_sf':      get_mu_loose_iso_sf,
     'get_mu_hlt_sf':            get_mu_hlt_sf,

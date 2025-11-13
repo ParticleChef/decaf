@@ -2,6 +2,11 @@ import numpy as np
 import awkward as ak
 from coffea.util import save
 from coffea.nanoevents.methods import vector as v
+from coffea import lookup_tools, jetmet_tools, util
+from coffea.lookup_tools import extractor, dense_lookup
+from coffea.jetmet_tools import JECStack, CorrectedJetsFactory, CorrectedMETFactory
+import correctionlib
+from correctionlib import convert
 
 ### Electron ID ###
 def isVetoElectron(electron, year):
@@ -109,13 +114,54 @@ def isMediumTau(tau, met_pt, met_phi, year):
     return mask
 
 ### Jet ID ###
+''' deprecated
 def isGoodJet(jet):
     pt = jet.pt
     eta = jet.eta
     jetId = jet.jetId
     mask = (pt > 30) & (abs(eta) < 2.4) & ((jetId & 6) == 6)
     return mask
+'''
+## https://cms-analysis-corrections.docs.cern.ch/corrections_era/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/JME/2025-07-17/#jetidjsongz
+def isGoodJet(jet, year):
+    pt = jet.pt
+    eta = jet.eta
+    phi = jet.phi
+    chHEF = jet.chHEF
+    neHEF = jet.neHEF
+    chEmEF = jet.chEmEF
+    neEmEF = jet.neEmEF
+    muEF = jet.muEF
+    chMultiplicity = jet.chMultiplicity
+    neMultiplicity = jet.neMultiplicity
+    multiplicity = chMultiplicity + neMultiplicity
 
+    def getJetVeto(eta,phi):
+        evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jetvetomaps.json.gz')
+        corr = evaluator["Summer24Prompt24_RunBCDEFGHI_V1"]
+        counts = ak.num(eta)
+        eta, phi = ak.flatten(eta), ak.flatten(phi)
+        out = corr.evaluate('jetvetomap',eta,phi)
+        return ak.unflatten(out, counts)
+
+    def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
+        evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jetid.json.gz')
+        corr = evaluator["AK4PUPPI_TightLeptonVeto"]
+        counts = ak.num(eta)
+        eta, chHEF, neHEF, chEmEF, neEmEF, muEF = ak.flatten(eta), ak.flatten(chHEF), ak.flatten(neHEF), ak.flatten(chEmEF), ak.flatten(neEmEF), ak.flatten(muEF)
+        chMultiplicity, neMultiplicity, multiplicity = ak.flatten(chMultiplicity), ak.flatten(neMultiplicity), ak.flatten(multiplicity)
+        args = (
+            eta,
+            chHEF, neHEF, chEmEF, neEmEF, muEF,
+            chMultiplicity, neMultiplicity, multiplicity,
+        )
+        out = corr.evaluate(*args)
+        return ak.unflatten(out, counts)
+        
+    jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
+    vetoMap = getJetVeto(eta, phi)
+    mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1) & (vetoMap == 0)
+    return mask
 
 ids = {}
 ids['isVetoElectron'] = isVetoElectron
