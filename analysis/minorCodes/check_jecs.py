@@ -29,7 +29,6 @@ def check_json(path):
 isRealsample = True
 sample = {
     'TT_run3': "/data/mc/Run3Summer22NanoAODv12/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/f7267ea1-1288-4112-a06a-849bf1f36dfa.root"
-#    '18WJet': "root://dcache-cms-xrootd.desy.de:1094//store/mc/Run3Summer22NanoAODv12/WtoLNu-2Jets_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/055aacfc-52a3-4274-bfc6-767d6f193e9c.root",
 }
 sample_name = 'TT_run3'
 jec_cache = cachetools.Cache(np.inf)
@@ -70,7 +69,6 @@ def jec_name(year, jec_algo, dojer):
 
     return filenames
 
-
 def add_jec_variables(jets, event_rho):
 	jets["pt_raw"] = (1 - jets.rawFactor)*jets.pt
 	jets["mass_raw"] = (1 - jets.rawFactor)*jets.mass
@@ -78,82 +76,151 @@ def add_jec_variables(jets, event_rho):
 	jets["event_rho"] = ak.broadcast_arrays(event_rho, jets.pt)[0]
 	return jets
 
-
-
-jec_name_map = {
-    'JetPt': 'pt',
-    'JetMass': 'mass',
-    'JetEta': 'eta',
-    'JetA': 'area',
-    'ptGenJet': 'pt_gen',
-    'ptRaw': 'pt_raw',
-    'massRaw': 'mass_raw',
-    'Rho': 'event_rho',
-    'METpt': 'pt',
-    'METphi': 'phi',
-    'JetPhi': 'phi',
-    'UnClusteredEnergyDeltaX': 'MetUnclustEnUpDeltaX',
-    'UnClusteredEnergyDeltaY': 'MetUnclustEnUpDeltaY',
+example_value_dict = {
+    "JetPt": 100.0,
+    "JetEta": 0.0,
+    "JetPhi": 0.2,
+    "JetA": 0.5,
+    "Rho": 15.0,
+    "systematic": "nom",
+    "GenPt": 80.0,  # or -1 if no match
+    "EventID": 12345,
 }
+def get_corr_inputs(input_dict, corr_obj):
+    input_values = [input_dict[inp.name] for inp in corr_obj.inputs]
+    return input_values
 
+def dic_corr_inputs(input_dict, corr_obj):
+    input_values = {
+        inp.name: input_dict[inp.name] for inp in corr_obj.inputs
+        }
+    return input_values
 
-def jec_files(year, jec_algo, dojer):
+Rho = events.Rho
+genPart = events.GenPart
+Jet = add_jec_variables(events.Jet, events.Rho.fixedGridRhoFastjetAll)
 
-    jec_level = ["L1FastJet", "L2L3Residual", "L2Relative", "L3Absolute"]#, "Uncertainty"]
-    jec_tag = {
-        "2022pre"  : "Summer22_22Sep2023_V2_MC",
-        "2022post" : "Summer22EE_22Sep2023_V2_MC",
-        "2023pre"  : "Summer23Prompt23_V1_MC",
-        "2023post" : "Summer23BPixPrompt23_V1_MC"
-    }
+Jet['JetPt'] = Jet.pt
+Jet['JetEta'] = Jet.eta
+Jet['JetPhi'] = Jet.phi
+Jet['JetA'] = Jet.area
+Rho['Rho'] = Rho.fixedGridRhoFastjetAll
+genPart['GenPt'] = genPart.pt
+rho_broadcasted = ak.broadcast_arrays(Jet.pt, Rho.Rho[:, None])[1]
 
-    jer_level = ["PtResolution"]#,"SF"]
-    jer_tag = {
-        "2022pre"  : ["Summer22_22Sep2023_JRV1_MC"],
-        "2022post" : ["Summer22EE_22Sep2023_JRV1_MC"],
-        "2023pre"  : ["Summer23Prompt23_RunCv123_JRV1_MC", "Summer23Prompt23_RunCv4_JRV1_MC"],
-        "2023post" : ["Summer23BPixPrompt23_RunD_JRV1_MC"]
-    }
+jec_inputs = {
+    'JetPt': Jet.JetPt,
+    'JetEta': Jet.JetEta,
+    'JetPhi': Jet.JetPhi,
+    'JetA': Jet.area,
+    'Rho': rho_broadcasted, #Rho.fixedGridRhoFastjetAll,
+#    'GenPt': genPart.pt
+}
+cset = correctionlib.CorrectionSet.from_file("/home/jhong/nanoaod-study/decaf/analysis/data/JetMETCorr/2022pre/jet_jerc.json.gz")
+keys = jec_name('2022pre', 'AK4PFPuppi', False)
+for key in keys:
+    print(key)
+    sf = cset[key]
+    for inp in sf.inputs:
+        print('sf.name: ', inp.name)
+    zipped_inputs = ak.zip(
+        dic_corr_inputs(jec_inputs, sf),
+        depth_limit=1
+    )
+    print("zip inputs:", zipped_inputs)
+    cnt = 0
+    for event in zipped_inputs:
+        print("zipped_inputs element", event)
+        cnt = cnt + 1
+        if cnt > 5: break
+        for args in event:
+            print("event element", args, "value:", event[args])
+    sf_array = ak.Array([
+        #[sf.evaluate(**args) for args in event]
+        [sf.evaluate(**jet.to_dict()) for jet in event]
+        for event in zipped_inputs
+    ])
+    #sfeval = sf.evaluate(*inputs)
+    print('******sf eval: ', sf_array)
 
-    filenames = []
-    for lv in jec_level:
-        filename = f"{jec_tag[year]}_{lv}_{jec_algo}.txt"
-        if 'Unc' in lv: filename = f"{jec_tag[year]}_{lv}_{jec_algo}.txt"
-        filenames.append(filename)
-    if dojer:
-        for v in jer_tag[year]:
-            filenames += [f"{v}_{lv}_{jec_algo}.txt" for lv in jer_level]
-
-    return filenames
-
-print(jec_files("2022pre", "AK4PFPuppi", False))
-
-
-def jet_factory_factory(files, year):
-    ext = extractor()
-    directory='data/JetMETCorr/'+year
-    for filename in files:
-        ext.add_weight_sets([f"* * {directory+'/'+filename}"])
-    ext.finalize()
-    jec_stack = JECStack(ext.make_evaluator())
-    return CorrectedJetsFactory(jec_name_map, jec_stack)
-
-
-
-def jet_factory(year, jec_algo, dojer):
-    return jet_factory_factory(jec_files(year, jec_algo, dojer), year)
-
-print("function jet_factory: ", jet_factory("2022pre","AK4PFPuppi", False))
-jjjjj = jet_factory("2022pre","AK4PFPuppi", False)
-print(events.Jet.pt)
-jets = jjjjj.build(add_jec_variables(events.Jet, events.Rho.fixedGridRhoFastjetAll), jec_cache)
-print(jets.pt)
-
-
-#corrections = load('data/corrections.coffea')
-#jet_factory = corrections['jet_factory']
-#print(jet_factory['2022premc'])
-
+#jec_name_map = {
+#    'JetPt': 'pt',
+#    'JetMass': 'mass',
+#    'JetEta': 'eta',
+#    'JetA': 'area',
+#    'ptGenJet': 'pt_gen',
+#    'ptRaw': 'pt_raw',
+#    'massRaw': 'mass_raw',
+#    'Rho': 'event_rho',
+#    'METpt': 'pt',
+#    'METphi': 'phi',
+#    'JetPhi': 'phi',
+#    'UnClusteredEnergyDeltaX': 'MetUnclustEnUpDeltaX',
+#    'UnClusteredEnergyDeltaY': 'MetUnclustEnUpDeltaY',
+#}
+#
+#
+#def jec_files(year, jec_algo, dojer):
+#
+#    jec_level = ["L1FastJet", "L2L3Residual", "L2Relative", "L3Absolute"]#, "Uncertainty"]
+#    jec_tag = {
+#        "2022pre"  : "Summer22_22Sep2023_V2_MC",
+#        "2022post" : "Summer22EE_22Sep2023_V2_MC",
+#        "2023pre"  : "Summer23Prompt23_V1_MC",
+#        "2023post" : "Summer23BPixPrompt23_V1_MC"
+#    }
+#
+#    jer_level = ["PtResolution"]#,"SF"]
+#    jer_tag = {
+#        "2022pre"  : ["Summer22_22Sep2023_JRV1_MC"],
+#        "2022post" : ["Summer22EE_22Sep2023_JRV1_MC"],
+#        "2023pre"  : ["Summer23Prompt23_RunCv123_JRV1_MC", "Summer23Prompt23_RunCv4_JRV1_MC"],
+#        "2023post" : ["Summer23BPixPrompt23_RunD_JRV1_MC"]
+#    }
+#
+#    filenames = []
+#    for lv in jec_level:
+#        filename = f"{jec_tag[year]}_{lv}_{jec_algo}.txt"
+#        if 'Unc' in lv: filename = f"{jec_tag[year]}_{lv}_{jec_algo}.txt"
+#        filenames.append(filename)
+#    if dojer:
+#        for v in jer_tag[year]:
+#            filenames += [f"{v}_{lv}_{jec_algo}.txt" for lv in jer_level]
+#
+#    return filenames
+#
+#print(jec_files("2022pre", "AK4PFPuppi", False))
+#
+#
+#def jet_factory_factory(files, year):
+#    ext = extractor()
+#    directory='data/JetMETCorr/'+year
+#    for filename in files:
+#        ext.add_weight_sets([f"* * {directory+'/'+filename}"])
+#    ext.finalize()
+#    jec_stack = JECStack(ext.make_evaluator())
+#    return CorrectedJetsFactory(jec_name_map, jec_stack)
+#
+#
+#
+#def jet_factory(year, jec_algo, dojer):
+#    return jet_factory_factory(jec_files(year, jec_algo, dojer), year)
+#
+#print("function jet_factory: ", jet_factory("2022pre","AK4PFPuppi", False))
+#
+#
+#
+#def add_jec_variables(jets, event_rho):
+#	jets["pt_raw"] = (1 - jets.rawFactor)*jets.pt
+#	jets["mass_raw"] = (1 - jets.rawFactor)*jets.mass
+#	jets["pt_gen"] = ak.values_astype(ak.fill_none(jets.matched_gen.pt, 0), np.float32)
+#	jets["event_rho"] = ak.broadcast_arrays(event_rho, jets.pt)[0]
+#	return jets
+#
+##corrections = load('data/corrections.coffea')
+##jet_factory = corrections['jet_factory']
+##print(jet_factory['2022premc'])
+#
 #
 #isRealsample = False
 #sample = {
