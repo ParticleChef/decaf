@@ -54,7 +54,7 @@ with open(output_py, 'w') as f:
         if info['tag'] != current_tag:
             f.write(f"\n    ## {info['tag']}\n")
             current_tag = info['tag']
-        f.write(f"    '{key}': ('{info['base']}', 'MC', '{info['xs']}'),\n")
+        f.write(f"    '{key}': ('{info['base']}', 'MC', {float(info['xs'])}),\n")
     f.write("}\n")
 
 print(f"✅ Saved {len(processes)} processes to {output_py}")
