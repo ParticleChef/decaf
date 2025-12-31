@@ -41,7 +41,38 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
     run, _ = ak.broadcast_arrays(run, pt)
     pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
     if year == '2022pre':
-        pass
+        ## DATA Correction
+        if isData:
+            jec_names = {
+                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L1FastJet_AK4PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK4PFPuppi",
+                'L3Absolute' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK4PFPuppi",
+                'L2L3Residual' : "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            # L2L3Residual Correction
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(run, eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
+        ## MC Correction
+        else:
+            jec_names = {
+                'L1FastJet' : "Summer22_22Sep2023_V3_MC_L1FastJet_AK4PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_V3_MC_L2Relative_AK4PFPuppi",
+                'L3Absolute' : "Summer22_22Sep2023_V3_MC_L3Absolute_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3
+
     elif year == '2022post':
         pass
     elif year == '2023pre':
@@ -89,7 +120,38 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
     run, _ = ak.broadcast_arrays(run, pt)
     pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
     if year == '2022pre':
-        pass
+        ## DATA Correction
+        if isData:
+            jec_names = {
+                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK8PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
+                'L3Absolute' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
+                'L2L3Residual' : "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK8PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            # L2L3Residual Correction
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(run, eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
+        ## MC Correction
+        else:
+            jec_names = {
+                'L1FastJet' : "Summer22_22Sep2023_V3_MC_L1FastJet_AK8PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_V3_MC_L2Relative_AK8PFPuppi",
+                'L3Absolute' : "Summer22_22Sep2023_V3_MC_L3Absolute_AK8PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3
+
     elif year == '2022post':
         pass
     elif year == '2023pre':
