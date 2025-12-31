@@ -8,6 +8,58 @@ from coffea.jetmet_tools import JECStack, CorrectedJetsFactory, CorrectedMETFact
 import correctionlib
 from correctionlib import convert
 
+### Iso Track ID ###
+def isTrackElectron(track, met_pt, met_phi, year):
+    pt = track.pt
+    eta = track.eta
+    pdgId = abs(track.pdgId)
+    relIso = track.pfRelIso03_all
+    mT = np.sqrt(
+        2 * pt * met_pt * (1 - np.cos(track.phi - met_phi))
+    )
+    mask = (
+            (pt > 5)
+            & (abs(eta) < 2.5)
+            & (pdgId == 11)
+            & (relIso < 0.2)
+            & (mT < 100)
+        )
+    return mask
+
+def isTrackMuon(track, met_pt, met_phi, year):
+    pt = track.pt
+    eta = track.eta
+    pdgId = abs(track.pdgId)
+    relIso = track.pfRelIso03_all
+    mT = np.sqrt(
+        2 * pt * met_pt * (1 - np.cos(track.phi - met_phi))
+    )
+    mask = (
+            (pt > 5)
+            & (abs(eta) < 2.5)
+            & (pdgId == 13)
+            & (relIso < 0.2)
+            & (mT < 100)
+        )
+    return mask
+
+def isTrackPion(track, met_pt, met_phi, year):
+    pt = track.pt
+    eta = track.eta
+    pdgId = abs(track.pdgId)
+    relIso = track.pfRelIso03_all
+    mT = np.sqrt(
+        2 * pt * met_pt * (1 - np.cos(track.phi - met_phi))
+    )
+    mask = (
+            (pt > 10)
+            & (abs(eta) < 2.5)
+            & (pdgId == 211)
+            & (relIso < 0.1)
+            & (mT < 100)
+        )
+    return mask
+
 ### Electron ID ###
 def isVetoElectron(electron, year):
     pt = electron.pt
@@ -163,7 +215,49 @@ def isGoodJet(jet, year):
     mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1) & (vetoMap == 0)
     return mask
 
+def isGoodFatJet(jet, year):
+    pt = jet.pt
+    eta = jet.eta
+    phi = jet.phi
+    msd = jet.msoftdrop
+    chHEF = jet.chHEF
+    neHEF = jet.neHEF
+    chEmEF = jet.chEmEF
+    neEmEF = jet.neEmEF
+    muEF = jet.muEF
+    chMultiplicity = jet.chMultiplicity
+    neMultiplicity = jet.neMultiplicity
+    multiplicity = chMultiplicity + neMultiplicity
+
+    def getJetVeto(eta,phi):
+        evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jetvetomaps.json.gz')
+        corr = evaluator["Summer24Prompt24_RunBCDEFGHI_V1"]
+        counts = ak.num(eta)
+        eta, phi = ak.flatten(eta), ak.flatten(phi)
+        out = corr.evaluate('jetvetomap',eta,phi)
+        return ak.unflatten(out, counts)
+    def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
+        evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jetid.json.gz')
+        corr = evaluator["AK8PUPPI_TightLeptonVeto"]
+        counts = ak.num(eta)
+        eta, chHEF, neHEF, chEmEF, neEmEF, muEF = ak.flatten(eta), ak.flatten(chHEF), ak.flatten(neHEF), ak.flatten(chEmEF), ak.flatten(neEmEF), ak.flatten(muEF)
+        chMultiplicity, neMultiplicity, multiplicity = ak.flatten(chMultiplicity), ak.flatten(neMultiplicity), ak.flatten(multiplicity)
+        args = (
+            eta,
+            chHEF, neHEF, chEmEF, neEmEF, muEF,
+            chMultiplicity, neMultiplicity, multiplicity,
+        )
+        out = corr.evaluate(*args)
+        return ak.unflatten(out, counts)
+    jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
+    vetoMap = getJetVeto(eta, phi)
+    mask = (pt > 200) & (abs(eta) < 2.0) & (jetId == 1) & (vetoMap == 0) & (msd > 60)
+    return mask
+
 ids = {}
+ids['isTrackElectron'] = isTrackElectron
+ids['isTrackMuon'] = isTrackMuon
+ids['isTrackPion'] = isTrackPion
 ids['isVetoElectron'] = isVetoElectron
 ids['isMediumElectron'] = isMediumElectron
 ids['isLooseMuon'] = isLooseMuon
@@ -171,4 +265,5 @@ ids['isMediumMuon'] = isMediumMuon
 ids['isMediumPhoton'] = isMediumPhoton
 ids['isMediumTau'] = isMediumTau
 ids['isGoodJet'] = isGoodJet
+ids['isGoodFatJet'] = isGoodFatJet
 save(ids, 'data/ids.coffea')

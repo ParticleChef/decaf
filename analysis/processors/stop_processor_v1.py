@@ -101,11 +101,10 @@ class AnalysisProcessor(processor.ProcessorABC):
         self._common = common
         
         self._samples = {
-            'cat1_preselection': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET'),
-            'cat2_signal_trigger': ('TT','EGamma','SMS'),
-            'cat3_electron_trigger': ('TT','JetMET','SMS'),
-            'cat4_muon_trigger': ('TT','JetMET','SMS'),
-            'cat5_photon_trigger': ('TT','JetMET','SMS'),
+            'cat1_preselection': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
+            'cat2_highDeltaM_mediumB': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
+            'cat3_highDeltaM_tightB': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
+            'cat4_highDeltaM_looseB': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
         }
         self._signal_triggers ={
             '2022pre': [
@@ -396,20 +395,26 @@ class AnalysisProcessor(processor.ProcessorABC):
             'template': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Variable([250,260,270,280,290,300,350,400,500,800], name='met', label='E_{T}^{miss} (GeV)'),
+                hist.axis.Variable([250,260,270,280,290,300,350,400,500,800], name='met', label=r'$E_{T}^{miss}$ (GeV)'),
                 storage=hist.storage.Weight(),
             ),
             'metpt': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
                 hist.axis.IntCategory([0, 1], name='signal_trigger', label='Signal Trigger'),
-                hist.axis.Variable([100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300,350,400,500,800], name='met', label='E_{T}^{miss} (GeV)'),
+                hist.axis.Variable([100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300,350,400,500,800], name='met', label=r'$E_{T}^{miss}$ (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
+            'metpt_10GeVbins': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(150, 0, 1500, name='metpt_10GeVbins', label=r'$E_{T}^{miss}$ (GeV)'),
                 storage=hist.storage.Weight(),
             ),
             'metphi': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Regular(64, -np.pi, np.pi, name='metphi', label='\phi_{E_{T}^{miss}}'),
+                hist.axis.Regular(64, -np.pi, np.pi, name='metphi', label=r'$\phi_{E_{T}^{miss}}$'),
                 storage=hist.storage.Weight(),
             ),
             'nElectron': hist.Hist(
@@ -433,49 +438,175 @@ class AnalysisProcessor(processor.ProcessorABC):
             'j1pt': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Variable(np.arange(0,601,10), name='j1pt', label='Leading Jet p_{T} (GeV)'),
+                hist.axis.Variable(np.arange(0,601,10), name='j1pt', label=r'Leading Jet $p_{T}$ (GeV)'),
                 storage=hist.storage.Weight(),
             ),
             'j1eta': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Regular(64, -5.0, 5.0, name='j1eta', label='Leading Jet #eta'),
+                hist.axis.Regular(64, -5.0, 5.0, name='j1eta', label=r'Leading Jet $\eta$'),
                 storage=hist.storage.Weight(),
             ),
             'j1phi': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Regular(64, -np.pi, np.pi, name='j1phi', label='Leading Jet #phi'),
+                hist.axis.Regular(64, -np.pi, np.pi, name='j1phi', label=r'Leading Jet $\phi$'),
                 storage=hist.storage.Weight(),
             ),
             'j2pt': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Variable(np.arange(0,601,10), name='j2pt', label='Sub-leading Jet p_{T} (GeV)'),
+                hist.axis.Variable(np.arange(0,601,10), name='j2pt', label=r'Sub-leading Jet $p_{T}$ (GeV)'),
                 storage=hist.storage.Weight(),
             ),
             'j2eta': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Regular(64, -5.0, 5.0, name='j2eta', label='Sub-leading Jet #eta'),
+                hist.axis.Regular(64, -5.0, 5.0, name='j2eta', label=r'Sub-leading Jet $\eta$'),
                 storage=hist.storage.Weight(),
             ),
             'j2phi': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Regular(64, -np.pi, np.pi, name='j2phi', label='Sub-leading Jet #phi'),
+                hist.axis.Regular(64, -np.pi, np.pi, name='j2phi', label=r'Sub-leading Jet $\phi$'),
+                storage=hist.storage.Weight(),
+            ),
+            'nb_loose': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(5, 0, 5, name='nb_loose', label='Number of b-tagged Jets'),
+                storage=hist.storage.Weight(),
+            ),
+            'nb_medium': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(5, 0, 5, name='nb_medium', label='Number of b-tagged Jets'),
+                storage=hist.storage.Weight(),
+            ),
+            'nb_tight': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(5, 0, 5, name='nb_tight', label='Number of b-tagged Jets'),
+                storage=hist.storage.Weight(),
+            ),
+            'b1_medium_pt': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Variable(np.arange(0,601,10), name='b1_medium_pt', label=r'Leading b-tagged Jet $p_{T}$ (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
+            'b1_medium_eta': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(64, -5.0, 5.0, name='b1_medium_eta', label=r'Leading b-tagged Jet $\eta$'),
+                storage=hist.storage.Weight(),
+            ),
+            'b1_medium_phi': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(64, -np.pi, np.pi, name='b1_medium_phi', label=r'Leading b-tagged Jet $\phi$'),
+                storage=hist.storage.Weight(),
+            ),
+            'b1_tight_pt': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Variable(np.arange(0,601,10), name='b1_tight_pt', label=r'Leading Tight b-tagged Jet $p_{T}$ (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
+            'b1_tight_eta': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(64, -5.0, 5.0, name='b1_tight_eta', label=r'Leading Tight b-tagged Jet $\eta$'),
+                storage=hist.storage.Weight(),
+            ),
+            'b1_tight_phi': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(64, -np.pi, np.pi, name='b1_tight_phi', label=r'Leading Tight b-tagged Jet $\phi$'),
+                storage=hist.storage.Weight(),
+            ),
+            'b1_loose_pt': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Variable(np.arange(0,601,10), name='b1_loose_pt', label=r'Leading Loose b-tagged Jet $p_{T}$ (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
+            'b1_loose_eta': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(64, -5.0, 5.0, name='b1_loose_eta', label=r'Leading Loose b-tagged Jet $\eta$'),
+                storage=hist.storage.Weight(),
+            ),
+            'b1_loose_phi': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(64, -np.pi, np.pi, name='b1_loose_phi', label=r'Leading Loose b-tagged Jet $\phi$'),
                 storage=hist.storage.Weight(),
             ),
             'ht': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
-                hist.axis.Variable([300,350,400,500,600,700,800,900,1000,1200,1500,2000], name='ht', label='H_{T} (GeV)'),
+                hist.axis.Variable([300,350,400,500,600,700,800,900,1000,1200,1500,2000], name='ht', label=r'$H_{T}$ (GeV)'),
                 storage=hist.storage.Weight(),
             ),
             'nPV': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
                 hist.axis.Regular(100, 0, 100, name='nPV', label='Number of Primary Vertices'),
+                storage=hist.storage.Weight(),
+            ),
+            'nfj': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(10, 0, 10, name='nfj', label='Number of Fat Jets'),
+                storage=hist.storage.Weight(),
+            ),
+            'fj1pt': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Variable(np.arange(0,1001,10), name='fj1pt', label=r'Leading Fat Jet $p_{T}$ (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
+            'fj1mass': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Variable(np.arange(0,501,10), name='fj1mass', label='Leading Fat Jet Mass (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
+            'fj1msd': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Variable(np.arange(0,501,10), name='fj1msd', label='Leading Fat Jet Soft Drop Mass (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
+            'fj1phi': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(64, -np.pi, np.pi, name='fj1phi', label=r'Leading Fat Jet $\phi$'),
+                storage=hist.storage.Weight(),
+            ),
+            'fj1eta': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(64, -5.0, 5.0, name='fj1eta', label=r'Leading Fat Jet $\eta$'),
+                storage=hist.storage.Weight(),
+            ),
+            'fj1TvsQCD': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(500, 0.0, 1.0, name='fj1TvsQCD', label='Leading Fat Jet TvsQCD'),
+                storage=hist.storage.Weight(),
+            ),
+            'fj1WvsQCD': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(50, 0.0, 1.0, name='fj1WvsQCD', label='Leading Fat Jet WvsQCD'),
+                storage=hist.storage.Weight(),
+            ),
+            'fj1QCD': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(50, 0.0, 1.0, name='fj1QCD', label='Leading Fat Jet QCD'),
                 storage=hist.storage.Weight(),
             ),
         }
@@ -498,6 +629,9 @@ class AnalysisProcessor(processor.ProcessorABC):
                     
         """ Initialize the physics objects """
         ### read the ids
+        isTrackElectron = self._ids['isTrackElectron']
+        isTrackMuon = self._ids['isTrackMuon']
+        isTrackPion = self._ids['isTrackPion']
         isVetoElectron = self._ids['isVetoElectron']
         isMediumElectron = self._ids['isMediumElectron']
         isLooseMuon = self._ids['isLooseMuon']
@@ -505,10 +639,12 @@ class AnalysisProcessor(processor.ProcessorABC):
         isMediumPhoton = self._ids['isMediumPhoton']
         isMediumTau = self._ids['isMediumTau']
         isGoodJet = self._ids['isGoodJet']
+        isGoodFatJet = self._ids['isGoodFatJet']
 
         ### read the corrections
         get_pu_weight = self._corrections['get_pu_weight']
         get_jec_correction = self._corrections['get_jec_correction']
+        get_fjec_correction = self._corrections['get_fjec_correction']
 
         ### Initialize global quantities
         npv = events.PV.npvsGood
@@ -518,6 +654,15 @@ class AnalysisProcessor(processor.ProcessorABC):
         else:
             met = events.PuppiMET
         calo_met = events.CaloMET
+
+        ### Tracks
+        trk = events.IsoTrack
+        trk['isTrackElectron'] = isTrackElectron(trk, met.pt, met.phi, self._year)
+        trk['isTrackMuon'] = isTrackMuon(trk, met.pt, met.phi, self._year)
+        trk['isTrackPion'] = isTrackPion(trk, met.pt, met.phi, self._year)
+        trk_e = trk[trk.isTrackElectron]
+        trk_m = trk[trk.isTrackMuon]
+        trk_pi = trk[trk.isTrackPion]
 
         ### Electrons
         e = events.Electron
@@ -567,6 +712,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, j.rho, j.area, run, isData)
         j['pt'] = j.pt * jec_corr
         j['mass'] = j.mass * jec_corr
+        ### Appling JetID
         j['isgood'] = isGoodJet(j, self._year)
         j['T'] = ak.zip({
             'r': j.pt,
@@ -576,12 +722,38 @@ class AnalysisProcessor(processor.ProcessorABC):
         j['isupartL'] = (j.btagUParTAK4B>0.0246)
         j['isupartM'] = (j.btagUParTAK4B>0.1272)
         j['isupartT'] = (j.btagUParTAK4B>0.4648)
-        #print(j['isupartM'].pt)
+
         j_good = j[j.isgood]
         j1 = ak.firsts(j_good)
         j2 = ak.pad_none(j_good, target=2)[:,1]
         b = j_good[j_good.isupartM]
+        b1 = ak.firsts(b)
+        b_tight = j_good[j_good.isupartT]
+        b1_tight = ak.firsts(b_tight)
+        b_loose = j_good[j_good.isupartL]
+        b1_loose = ak.firsts(b_loose)
+        nb_loose = ak.num(b_loose, axis=1)
+        nb_medium = ak.num(b, axis=1)
+        nb_tight = ak.num(b_tight, axis=1)
+
+
+        ### FatJets
+        fj = events.FatJet
+        ### Appling JECs
+        fjec_corr = get_fjec_correction(self._year, fj.pt, fj.eta, fj.phi, fj.rho, fj.area, run, isData)
+
+        fj['pt'] = fj.pt * fjec_corr
+        fj['mass'] = fj.mass * fjec_corr
+        ### Appling FatJetID
+
+        fj['isgood'] = isGoodFatJet(fj, self._year)
         
+        fj['T'] = ak.zip({
+            'r': fj.pt,
+            'phi': fj.phi,
+        }, with_name='PolarTwoVector', behavior=vector.behavior)
+        fj_good = fj[fj.isgood]
+        nfj_good = ak.num(fj_good, axis=1)
 
         ### Scalar HT
         scalarHT = ak.sum(j_good.pt, axis=1)
@@ -615,6 +787,9 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('reference_trigger', reference_triggers)
 
         ### Number of objects
+        n_trk_e = ak.num(trk_e, axis=1)
+        n_trk_m = ak.num(trk_m, axis=1)
+        n_trk_pi = ak.num(trk_pi, axis=1)
         n_e_veto = ak.num(e_veto, axis=1)
         n_e_medium = ak.num(e_medium, axis=1)
         n_m_loose = ak.num(m_loose, axis=1)
@@ -639,48 +814,62 @@ class AnalysisProcessor(processor.ProcessorABC):
         
         """ Define the selections """
 
+        selection.add('zero_trk_e', n_trk_e == 0)
+        selection.add('zero_trk_m', n_trk_m == 0)
+        selection.add('zero_trk_pi', n_trk_pi == 0)
         selection.add('zero_e', n_e_veto == 0)
         selection.add('zero_m', n_m_loose == 0)
         selection.add('zero_t', n_t_medium == 0)
         selection.add('one_e', n_e_medium == 1)
         selection.add('one_m', n_m_medium == 1)
         selection.add('one_p', n_p_medium == 1)
+        selection.add('zero_b', n_b == 0)
         selection.add('one_b', n_b >= 1)
+        selection.add('one_b_tight', ak.num(b_tight, axis=1) >=1)
+        selection.add('one_b_loose', ak.num(b_loose, axis=1) >=1)
+        selection.add('exact_one_b', n_b == 1)
+        selection.add('two_b', n_b >= 2)
         selection.add('two_j', n_j_good >= 2)
+        selection.add('five_j', n_j_good >= 5)
         selection.add('ht_300', scalarHT > 300)
         selection.add('met_250', met.pt > 250)
         selection.add('puppi/calo', met.pt / calo_met.pt < 5)
-        selection.add('opening_angles_preselection', (j1_met_dphi > 0.5) & (j2_met_dphi > 0.15) & ak.fill_none((j3_met_dphi > 0.15), True))
+        selection.add('opening_angles_preselection', (j1_met_dphi > 0.5) & (j2_met_dphi > 0.15) & ak.fill_none(j3_met_dphi > 0.15, True))
+        selection.add('opening_angles_highDeltaM', (j1_met_dphi > 0.5) & (j2_met_dphi > 0.5) & (j3_met_dphi > 0.5) & (j4_met_dphi > 0.5) & (j5_met_dphi > 0.5))
 
         regions = {
             'cat1_preselection': [
                 'lumimask', 'met_filters',
                 'signal_trigger',
-                'zero_m', 'zero_t', 'zero_e', 'two_j', 'one_b',
+                'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
+                'zero_m', 'zero_t', 'zero_e', 'two_j',
                 'met_250', 'puppi/calo',
                 'ht_300', 'opening_angles_preselection'
             ],
-            'cat2_signal_trigger': [
+            'cat2_highDeltaM_mediumB': [
                 'lumimask', 'met_filters',
-                'reference_trigger',
-                'zero_m', 'zero_t', 'one_e', 'two_j',
-                'ht_300', 'opening_angles_preselection'
+                'signal_trigger',
+                'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
+                'zero_m', 'zero_t', 'zero_e', 'five_j', 'one_b',
+                'met_250', 'puppi/calo',
+                'ht_300', 'opening_angles_highDeltaM'
             ],
-            'cat3_electron_control': [
-                'lumimask', 'met_filters', 
-                'zero_m', 'zero_t', 'one_e', 'two_j', 
-                'ht_300', 'opening_angles_preselection'
+            'cat3_highDeltaM_tightB': [
+                'lumimask', 'met_filters',
+                'signal_trigger',
+                'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
+                'zero_m', 'zero_t', 'zero_e', 'five_j',  'one_b_tight',
+                'met_250', 'puppi/calo',
+                'ht_300', 'opening_angles_highDeltaM'
             ],
-            'cat4_muon_control': [
-                'lumimask', 'met_filters', 
-                'zero_e', 'zero_t', 'one_m', 'two_j', 
-                'ht_300', 'opening_angles_preselection'
+            'cat4_highDeltaM_looseB': [
+                'lumimask', 'met_filters',
+                'signal_trigger',
+                'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
+                'zero_m', 'zero_t', 'zero_e', 'five_j', 'one_b_loose',
+                'met_250', 'puppi/calo',
+                'ht_300', 'opening_angles_highDeltaM'
             ],
-            'cat5_photon_control': [
-                'lumimask', 'met_filters', 
-                'zero_e', 'zero_m', 'one_p', 'two_j', 
-                'ht_300', 'opening_angles_preselection'
-            ]
         }
         if not isData:
             weights.add('genweight', events.genWeight)
@@ -718,6 +907,7 @@ class AnalysisProcessor(processor.ProcessorABC):
             )
             if systematic is None:
                 variables = {
+                    'metpt_10GeVbins': met.pt,
                     'metphi': met.phi,
                     'nElectron': n_e_medium,
                     'nMuon': n_m_medium,
@@ -728,8 +918,29 @@ class AnalysisProcessor(processor.ProcessorABC):
                     'j2pt': j2.pt,
                     'j2eta': j2.eta,
                     'j2phi': j2.phi,
+                    'nb_loose': nb_loose,
+                    'nb_medium': nb_medium,
+                    'nb_tight': nb_tight,
+                    'b1_medium_pt': b1.pt,
+                    'b1_medium_eta': b1.eta,
+                    'b1_medium_phi': b1.phi,
+                    'b1_tight_pt': b1_tight.pt,
+                    'b1_tight_eta': b1_tight.eta,
+                    'b1_tight_phi': b1_tight.phi,
+                    'b1_loose_pt': b1_loose.pt,
+                    'b1_loose_eta': b1_loose.eta,
+                    'b1_loose_phi': b1_loose.phi,
                     'ht': scalarHT,
-                    'nPV': npv
+                    'nPV': npv,
+                    'nfj': nfj_good,
+                    'fj1pt': ak.fill_none(ak.firsts(fj_good).pt, -99),
+                    'fj1mass': ak.fill_none(ak.firsts(fj_good).mass, -99),
+                    'fj1msd': ak.fill_none(ak.firsts(fj_good).msoftdrop, -99),
+                    'fj1phi': ak.fill_none(ak.firsts(fj_good).phi, -99),
+                    'fj1eta': ak.fill_none(ak.firsts(fj_good).eta, -99),
+                    'fj1TvsQCD': ak.fill_none(ak.firsts(fj_good).particleNetWithMass_TvsQCD, -99),
+                    'fj1WvsQCD': ak.fill_none(ak.firsts(fj_good).particleNetWithMass_WvsQCD, -99),
+                    'fj1QCD': ak.fill_none(ak.firsts(fj_good).particleNetWithMass_QCD, -99),
                 }
                 for variable in output:
                     if variable not in variables:
