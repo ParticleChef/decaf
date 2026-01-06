@@ -45,11 +45,11 @@ def get_met_xy_correction(year, met_type, isData, met_pt, met_phi, npvGood):
     else:
         pass
     if isData:
-        isData = 'DATA:
+        dtmc = 'DATA:
     else:
-        isData = 'MC'
-    corr_pt = evaluator['met_xy_correction'].evaluate('pt', met_type, epoch, isData, 'nom', met_pt, met_phi, npvGood)
-    corr_phi = evaluator['met_xy_correction'].evaluate('phi', met_type, epoch, isData, 'nom', met_pt, met_phi, npvGood)
+        dtmc = 'MC'
+    corr_pt = evaluator['met_xy_correction'].evaluate('pt', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
+    corr_phi = evaluator['met_xy_correction'].evaluate('phi', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
     return corr_pt, corr_phi
 
 def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
