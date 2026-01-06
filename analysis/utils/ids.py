@@ -299,11 +299,11 @@ def isGoodAK15(fj):
     pt=fj.pt
     eta=fj.eta
     jet_id=fj.jetId
-    nhf=fj.neHEF
-    chf=fj.chHEF
+    #nhf=fj.neHEF
+    #chf=fj.chHEF
     
     mask = (
-        (pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6 ) & (nhf < 0.8) & (chf > 0.1)
+        (pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6 )# & (nhf < 0.8) & (chf > 0.1)
     )
     return mask
 

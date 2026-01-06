@@ -15,6 +15,42 @@ def sigmoid(x,a,b,c,d):
 
 #########
 ## BTag wp
+## Run3 WPs: https://cms-analysis-corrections.docs.cern.ch/corrections_era/
+## WPs are stored in btagging.json.gz file by POG
+## For 2022, 2023: particleNet
+## For 2024: UParTAK4
+PNetUParTWPs = {
+    '2022pre': {
+        'loose' : 0.047,
+        'medium': 0.245,
+        'tight' : 0.6734
+    },
+    '2022post': {
+        'loose' : 0.0499,
+        'medium': 0.2605,
+        'tight' : 0.6915
+    },
+    '2023pre': {
+        'loose' : 0.0358,
+        'medium': 0.1917,
+        'tight' : 0.6172
+    },
+    '2023post': {
+        'loose' : 0.0359,
+        'medium': 0.1919,
+        'tight' : 0.6133
+    },
+    '2024': {
+        'loose' : 0.0246,
+        'medium': 0.1272,
+        'tight' : 0.4648
+    }
+}
+
+
+
+#########
+## BTag wp
 ## UL18 WPs on ttbar RunIISummer19UL18MiniAOD dataset (pt>30 GeV)
 ## https://indico.cern.ch/event/967689/contributions/4083041/attachments/2130779/3590310/BTagPerf_201028_UL18WPs.pdf
 ## 2017 Ultra   Legacy  WPs on  RunIISummer19UL17MiniAOD    MC  production
@@ -71,7 +107,8 @@ deepcsvWPs = {
 
 btagWPs = {
     'deepflav': deepflavWPs,
-    'deepcsv' : deepcsvWPs
+    'deepcsv' : deepcsvWPs,
+    'PNetUParT': PNetUParTWPs
 }
     
 common = {}

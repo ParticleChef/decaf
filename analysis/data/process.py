@@ -19,11 +19,11 @@ processes = {
     'DYto2L-2Jets_MLL-50_PTLL-600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8': ('DYto2L-2Jets_MLL-50_PTLL-600_2J', 'MC', 0.07019),
 
     ## DYto2L-4Jets
-    'DYto2L-4Jets_MLL-50_PTLL-100to200_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-100to200', 'MC', 58.46),
-    'DYto2L-4Jets_MLL-50_PTLL-200to400_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-200to400', 'MC', 6.678),
-    'DYto2L-4Jets_MLL-50_PTLL-400to600_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-400to600', 'MC', 0.3833),
-    'DYto2L-4Jets_MLL-50_PTLL-40to100_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-40to100', 'MC', 403.7),
-    'DYto2L-4Jets_MLL-50_PTLL-600_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-600', 'MC', 0.06843),
+    #'DYto2L-4Jets_MLL-50_PTLL-100to200_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-100to200', 'MC', 58.46),
+    #'DYto2L-4Jets_MLL-50_PTLL-200to400_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-200to400', 'MC', 6.678),
+    #'DYto2L-4Jets_MLL-50_PTLL-400to600_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-400to600', 'MC', 0.3833),
+    #'DYto2L-4Jets_MLL-50_PTLL-40to100_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-40to100', 'MC', 403.7),
+    #'DYto2L-4Jets_MLL-50_PTLL-600_TuneCP5_13p6TeV_madgraphMLM-pythia8': ('DYto2L-4Jets_MLL-50_PTLL-600', 'MC', 0.06843),
 
     ## GJ
     'GJ_PTG-100to200_TuneCP5_13p6TeV_amcatnlo-pythia8': ('GJ_PTG-100to200', 'MC', 1396.0),
@@ -119,4 +119,10 @@ processes = {
 
     ## ZZ
     'ZZ_TuneCP5_13p6TeV_pythia8': ('ZZ', 'MC', 12.75),
+
+    ## Monotop 
+    'sig_Mphi-1995_Mchi-1000': ('Mphi-1995_Mchi-1000', 'MC', 1.0),
+    'sig_Mphi-2000_Mchi-1500': ('Mphi-2000_Mchi-1500', 'MC', 1.0),
+    'sig_Mphi-2000_Mchi-500':  ('Mphi-2000_Mchi-500', 'MC', 1.0),
+    'sig_Mphi-2000_Mchi-150':  ('Mphi-2000_Mchi-150', 'MC', 1.0),
 }
