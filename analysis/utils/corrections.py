@@ -35,6 +35,19 @@ def get_pu_weight(year, trueint):
 
     return weight, systup, systdown
 
+# MET XY Correction
+def get_met_xy_correction(year, met_type, isData, met_pt, met_phi, npvGood):
+    evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/met_xy_correction.json.gz')
+    if year == '2022pre':
+        epoch = '2022'
+    elif year == '2022post':
+        epoch = '2022EE'
+    else:
+        pass
+    corr_pt = evaluator['met_xy_correction'].evaluate('pt', met_type, epoch, isData, 'nom', met_pt, met_phi, npvGood)
+    corr_phi = evaluator['met_xy_correction'].evaluate('phi', met_type, epoch, isData, 'nom', met_pt, met_phi, npvGood)
+    return corr_pt, corr_phi
+
 def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
     evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jet_jerc.json.gz')
     counts = ak.num(pt)
@@ -433,6 +446,7 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
 corrections = {}
 corrections = {
     'get_pu_weight':            get_pu_weight,
+    'get_met_xy_correction':    get_met_xy_correction,
     'get_jec_correction':       get_jec_correction,
     'get_fjec_correction':      get_fjec_correction,
     'get_mu_highpt_id_sf':      get_mu_highpt_id_sf,
