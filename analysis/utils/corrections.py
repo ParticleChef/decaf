@@ -33,6 +33,191 @@ def get_pu_weight(year, trueint):
     return weight
 
 ####
+# MET XY Correction
+# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME
+####
+def get_met_xy_correction(year, met_type, isData, met_pt, met_phi, npvGood):
+    if year == '2022pre':
+        epoch = '2022'
+    elif year == '2022post':
+        epoch = '2022EE'
+    else:
+        print("Now MET xy correction has only 2022, 2022EE")
+    evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/met_xyCorrections_2022_'+epoch+'.json.gz')
+
+    if isData:
+        dtmc = 'DATA'
+    else:
+        dtmc = 'MC'
+
+    corr_pt = evaluator['met_xy_correction'].evaluate('pt', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
+    corr_phi = evaluator['met_xy_correction'].evaluate('phi', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
+
+    return corr_pt, corr_phi
+
+####
+# JEC
+# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME
+####
+def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
+    evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jet_jerc.json.gz')
+    counts = ak.num(pt)
+    run, _ = ak.broadcast_arrays(run, pt)
+    pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
+    if year == '2022pre':
+        ## DATA Correction
+        if isData:
+            jec_names = {
+                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L1FastJet_AK4PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK4PFPuppi",
+                'L3Absolute' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK4PFPuppi",
+                'L2L3Residual' : "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            # L2L3Residual Correction
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(run, eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
+        ## MC Correction
+        else:
+            jec_names = {
+                'L1FastJet' : "Summer22_22Sep2023_V3_MC_L1FastJet_AK4PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_V3_MC_L2Relative_AK4PFPuppi",
+                'L3Absolute' : "Summer22_22Sep2023_V3_MC_L3Absolute_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3
+
+    elif year == '2022post':
+        pass
+    elif year == '2023pre':
+        pass
+    elif year == '2023post':
+        pass
+    if year == '2024':
+        ## DATA Correction
+        if isData:
+            jec_names = {
+                'L1FastJet' : "Summer24Prompt24_V2_DATA_L1FastJet_AK4PFPuppi",
+                'L2Relative' : "Summer24Prompt24_V2_DATA_L2Relative_AK4PFPuppi",
+                'L3Absolute' : "Summer24Prompt24_V2_DATA_L3Absolute_AK4PFPuppi",
+                'L2L3Residual' : "Summer24Prompt24_V2_DATA_L2L3Residual_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            # L2L3Residual Correction
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(run, eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
+        ## MC Correction
+        else:
+            jec_names = {
+                'L1FastJet' : "Summer24Prompt24_V2_MC_L1FastJet_AK4PFPuppi",
+                'L2Relative' : "Summer24Prompt24_V2_MC_L2Relative_AK4PFPuppi",
+                'L3Absolute' : "Summer24Prompt24_V2_MC_L3Absolute_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3
+
+    return ak.unflatten(corr, counts)
+
+def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
+    evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/fatJet_jerc.json.gz')
+    counts = ak.num(pt)
+    run, _ = ak.broadcast_arrays(run, pt)
+    pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
+    if year == '2022pre':
+        ## DATA Correction
+        if isData:
+            jec_names = {
+                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK8PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
+                'L3Absolute' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
+                'L2L3Residual' : "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK8PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            # L2L3Residual Correction
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(run, eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
+        ## MC Correction
+        else:
+            jec_names = {
+                'L1FastJet' : "Summer22_22Sep2023_V3_MC_L1FastJet_AK8PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_V3_MC_L2Relative_AK8PFPuppi",
+                'L3Absolute' : "Summer22_22Sep2023_V3_MC_L3Absolute_AK8PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3
+
+    elif year == '2022post':
+        pass
+    elif year == '2023pre':
+        pass
+    elif year == '2023post':
+        pass
+    if year == '2024':
+        ## DATA Correction
+        if isData:
+            jec_names = {
+                'L1FastJet' : "Summer24Prompt24_V2_DATA_L1FastJet_AK8PFPuppi",
+                'L2Relative' : "Summer24Prompt24_V2_DATA_L2Relative_AK8PFPuppi",
+                'L3Absolute' : "Summer24Prompt24_V2_DATA_L3Absolute_AK8PFPuppi",
+                'L2L3Residual' : "Summer24Prompt24_V2_DATA_L2L3Residual_AK8PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            # L2L3Residual Correction
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(run, eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
+        ## MC Correction
+        else:
+            jec_names = {
+                'L1FastJet' : "Summer24Prompt24_V2_MC_L1FastJet_AK8PFPuppi",
+                'L2Relative' : "Summer24Prompt24_V2_MC_L2Relative_AK8PFPuppi",
+                'L3Absolute' : "Summer24Prompt24_V2_MC_L3Absolute_AK8PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3
+
+    return ak.unflatten(corr, counts)
+
+####
 # Muon ID scale factor
 # https://twiki.cern.ch/twiki/bin/view/CMS/TWikiPAGsMUO
 # https://twiki.cern.ch/twiki/bin/view/CMS/MuonRun32022
@@ -924,300 +1109,15 @@ def get_nnlo_nlo_wjet(channel, mass):
 #        np.nan_to_num(light_up_uncorrelated, nan=1.), \
 #        np.nan_to_num(light_down_uncorrelated, nan=1.)
 
-jec_name_map = {
-    'JetPt': 'pt',
-    'JetMass': 'mass',
-    'JetEta': 'eta',
-    'JetA': 'area',
-    'ptGenJet': 'pt_gen',
-    'ptRaw': 'pt_raw',
-    'massRaw': 'mass_raw',
-    'Rho': 'event_rho',
-    'METpt': 'pt',
-    'METphi': 'phi',
-    'JetPhi': 'phi',
-    'UnClusteredEnergyDeltaX': 'MetUnclustEnUpDeltaX',
-    'UnClusteredEnergyDeltaY': 'MetUnclustEnUpDeltaY',
-}
-
-def jet_factory_factory(files):
-    ext = extractor()
-    directory='data/JetMETCorr/2022pre'
-    for filename in files:
-        ext.add_weight_sets([f"* * {directory+'/'+filename}"])
-    ext.finalize()
-    jec_stack = JECStack(ext.make_evaluator())
-    return CorrectedJetsFactory(jec_name_map, jec_stack)
-
-jet_factory = {
-    "2022premc": jet_factory_factory(
-        files=[
-            "Summer22_22Sep2023_V2_MC_L1FastJet_AK4PFPuppi.txt",
-            "Summer22_22Sep2023_V2_MC_L2Relative_AK4PFPuppi.txt",
-#            "Summer22_22Sep2023_V2_MC_L1FastJet_AK4PFchs.jec.txt",
-#            "Summer22_22Sep2023_V2_MC_L2Relative_AK4PFchs.jec.txt",
-#            "Summer22_22Sep2023_V2_MC_UncertaintySources_AK4PFchs.junc.txt",
-#            "Summer22_22Sep2023_V2_MC_Uncertainty_AK4PFchs.junc.txt",
-#            "Summer20UL16APV_JRV3_MC_PtResolution_AK4PFchs.jr.txt",
-#            "Summer20UL16APV_JRV3_MC_SF_AK4PFchs.jersf.txt",
-        ]
-    ),
-    "2022premcNOJER": jet_factory_factory(
-        files=[
-            "Summer22_22Sep2023_V2_MC_L1FastJet_AK4PFPuppi.txt",
-            "Summer22_22Sep2023_V2_MC_L2Relative_AK4PFPuppi.txt",
-            "Summer22_22Sep2023_V2_MC_L2L3Residual_AK4PFPuppi.txt",
-            "Summer22_22Sep2023_V2_MC_L2Residual_AK4PFPuppi.txt",
-            "Summer22_22Sep2023_V2_MC_L3Absolute_AK4PFPuppi.txt",
-            "Summer22_22Sep2023_V2_MC_Uncertainty_AK4PFPuppi.txt",
-        ]
-    ),
-#    "2022predata": jet_factory_factory(
-#        files=[
-#            "Summer20UL16APV_JRV3_DATA_PtResolution_AK4PFchs.jr.txt",
-#            "Summer20UL16APV_JRV3_DATA_SF_AK4PFchs.jersf.txt",
-#        ]
-#    ),
-#    "2016postVFPmc": jet_factory_factory(
-#        files=[
-#            "Summer19UL16_V7_MC_L1FastJet_AK4PFchs.jec.txt",
-#            "Summer19UL16_V7_MC_L2Relative_AK4PFchs.jec.txt",
-#            "Summer19UL16_V7_MC_UncertaintySources_AK4PFchs.junc.txt",
-#            "Summer19UL16_V7_MC_Uncertainty_AK4PFchs.junc.txt",
-#            "Summer20UL16_JRV3_MC_PtResolution_AK4PFchs.jr.txt",
-#            "Summer20UL16_JRV3_MC_SF_AK4PFchs.jersf.txt",
-#        ]
-#    ),
-#    "2016postVFPmcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL16_V7_MC_L1FastJet_AK4PFchs.jec.txt",
-#            "Summer19UL16_V7_MC_L2Relative_AK4PFchs.jec.txt",
-#            "Summer19UL16_V7_MC_Uncertainty_AK4PFchs.junc.txt",
-#        ]
-#    ),
-#    "2016postVFPdata": jet_factory_factory(
-#        files=[
-#            "Summer20UL16_JRV3_DATA_PtResolution_AK4PFchs.jr.txt",
-#            "Summer20UL16_JRV3_DATA_SF_AK4PFchs.jersf.txt",
-#        ]
-#    ),
-#    "2017mc": jet_factory_factory(
-#        files=[
-#            "Summer19UL17_V5_MC_L1FastJet_AK4PFchs.jec.txt",
-#            "Summer19UL17_V5_MC_L2Relative_AK4PFchs.jec.txt",
-#            "Summer19UL17_V5_MC_UncertaintySources_AK4PFchs.junc.txt",
-#            "Summer19UL17_V5_MC_Uncertainty_AK4PFchs.junc.txt",
-#            "Summer19UL17_JRV3_MC_PtResolution_AK4PFchs.jr.txt",
-#            "Summer19UL17_JRV3_MC_SF_AK4PFchs.jersf.txt",
-#        ]
-#    ),
-#    "2017mcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL17_V5_MC_L1FastJet_AK4PFchs.jec.txt",
-#            "Summer19UL17_V5_MC_L2Relative_AK4PFchs.jec.txt",
-#            "Summer19UL17_V5_MC_Uncertainty_AK4PFchs.junc.txt",
-#        ]
-#    ),
-#    "2017data": jet_factory_factory(
-#        files=[
-#            "Summer19UL17_JRV2_DATA_PtResolution_AK4PFchs.jr.txt",
-#            "Summer19UL17_JRV2_DATA_SF_AK4PFchs.jersf.txt",
-#        ]
-#    ),
-#    "2018mc": jet_factory_factory(
-#        files=[
-#            "Summer19UL18_V5_MC_L1FastJet_AK4PFchs.jec.txt",
-#            "Summer19UL18_V5_MC_L2Relative_AK4PFchs.jec.txt",
-#            "Summer19UL18_V5_MC_L2L3Residual_AK4PFchs.txt",
-#            "Summer19UL18_V5_MC_L3Absolute_AK4PFchs.txt",
-#            "Summer19UL18_V5_MC_UncertaintySources_AK4PFchs.junc.txt",
-#            "Summer19UL18_V5_MC_Uncertainty_AK4PFchs.junc.txt",
-#            "Summer19UL18_JRV2_MC_PtResolution_AK4PFchs.jr.txt",
-#            "Summer19UL18_JRV2_MC_SF_AK4PFchs.jersf.txt",
-#        ]
-#    ),
-#    "2018mcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL18_V5_MC_L1FastJet_AK4PFchs.jec.txt",
-#            "Summer19UL18_V5_MC_L2Relative_AK4PFchs.jec.txt",
-#            "Summer19UL18_V5_MC_Uncertainty_AK4PFchs.junc.txt",
-#        ]
-#    ),
-#    "2018data": jet_factory_factory(
-#        files=[
-#            "Summer19UL18_JRV2_DATA_PtResolution_AK4PFchs.jr.txt",
-#            "Summer19UL18_JRV2_DATA_SF_AK4PFchs.jersf.txt",
-#        ]
-#    ),
-}
-#
-#subjet_factory = {
-#    "2016preVFPmc": jet_factory_factory(
-#        files=[
-#            "Summer19UL16APV_V7_MC_L1FastJet_AK4PFPuppi.jec.txt",
-#            "Summer19UL16APV_V7_MC_L2Relative_AK4PFPuppi.jec.txt",
-#            "Summer19UL16APV_V7_MC_UncertaintySources_AK4PFPuppi.junc.txt",
-#            "Summer19UL16APV_V7_MC_Uncertainty_AK4PFPuppi.junc.txt",
-#            "Summer20UL16APV_JRV3_MC_PtResolution_AK4PFPuppi.jr.txt",
-#            "Summer20UL16APV_JRV3_MC_SF_AK4PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2016preVFPmcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL16APV_V7_MC_L1FastJet_AK4PFPuppi.jec.txt",
-#            "Summer19UL16APV_V7_MC_L2Relative_AK4PFPuppi.jec.txt",
-#            "Summer19UL16APV_V7_MC_Uncertainty_AK4PFPuppi.junc.txt",
-#        ]
-#    ),
-#    "2016postVFPmc": jet_factory_factory(
-#        files=[
-#            "Summer19UL16_V7_MC_L1FastJet_AK4PFPuppi.jec.txt",
-#            "Summer19UL16_V7_MC_L2Relative_AK4PFPuppi.jec.txt",
-#            "Summer19UL16_V7_MC_UncertaintySources_AK4PFPuppi.junc.txt",
-#            "Summer19UL16_V7_MC_Uncertainty_AK4PFPuppi.junc.txt",
-#            "Summer20UL16_JRV3_MC_PtResolution_AK4PFPuppi.jr.txt",
-#            "Summer20UL16_JRV3_MC_SF_AK4PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2016postVFPmcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL16_V7_MC_L1FastJet_AK4PFPuppi.jec.txt",
-#            "Summer19UL16_V7_MC_L2Relative_AK4PFPuppi.jec.txt",
-#            "Summer19UL16_V7_MC_Uncertainty_AK4PFPuppi.junc.txt",
-#        ]
-#    ),
-#    "2017mc": jet_factory_factory(
-#        files=[
-#            "Summer19UL17_V5_MC_L1FastJet_AK4PFPuppi.jec.txt",
-#            "Summer19UL17_V5_MC_L2Relative_AK4PFPuppi.jec.txt",
-#            "Summer19UL17_V5_MC_UncertaintySources_AK4PFPuppi.junc.txt",
-#            "Summer19UL17_V5_MC_Uncertainty_AK4PFPuppi.junc.txt",
-#            "Summer19UL17_JRV3_MC_PtResolution_AK4PFPuppi.jr.txt",
-#            "Summer19UL17_JRV3_MC_SF_AK4PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2017mcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL17_V5_MC_L1FastJet_AK4PFPuppi.jec.txt",
-#            "Summer19UL17_V5_MC_L2Relative_AK4PFPuppi.jec.txt",
-#            "Summer19UL17_V5_MC_Uncertainty_AK4PFPuppi.junc.txt",
-#        ]
-#    ),
-#    "2018mc": jet_factory_factory(
-#        files=[
-#            "Summer19UL18_V5_MC_L1FastJet_AK4PFPuppi.jec.txt",
-#            "Summer19UL18_V5_MC_L2Relative_AK4PFPuppi.jec.txt",
-#            "Summer19UL18_V5_MC_UncertaintySources_AK4PFPuppi.junc.txt",
-#            "Summer19UL18_V5_MC_Uncertainty_AK4PFPuppi.junc.txt",
-#            "Summer19UL18_JRV2_MC_PtResolution_AK4PFPuppi.jr.txt",
-#            "Summer19UL18_JRV2_MC_SF_AK4PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2018mcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL18_V5_MC_L1FastJet_AK4PFPuppi.jec.txt",
-#            "Summer19UL18_V5_MC_L2Relative_AK4PFPuppi.jec.txt",
-#            "Summer19UL18_V5_MC_Uncertainty_AK4PFPuppi.junc.txt",
-#        ]
-#    ),
-#}
-#
-#fatjet_factory = {
-#    "2016preVFPmc": jet_factory_factory(
-#        files=[
-#            "Summer19UL16APV_V7_MC_L1FastJet_AK8PFPuppi.jec.txt",
-#            "Summer19UL16APV_V7_MC_L2Relative_AK8PFPuppi.jec.txt",
-#            "Summer19UL16APV_V7_MC_UncertaintySources_AK8PFPuppi.junc.txt",
-#            "Summer19UL16APV_V7_MC_Uncertainty_AK8PFPuppi.junc.txt",
-#            "Summer20UL16APV_JRV3_MC_PtResolution_AK8PFPuppi.jr.txt",
-#            "Summer20UL16APV_JRV3_MC_SF_AK8PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2016preVFPdata": jet_factory_factory(
-#        files=[
-#            "Summer20UL16APV_JRV3_DATA_PtResolution_AK8PFPuppi.jr.txt",
-#            "Summer20UL16APV_JRV3_DATA_SF_AK8PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2016preVFPmcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL16APV_V7_MC_L1FastJet_AK8PFPuppi.jec.txt",
-#            "Summer19UL16APV_V7_MC_L2Relative_AK8PFPuppi.jec.txt",
-#            "Summer19UL16APV_V7_MC_Uncertainty_AK8PFPuppi.junc.txt",
-#        ]
-#    ),
-#    "2016postVFPmc": jet_factory_factory(
-#        files=[
-#            "Summer19UL16_V7_MC_L1FastJet_AK8PFPuppi.jec.txt",
-#            "Summer19UL16_V7_MC_L2Relative_AK8PFPuppi.jec.txt",
-#            "Summer19UL16_V7_MC_UncertaintySources_AK8PFPuppi.junc.txt",
-#            "Summer19UL16_V7_MC_Uncertainty_AK8PFPuppi.junc.txt",
-#            "Summer20UL16_JRV3_MC_PtResolution_AK8PFPuppi.jr.txt",
-#            "Summer20UL16_JRV3_MC_SF_AK8PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2016postVFPmcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL16_V7_MC_L1FastJet_AK8PFPuppi.jec.txt",
-#            "Summer19UL16_V7_MC_L2Relative_AK8PFPuppi.jec.txt",
-#            "Summer19UL16_V7_MC_Uncertainty_AK8PFPuppi.junc.txt",
-#        ]
-#    ),
-#    "2016postVFPdata": jet_factory_factory(
-#        files=[
-#            "Summer20UL16_JRV3_DATA_PtResolution_AK8PFPuppi.jr.txt",
-#            "Summer20UL16_JRV3_DATA_SF_AK8PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2017mc": jet_factory_factory(
-#        files=[
-#            "Summer19UL17_V5_MC_L1FastJet_AK8PFPuppi.jec.txt",
-#            "Summer19UL17_V5_MC_L2Relative_AK8PFPuppi.jec.txt",
-#            "Summer19UL17_V5_MC_UncertaintySources_AK8PFPuppi.junc.txt",
-#            "Summer19UL17_V5_MC_Uncertainty_AK8PFPuppi.junc.txt",
-#            "Summer19UL17_JRV3_MC_PtResolution_AK8PFPuppi.jr.txt",
-#            "Summer19UL17_JRV3_MC_SF_AK8PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2017mcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL17_V5_MC_L1FastJet_AK8PFPuppi.jec.txt",
-#            "Summer19UL17_V5_MC_L2Relative_AK8PFPuppi.jec.txt",
-#            "Summer19UL17_V5_MC_Uncertainty_AK8PFPuppi.junc.txt",
-#        ]
-#    ),
-#    "2018mc": jet_factory_factory(
-#        files=[
-#            "Summer19UL18_V5_MC_L1FastJet_AK8PFPuppi.jec.txt",
-#            "Summer19UL18_V5_MC_L2Relative_AK8PFPuppi.jec.txt",
-#            "Summer19UL18_V5_MC_L2L3Residual_AK8PFPuppi.txt",
-#            "Summer19UL18_V5_MC_L3Absolute_AK8PFPuppi.txt",
-#            "Summer19UL18_V5_MC_UncertaintySources_AK8PFPuppi.junc.txt",
-#            "Summer19UL18_V5_MC_Uncertainty_AK8PFPuppi.junc.txt",
-#            "Summer19UL18_JRV2_MC_PtResolution_AK8PFPuppi.jr.txt",
-#            "Summer19UL18_JRV2_MC_SF_AK8PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2018data": jet_factory_factory(
-#        files=[
-#            "Summer19UL18_JRV2_DATA_PtResolution_AK8PFPuppi.jr.txt",
-#            "Summer19UL18_JRV2_DATA_SF_AK8PFPuppi.jersf.txt",
-#        ]
-#    ),
-#    "2018mcNOJER": jet_factory_factory(
-#        files=[
-#            "Summer19UL18_V5_MC_L1FastJet_AK8PFPuppi.jec.txt",
-#            "Summer19UL18_V5_MC_L2Relative_AK8PFPuppi.jec.txt",
-#            "Summer19UL18_V5_MC_Uncertainty_AK8PFPuppi.junc.txt",
-#        ]
-#    ),
-#}
-#met_factory = CorrectedMETFactory(jec_name_map)
 
 
 corrections = {}
 corrections = {
     'get_pu_weight':            get_pu_weight,
+    'get_met_xy_correction':    get_met_xy_correction,
+    'get_jec_correction':       get_jec_correction,
+    'get_fjec_correction':      get_fjec_correction,
+
     'get_mu_highpt_id_sf':      get_mu_highpt_id_sf,
     'get_mu_loose_iso_sf':      get_mu_loose_iso_sf,
     'get_mu_hlt_sf':            get_mu_hlt_sf,
@@ -1249,10 +1149,6 @@ corrections = {
 #    'get_msd_corr':             get_msd_corr,
 #    'get_btag_weight':          BTagCorrector,
 #    'get_mu_rochester_sf':      get_mu_rochester_sf,
-    'jet_factory':              jet_factory,
-#    'subjet_factory':           subjet_factory,
-#    'fatjet_factory':           fatjet_factory,
-#    'met_factory':              met_factory
 }
 
 
