@@ -31,7 +31,10 @@ class AnalysisProcessor(processor.ProcessorABC):
 	}
 
 	lumiMasks = {
-		'2022pre': LumiMask("data/lumiMask/Cert_Collisions2022_355100_362760_Golden.json"),
+		'2022pre' : LumiMask("data/lumiMask/Cert_Collisions2022_355100_362760_Golden.json"),
+		'2022post' : LumiMask("data/lumiMask/Cert_Collisions2022_355100_362760_Golden.json"),
+		'2023pre': LumiMask("data/lumiMask/Cert_Collisions2023_366442_370790_Golden.json"),
+		'2023post': LumiMask("data/lumiMask/Cert_Collisions2023_366442_370790_Golden.json"),
 	}
 	
 	met_filters = {
@@ -56,8 +59,9 @@ class AnalysisProcessor(processor.ProcessorABC):
 		self._skipJER = True
 
 		self._samples = {
-			'total' :('GJ','JetMET'),
-			'pho200' :('GJ', 'JetMET'),
+			'basic' :('GJ','JetMET'),
+			'oneA' :('GJ','JetMET'),
+			'eff' :('GJ', 'JetMET'),
 		}
 		
 
@@ -79,14 +83,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 				'Photon200'
 			]
 		}
-		self._singlemuon_triggers = {
-			'2022pre':
-				[
-				'Mu50',
-				'CascadeMu100',
-				'HighPtTkMu100'
-			]
-		}
 		self._corrections = corrections
 		self._ids = ids
 		self._common = common
@@ -95,24 +91,31 @@ class AnalysisProcessor(processor.ProcessorABC):
 			'sumw': 0.,
 			'template': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
-                hist.axis.Regular(100,0,1000, name='phopt', label='Photon Pt'),
-                #hist.axis.Variable([0,1], name='isPass', label='Photon200'),
+				hist.axis.Regular(60,0,1200, name='phopt', label='Photon Pt'),
+				hist.axis.Variable([-0.5,0.5,1.5], name='PFHT1050', label='Reference trigger'),#growth=False),
+				hist.axis.Variable([-0.5,0.5,1.5], name='Photon200',label='Photon trigger'),#growth=False),
 				#hist.axis.Variable([40,50,60,70,80,90,100,110,120,130,150,160,180,200,220,240,300], name='fjmass', label=r'AK15 Jet $m_{sd}$'),
 				storage=hist.storage.Weight(),
 			),
 			'phopt': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(38,250,1200, name='phopt', label='Leading Photon Pt'),
+				hist.axis.Regular(24,0,1200, name='phopt', label='Leading Photon Pt'),
+				hist.axis.Integer(0,2, name='PFHT1050', label='Reference trigger'),
+				hist.axis.Integer(0,2, name='Photon200', label='Photon trigger'),
 				storage=hist.storage.Weight(),
 			),
 			'phoeta': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(48,-2.4,2.4, name='phoeta', label='Leading Photon Eta'),
+				hist.axis.Integer(0,2, name='PFHT1050', label='Reference trigger'),
+				hist.axis.Integer(0,2, name='Photon200', label='Photon trigger'),
 				storage=hist.storage.Weight(),
 			),
 			'phophi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(64,-3.2,3.2, name='phophi', label='Leading Photon Phi'),
+				hist.axis.Integer(0,2, name='PFHT1050', label='Reference trigger'),
+				hist.axis.Integer(0,2, name='Photon200', label='Photon trigger'),
 				storage=hist.storage.Weight(),
 			),
 	}
@@ -155,10 +158,11 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		isLooseMuon	 = self._ids['isLooseMuon']	 
 		isTightMuon	 = self._ids['isTightMuon']	 
-		#isLooseElectron = self._ids['isLooseElectron'] 
-		#isTightElectron = self._ids['isTightElectron'] 
+		isLooseElectron = self._ids['isLooseElectron'] 
+		isTightElectron = self._ids['isTightElectron'] 
 		isLoosePhoton   = self._ids['isLoosePhoton']   
 		isTightPhoton   = self._ids['isTightPhoton']   
+		isGoodAK4	   = self._ids['isGoodAK4']
 
 		###
 		#Initialize global quantities (MET ecc.)
@@ -171,6 +175,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 		#Initialize physics objects
 		###
 
+		mu = events.Muon
+		mu['isloose'] = isLooseMuon(mu,self._year)
+		mu_loose = mu[mu.isloose]
+
+		e = events.Electron
+		e['isloose'] = isLooseElectron(e,self._year)
+		e_loose = e[e.isloose]
+
 		pho = events.Photon
 		pho['isloose'] = isLoosePhoton(pho,self._year)
 		pho['istight'] = isTightPhoton(pho,self._year)
@@ -180,9 +192,18 @@ class AnalysisProcessor(processor.ProcessorABC):
 		pho_ntot = ak.num(pho, axis=1)
 		pho_nloose = ak.num(pho_loose, axis=1)
 		pho_ntight = ak.num(pho_tight, axis=1)
-		
-		# define leading pho
 		leading_pho = ak.firsts(pho_tight)
+		
+		j = events.Jet
+		j['isgood'] = isGoodAK4(j, self._year)
+		j['isclean'] = (
+			ak.all(j.metric_table(mu_loose) > 0.4, axis=2)
+			& ak.all(j.metric_table(e_loose) > 0.4, axis=2)
+		)
+		j_good = j[j.isgood]
+		j_clean = j_good[j_good.isclean]
+		j_ht = ak.sum(j_clean.pt, axis=1)
+
 		
 		###
 		# Selections
@@ -204,7 +225,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			triggers = triggers | events.HLT[path]
 		#selection.add('met_triggers', triggers)
 
-        ## Reference trigger
+		## Reference trigger
 		triggers = np.zeros(len(events), dtype='bool')
 		for path in self._photon_ref_triggers[self._year]:
 			if path not in events.HLT.fields:
@@ -212,7 +233,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			triggers = triggers | events.HLT[path]
 		selection.add('reference_triggers', ak.to_numpy(triggers))
 
-        ## Photon Trigger
+		## Photon Trigger
 		triggers = np.zeros(len(events), dtype='bool')
 		for path in self._photon_triggers[self._year]:
 			if path not in events.HLT.fields:
@@ -222,22 +243,31 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		
 
+		selection.add('jet_ht1500', (j_ht > 1500))
 		selection.add('photon_selection', ((pho_ntight==1)&(pho_nloose==1)))
 
 
 		regions = {
-			'total': [
+			'basic': [
 					'lumimask',
 					'met_filters',
-					'photon_selection',
-                    'reference_triggers'
+					#'jet_ht1500',
+					#'photon_selection'
 			],
-			'pho200': [
+			'oneA': [
 					'lumimask',
 					'met_filters',
 					'photon_selection',
-                    'reference_triggers',
-					'single_photon_triggers'
+					#'jet_ht1500',
+					#'reference_triggers'
+			],
+			'eff': [
+					'lumimask',
+					'met_filters',
+					'photon_selection',
+					'jet_ht1500',
+					#'reference_triggers',
+					#'single_photon_triggers'
 			],
 		}
 
@@ -251,32 +281,49 @@ class AnalysisProcessor(processor.ProcessorABC):
 				
 		def fill(region, systematic):
 			cut = selection.all(*regions[region])
-			#sname = 'nominal' if systematic is None else systematic
-			#if systematic in weights.variations:
-			#	weight = weights.weight(modifier=systematic)[cut]
-			#else:
-			#	weight = weights.weight()[cut]
 			output['template'].fill(
 				  region=region,
-				  #systematic=sname,
-                  phopt=normalize(leading_pho.pt, cut),
+				  PFHT1050 =normalize(events.HLT.PFHT1050,cut),
+				  Photon200=normalize(events.HLT.Photon200,cut),
+				  phopt=normalize(leading_pho.pt, cut),
 #				  weight=weight
 			)
-			if systematic is None:
-				variables = {
-					'phopt':				  leading_pho.pt,
-					'phophi':				 leading_pho.phi,
-					'phoeta':				 leading_pho.eta,
-				}
-				for variable in output:
-					if variable not in variables:
-						continue
-					normalized_variable = {variable: normalize(variables[variable],cut)}
-					output[variable].fill(
-						region=region,
-						**normalized_variable,
-			#			weight=weight,
-					)
+			output['phopt'].fill(
+				  region=region,
+				  phopt=normalize(leading_pho.pt, cut),
+				  PFHT1050 =normalize(events.HLT.PFHT1050,cut),
+				  Photon200=normalize(events.HLT.Photon200,cut),
+#				  weight=weight
+			)
+			output['phophi'].fill(
+				  region=region,
+				  phophi=normalize(leading_pho.phi, cut),
+				  PFHT1050 =normalize(events.HLT.PFHT1050,cut),
+				  Photon200=normalize(events.HLT.Photon200,cut),
+#				  weight=weight
+			)
+			output['phoeta'].fill(
+				  region=region,
+				  phoeta=normalize(leading_pho.eta, cut),
+				  PFHT1050 =normalize(events.HLT.PFHT1050,cut),
+				  Photon200=normalize(events.HLT.Photon200,cut),
+#				  weight=weight
+			)
+			#if systematic is None:
+			#	variables = {
+			#		'phopt':				  leading_pho.pt,
+			#		'phophi':				 leading_pho.phi,
+			#		'phoeta':				 leading_pho.eta,
+			#	}
+			#	for variable in output:
+			#		if variable not in variables:
+			#			continue
+			#		normalized_variable = {variable: normalize(variables[variable],cut)}
+			#		output[variable].fill(
+			#			region=region,
+			#			**normalized_variable,
+			##			weight=weight,
+			#		)
 
 
 		if shift_name is None:
@@ -287,19 +334,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 		for region in regions:
 			if region not in selected_regions: continue
 
-
-			###
-			# Adding recoil and minDPhi requirements
-			###
-
-			#if True:
-			#	selection.add('test_selection', np.ones_like(leading_mu.pt))
-			#	
-			#	if region == 'nocr':
-			#		regions[region].insert(2, 'test_selection')
-			#	else:
-			#		regions[region].insert(3, 'test_selection')
-
 			for systematic in systematics:
 				if isData and systematic is not None:
 					continue
@@ -308,7 +342,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		scale = 1
 		if self._xsec[dataset]!= -1: 
-			scale = self._lumi*self._xsec[dataset]
+			scale = 1.0#self._lumi*self._xsec[dataset]
 
 		for key in output:
 			if key=='sumw': 
