@@ -45,7 +45,7 @@ def get_met_xy_correction(year, met_type, isData, met_pt, met_phi, npvGood):
     else:
         pass
     if isData:
-        dtmc = 'DATA:
+        dtmc = 'DATA'
     else:
         dtmc = 'MC'
     corr_pt = evaluator['met_xy_correction'].evaluate('pt', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
