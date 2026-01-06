@@ -22,8 +22,8 @@ for dataset, info in samplefiles.items():
     # check players in lane
     #print('total samples: '+str(total_samples))
     sleep_time = 10
-    stream = os.popen("ps -ef | grep 'python3 run.py' | wc -l")
-    if int(stream.read()) < 30:
+    stream = os.popen(r"ps -eo ppid=,args= | awk '$1==1 && $0 ~ /python3 run\.py/ {c++} END{print c+0}'")
+    if int(stream.read()) < 50:
         # nohup job
         #print('ds')
         os.system('nohup python3 run.py -p '+options.processor+' -m '+options.metadata+' -d '+dataset+' -w '+str(options.workers)+' > log/'+dataset+'.log &')
@@ -33,7 +33,7 @@ for dataset, info in samplefiles.items():
         continue
     else:
         while True:
-            stream = os.popen("ps -ef | grep 'python3 run.py' | wc -l")
+            stream = os.popen(r"ps -eo ppid=,args= | awk '$1==1 && $0 ~ /python3 run\.py/ {c++} END{print c+0}'")
             print('----------------------------------------------------------')
             print('now "'+str(stream.read())+'"       players in lane')
             print('total '+str(idx)+' jobs are submitted')
@@ -42,8 +42,8 @@ for dataset, info in samplefiles.items():
             time.sleep(sleep_time)
             i += 1
             time.sleep(sleep_time)
-            stream = os.popen("ps -ef | grep 'python3 run.py' | wc -l")
-            if int(stream.read()) < 30:
+            stream = os.popen(r"ps -eo ppid=,args= | awk '$1==1 && $0 ~ /python3 run\.py/ {c++} END{print c+0}'")
+            if int(stream.read()) < 50:
                 break
         os.system('nohup python3 run.py -p '+options.processor+' -m '+options.metadata+' -d '+dataset+' -w '+str(options.workers)+' > log/'+dataset+'.log &')
         idx += 1
@@ -62,7 +62,7 @@ while True:
         stream = os.popen("ls -lh hists/"+options.processor+"| grep .futures |wc -l")
     print('----------------------------------------------------------')
     print('For now "'+str(stream.read())+'"       players has finished')
-    stream = os.popen("ps -ef | grep 'python3 run.py' | wc -l")
+    stream = os.popen(r"ps -eo ppid=,args= | awk '$1==1 && $0 ~ /python3 run\.py/ {c++} END{print c+0}'")
     print('Still '+str(int(stream.read())/2)+' jobs are running')
     print('sleeping for '+str(sleep_time*i)+' seconds...')
     print('----------------------------------------------------------')

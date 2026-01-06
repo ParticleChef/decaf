@@ -12,14 +12,13 @@ from data.process import *
 #####
 
 year = 2022
-name_key = '_private_test'
+name_key = '_private_v1'
 json_name = str(year) + name_key # It will be json file name
 
-nodata = True ## If 'False', data is also in list.
+nodata = False ## If 'False', data is also in list.
 
 ### MC Loop
 # search directory
-#storage_dir = '/data/mc/Run3Summer22NanoAODv12'
 storage_dir = '/data/mc/privatemc/' + str(year)
 print(storage_dir)
 outdict = {}
@@ -28,8 +27,8 @@ outdict = {}
 ls = os.listdir(storage_dir)
 
 for k, v in processes.items():
-    #if not 'GJ' in k: continue ## Use if or if not to use specific dataset or exclude.
-    print(k, v)
+    if 'Mphi' in k: continue ## Use if or if not to use specific dataset or exclude.
+    #print(k, v)
     if not k in ls: continue
     xs = v[2]
     target_dir = os.listdir(storage_dir+'/'+str(k))
@@ -48,72 +47,91 @@ for k, v in processes.items():
 
     else:
         ## Search root files in Lowest directory
+        files = []
         for version_dir in target_dir:
-            files = []
             for dirpath, dirnames, filenames in os.walk(os.path.join(storage_dir, str(k), str(version_dir))):
                 for f in filenames:
                     if f.endswith(".root"):
                         files.append(os.path.join(dirpath, f))
 
-            if len(files) > 10:
-                idx = 1
-                for i in range(0,len(files),10):
-                    new_key = str(k)+'____'+str(idx)+'_'
-                    new_data = files[i:i+10]
-                    outdict.update({new_key:{'files':new_data,'xs':xs}})
-                    idx += 1
-            else:
-                outdict.update({k:{'files':files,'xs':xs}})
+        if len(files) > 10:
+            idx = 1
+            for i in range(0, len(files), 10):
+                new_key = str(k)+'____'+str(idx)+'_'
+                new_data = files[i:i+10]
+                outdict.update({new_key:{'files':new_data,'xs':xs}})
+                idx += 1
+        else:
+            outdict.update({k:{'files':files,'xs':xs}})
 
 
             
 ### Data Loop
 # search directory
-#storage_dirlist = ['/data/data/2022C/', '/data/data/2022D/']
-storage_dirlist = {
-    '2022': ['/data/data/privatedata/2022']
+storage_dirdata = {
+    '2022': '/data/data/privatedata/2022'
 }
-for storage_dir in storage_dirlist[str(year)]:
+for k, v in processes.items():
     if nodata: break
-    # get ls
-    ls = os.listdir(storage_dir)
-    for key in ls:
-        if 'MuonEG' in key: continue
-        if 'DoubleMuon' in key: continue
-        if 'SingleMuon' in key: continue
-        # get file list with absolute path
-        files = os.listdir(storage_dir+'/'+key)
-        files = [storage_dir+'/'+key+'/'+f for f in files]
-        if 'DoubleMuon' in key:
-            if len(files) > 3:
-                idx = 1
-                for i in range(0, len(files), 3):
-                    new_key = key + '____' + str(idx) + '_'
-                    new_data = files[i:i+3]
-                    outdict.update({new_key: {'files': new_data, 'xs': -1}})
-                    idx += 1
-            else:
-                outdict.update({key: {'files': files, 'xs': -1}})
-        elif 'MuonEG' in key:
-            if len(files) > 3:
-                idx = 1
-                for i in range(0, len(files), 3):
-                    new_key = key + '____' + str(idx) + '_'
-                    new_data = files[i:i+3]
-                    outdict.update({new_key: {'files': new_data, 'xs': -1}})
-                    idx += 1
-            else:
-                outdict.update({key: {'files': files, 'xs': -1}})
+    if 'Mphi' in k: continue
+    if not v[2] == 1: continue
+    print(k, v)
+    target_dir = os.listdir(storage_dirdata[str(year)]+'/'+str(k))
+    if '.root' in target_dir[0]:
+        files = os.listdir(storage_dirdata[str(year)]+'/'+str(k))
+        files = [storage_dirdata[str(year)]+'/'+str(k)+'/'+f for f in files]
+        if len(files) > 10:
+            idx = 1
+            for i in range(0,len(files),10):
+                new_key = str(k)+'____'+str(idx)+'_'
+                new_data = files[i:i+10]
+                outdict.update({new_key:{'files':new_data,'xs':-1}})
+                idx += 1
         else:
-            if len(files) > 10:
-                idx = 1
-                for i in range(0, len(files), 10):
-                    new_key = key + '____' + str(idx) + '_'
-                    new_data = files[i:i+10]
-                    outdict.update({new_key: {'files': new_data, 'xs': -1}})
-                    idx += 1
-            else:
-                outdict.update({key: {'files': files, 'xs': -1}})
+            outdict.update({k:{'files':files,'xs':-1}})
+
+    else:
+        ## Search root files in Lowest directory
+        files = []
+        for version_dir in target_dir:
+            for dirpath, dirnames, filenames in os.walk(os.path.join(storage_dirdata[str(year)], str(k), str(version_dir))):
+                for f in filenames:
+                    if f.endswith(".root"):
+                        files.append(os.path.join(dirpath, f))
+
+        if len(files) > 10:
+            idx = 1
+            for i in range(0,len(files),10):
+                new_key = str(k)+'____'+str(idx)+'_'
+                new_data = files[i:i+10]
+                outdict.update({new_key:{'files':new_data,'xs':-1}})
+                idx += 1
+        else:
+            outdict.update({k:{'files':files,'xs':-1}})
+
+
+#for storage_dir in storage_dirlist[str(year)]:
+#    if nodata: break
+#    # get ls
+#    ls = os.listdir(storage_dir)
+#    for key in ls:
+#        print('key: ', key)
+#        if 'MuonEG' in key: continue
+#        if 'DoubleMuon' in key: continue
+#        if 'SingleMuon' in key: continue
+#        # get file list with absolute path
+#        target_dir = os.listdir(storage_dir+'/'+str(key))
+#        files = os.listdir(storage_dir+'/'+key)
+#        files = [storage_dir+'/'+key+'/'+f for f in files]
+#        if len(files) > 10:
+#            idx = 1
+#            for i in range(0, len(files), 10):
+#                new_key = key + '____' + str(idx) + '_'
+#                new_data = files[i:i+10]
+#                outdict.update({new_key: {'files': new_data, 'xs': -1}})
+#                idx += 1
+#            else:
+#                outdict.update({key: {'files': files, 'xs': -1}})
 
 #print(outdict)
 # sorting by key
