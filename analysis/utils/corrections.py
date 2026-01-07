@@ -17,7 +17,7 @@ import hist
 
 ####
 # PU weight
-# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/LUM
+# https://cms-analysis-corrections.docs.cern.ch/corrections_era/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/LUM/latest/#puweights_cjsongz
 ####
 #trueint = events.Pileup.nTrueInt
 def get_pu_weight(year, trueint):
@@ -26,7 +26,8 @@ def get_pu_weight(year, trueint):
         '2022post': 'Collisions2022_359022_362760_eraEFG_GoldenJson',
         '2023pre' : 'Collisions2023_366403_369802_eraBC_GoldenJson',
         '2023post': 'Collisions2023_369803_370790_eraD_GoldenJson',
-        '2024': 'Collisions2024_378981_386951_GoldenJson'
+        #'2024': 'Collisions2024_378981_386951_GoldenJson',
+        '2024': 'Collisions24_BCDEFGHI_goldenJSON',
     }
     evaluator = correctionlib.CorrectionSet.from_file('data/PUweight/'+year+'/puWeights.json.gz')
     weight = evaluator[correction[year]].evaluate(trueint, 'nominal')
