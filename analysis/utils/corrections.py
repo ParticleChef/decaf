@@ -49,8 +49,8 @@ def get_met_xy_correction(year, met_type, isData, met_pt, met_phi, npvGood):
         dtmc = 'DATA'
     else:
         dtmc = 'MC'
-    corr_pt = evaluator['met_xy_correction'].evaluate('pt', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
-    corr_phi = evaluator['met_xy_correction'].evaluate('phi', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
+    corr_pt = evaluator['met_xy_corrections'].evaluate('pt', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
+    corr_phi = evaluator['met_xy_corrections'].evaluate('phi', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
     return corr_pt, corr_phi
 
 def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
