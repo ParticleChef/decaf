@@ -57,6 +57,7 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
     evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jet_jerc.json.gz')
     counts = ak.num(pt)
     run, _ = ak.broadcast_arrays(run, pt)
+    rho, _ = ak.broadcast_arrays(rho, pt)
     pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
     if year == '2022pre':
         ## DATA Correction
@@ -136,6 +137,7 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
     evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/fatJet_jerc.json.gz')
     counts = ak.num(pt)
     run, _ = ak.broadcast_arrays(run, pt)
+    rho, _ = ak.broadcast_arrays(rho, pt)
     pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
     if year == '2022pre':
         ## DATA Correction
