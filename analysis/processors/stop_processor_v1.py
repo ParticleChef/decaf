@@ -707,11 +707,12 @@ class AnalysisProcessor(processor.ProcessorABC):
         #print(t_medium.pt)
 
         ### Jets
-        j = events.Jet
+        j = events.Jet # Events/Jet_*
         ### Appling JECs
         jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, j.rho, j.area, run, isData)
         j['pt'] = j.pt * jec_corr
         j['mass'] = j.mass * jec_corr
+
         ### Appling JetID
         j['isgood'] = isGoodJet(j, self._year)
         j['T'] = ak.zip({
@@ -820,6 +821,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('zero_e', n_e_veto == 0)
         selection.add('zero_m', n_m_loose == 0)
         selection.add('zero_t', n_t_medium == 0)
+        selection.add('one_veto_lepton', ((n_e_veto == 1) & (n_m_loose == 0)) | ((n_e_veto == 0) & (n_m_loose == 1)))
         selection.add('one_e', n_e_medium == 1)
         selection.add('one_m', n_m_medium == 1)
         selection.add('one_p', n_p_medium == 1)
@@ -846,7 +848,16 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'met_250', 'puppi/calo',
                 'ht_300', 'opening_angles_preselection'
             ],
-            'cat2_highDeltaM_mediumB': [
+            'cat2_LLCR': [
+                'lumimask', 'met_filters',
+                'signal_trigger',
+                'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
+                'zero_t', 'two_j',
+                'one_veto_lepton',
+                'met_250', 'puppi/calo',
+                'ht_300', 'opening_angles_preselection'
+            ],
+            'cat3_highDeltaM_mediumB': [
                 'lumimask', 'met_filters',
                 'signal_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
@@ -854,7 +865,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'met_250', 'puppi/calo',
                 'ht_300', 'opening_angles_highDeltaM'
             ],
-            'cat3_highDeltaM_tightB': [
+            'cat4_highDeltaM_tightB': [
                 'lumimask', 'met_filters',
                 'signal_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
@@ -862,7 +873,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'met_250', 'puppi/calo',
                 'ht_300', 'opening_angles_highDeltaM'
             ],
-            'cat4_highDeltaM_looseB': [
+            'cat5_highDeltaM_looseB': [
                 'lumimask', 'met_filters',
                 'signal_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
