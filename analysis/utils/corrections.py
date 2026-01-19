@@ -143,8 +143,8 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
         ## DATA Correction
         if isData:
             jec_names = {
-                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK8PFPuppi",
-                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
+                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L1FastJet_AK8PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK8PFPuppi",
                 'L3Absolute' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
                 'L2L3Residual' : "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK8PFPuppi"
             }
