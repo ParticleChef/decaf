@@ -28,6 +28,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 		#https://twiki.cern.ch/twiki/bin/viewauth/CMS/LumiRecommendationsRun3
 		'2022pre' : 7.980,
 		'2022post': 26.67,
+		'2023pre' : 17.794,
 	}
 
 	lumiMasks = {
@@ -385,6 +386,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 		get_mu_tight_id_sf	   = self._corrections['get_mu_tight_id_sf']
 		get_mu_loose_iso_sf	  = self._corrections['get_mu_loose_iso_sf']
 		get_mu_tight_iso_sf	  = self._corrections['get_mu_tight_iso_sf']
+		get_met_xy_correction	= self._corrections['get_met_xy_correction']
 		#get_met_trig_weight	  = self._corrections['get_met_trig_weight']
 		#get_ele_loose_id_sf	  = self._corrections['get_ele_loose_id_sf']
 		#get_ele_tight_id_sf	  = self._corrections['get_ele_tight_id_sf']
@@ -392,11 +394,13 @@ class AnalysisProcessor(processor.ProcessorABC):
 		#get_ele_reco_sf_below20  = self._corrections['get_ele_reco_sf_below20']
 		#get_ele_reco_sf_above20  = self._corrections['get_ele_reco_sf_above20']
 		#get_mu_rochester_sf	  = self._corrections['get_mu_rochester_sf'][self._year]
-		#get_met_xy_correction	= self._corrections['get_met_xy_correction']
 		#get_nlo_ewk_weight	   = self._corrections['get_nlo_ewk_weight']	
 		#get_nnlo_nlo_weight	  = self._corrections['get_nnlo_nlo_weight'][self._year]
 		#get_btag_weight	  = self._corrections['get_btag_weight']
 		#get_ttbar_weight	 = self._corrections['get_ttbar_weight']
+
+		get_jec_correction = self._corrections['get_jec_correction']
+		get_fjec_correction = self._corrections['get_fjec_correction']
 		
 		isLooseMuon	 = self._ids['isLooseMuon']	 
 		isTightMuon	 = self._ids['isTightMuon']	 
@@ -417,7 +421,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 		npv = events.PV.npvsGood
 		run = events.run
 		met = events.MET
-		#met['pt'] , met['phi'] = get_met_xy_correction(self._year, npv, run, met.pt, met.phi, isData)
+		met['pt'] , met['phi'] = get_met_xy_correction(self._year, 'MET', isData,  met.pt, met.phi, npv)
 
 		###
 		#Initialize physics objects
@@ -520,6 +524,10 @@ class AnalysisProcessor(processor.ProcessorABC):
 		leading_pho = ak.firsts(pho_tight)
 
 		fj = events.AK15PuppiJet
+		rho_density = events.Rho.fixedGridRhoFastjetAll
+		fjec_corr = get_fjec_correction(self._year, fj.pt, fj.eta, fj.phi, rho_density, fj.area, run, isData)
+		fj['pt'] = fj.pt * fjec_corr
+		fj['mass'] = fj.mass * fjec_corr
 		#fj['msd_corr'] = get_msd_corr(fj)
 		fj['vec'] = ak.zip(
 			{
@@ -558,6 +566,9 @@ class AnalysisProcessor(processor.ProcessorABC):
 		leading_fj = ak.firsts(fj_clean)
 
 		j = events.Jet
+		jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, rho_density, j.area, run, isData)
+		j['pt'] = j.pt * jec_corr
+		j['mass'] = j.mass * jec_corr
 		j['T'] = ak.zip(
 			{
 				"r": j.pt,

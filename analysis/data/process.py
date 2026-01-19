@@ -5,6 +5,9 @@ processes = {
     ## Data
     'JetMET':('JetMET','Data',1),
     'EGamma':('EGamma','Data',1),
+    'Muon':('Muon','Data',1),
+    'Muon0':('Muon0','Data',1),
+    'Muon1':('Muon1','Data',1),
 
     ## DYto2L-2Jets
     'DYto2L-2Jets_MLL-50_PTLL-100to200_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8': ('DYto2L-2Jets_MLL-50_PTLL-100to200_1J', 'MC', 45.42),

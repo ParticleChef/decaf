@@ -14,6 +14,8 @@ def isLooseElectron(e, year):
 
     if '2022' in year:
         year='2022'
+    if '2023' in year:
+        year='2023'
 
     pt=e.pt
     eta=e.eta+e.deltaEtaSC
@@ -33,7 +35,7 @@ def isLooseElectron(e, year):
             & (abs(eta) < 2.5)
             & (loose_id >= 1)
         )
-    elif year == "2018":
+    elif year == "2023":
         mask = (
             (pt > 10)
             & (abs(eta) < 1.4442)
@@ -50,6 +52,8 @@ def isLooseElectron(e, year):
 def isTightElectron(e, year):
     if '2022' in year:
         year='2022'
+    if '2023' in year:
+        year='2023'
 
     pt=e.pt
     eta=e.eta+e.deltaEtaSC
@@ -73,7 +77,7 @@ def isTightElectron(e, year):
 #            & (abs(dz) < 0.2)
             & (tight_id == 4)
         )
-    elif year == "2018":  
+    elif year == "2023":  
         mask = (
             (pt > 40)
             & (abs(eta) < 1.4442)
@@ -105,6 +109,8 @@ def isLooseMuon(mu, year):
     
     if '2022' in year:
         year='2022'
+    if '2023' in year:
+        year='2023'
         
     pt=mu.pt
     eta=mu.eta
@@ -127,6 +133,8 @@ def isTightMuon(mu, year):
     
     if '2022' in year:
         year='2022'
+    if '2023' in year:
+        year='2023'
         
     pt=mu.pt
     eta=mu.eta
@@ -146,6 +154,8 @@ def isSoftMuon(mu, year):
     
     if '2022' in year:
         year='2022'
+    if '2023' in year:
+        year='2023'
         
     pt=mu.pt
     eta=mu.eta
@@ -155,9 +165,7 @@ def isSoftMuon(mu, year):
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2022":
         mask = (pt > 5) & (abs(eta) < 2.4) & tight_id & (iso > 0.15)
-    elif year == "2017":
-        mask = (pt > 5) & (abs(eta) < 2.4) & tight_id & (iso > 0.15)
-    elif year == "2018":
+    else:
         mask = (pt > 5) & (abs(eta) < 2.4) & tight_id & (iso > 0.15)
     return mask
 
@@ -248,6 +256,8 @@ def isLoosePhoton(pho, year):
     
     if '2022' in year:
         year='2022'
+    if '2023' in year:
+        year='2023'
 
     pt=pho.pt
     eta=pho.eta
@@ -261,7 +271,7 @@ def isLoosePhoton(pho, year):
             & (abs(eta) < 2.5)
             & (loose_id >= 1)
         )
-    elif year == "2018":
+    elif year == "2023":
         mask = (
             (pt > 20)
             & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660))
@@ -274,6 +284,8 @@ def isLoosePhoton(pho, year):
 def isTightPhoton(pho, year):
     if '2022' in year:
         year='2022'
+    if '2023' in year:
+        year='2023'
 
     pt=pho.pt
     eta=pho.eta
@@ -282,8 +294,8 @@ def isTightPhoton(pho, year):
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2022":
         mask = (pt > 200) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
-    elif year == "2018":
-        mask = (pt > 230) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
+    elif year == "2023":
+        mask = (pt > 200) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
     return mask&(pho.electronVeto)&(pho.isScEtaEB) #tight photons are barrel only
 
 
@@ -325,6 +337,8 @@ def isGoodAK15(fj):
 def isGoodAK4(j, year):
     if '2022' in year:
         year='2022'
+    if '2023' in year:
+        year='2023'
     
     pt=j.pt
     eta=j.eta
@@ -335,6 +349,8 @@ def isGoodAK4(j, year):
     
     mask = (pt > 30) & (abs(eta) < 2.4) & ((jet_id & 6) == 6)
     if year == "2022":
+        mask = ((pt >= 50) & mask) | ((pt < 50) & mask) # & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1)
+    else:
         mask = ((pt >= 50) & mask) | ((pt < 50) & mask) # & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1)
 
     return mask

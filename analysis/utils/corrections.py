@@ -50,8 +50,8 @@ def get_met_xy_correction(year, met_type, isData, met_pt, met_phi, npvGood):
     else:
         dtmc = 'MC'
 
-    corr_pt = evaluator['met_xy_correction'].evaluate('pt', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
-    corr_phi = evaluator['met_xy_correction'].evaluate('phi', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
+    corr_pt = evaluator['met_xy_corrections'].evaluate('pt', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
+    corr_phi = evaluator['met_xy_corrections'].evaluate('phi', met_type, epoch, dtmc, 'nom', met_pt, met_phi, npvGood)
 
     return corr_pt, corr_phi
 
@@ -63,6 +63,7 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
     evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jet_jerc.json.gz')
     counts = ak.num(pt)
     run, _ = ak.broadcast_arrays(run, pt)
+    rho, _ = ak.broadcast_arrays(rho, pt)
     pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
     if year == '2022pre':
         ## DATA Correction
@@ -76,11 +77,11 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
             # L2Relative Correction
-            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
             # L3Absolute Correction
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             # L2L3Residual Correction
-            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(run, eta, pt)
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
         ## MC Correction
         else:
@@ -92,7 +93,7 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
             # L2Relative Correction
-            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
             # L3Absolute Correction
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3
@@ -142,24 +143,25 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
     evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/fatJet_jerc.json.gz')
     counts = ak.num(pt)
     run, _ = ak.broadcast_arrays(run, pt)
+    rho, _ = ak.broadcast_arrays(rho, pt)
     pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
     if year == '2022pre':
         ## DATA Correction
         if isData:
             jec_names = {
-                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK8PFPuppi",
-                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
+                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L1FastJet_AK8PFPuppi",
+                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK8PFPuppi",
                 'L3Absolute' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
                 'L2L3Residual' : "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK8PFPuppi"
             }
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
             # L2Relative Correction
-            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
             # L3Absolute Correction
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             # L2L3Residual Correction
-            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(run, eta, pt)
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
         ## MC Correction
         else:
@@ -171,7 +173,7 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
             # L2Relative Correction
-            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta,  pt)
             # L3Absolute Correction
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3
@@ -333,19 +335,19 @@ def get_mu_tight_iso_sf (year, eta, pt):
 # https://twiki.cern.ch/twiki/bin/view/CMS/RochcorMuon
 # RUN3 NOT UPDATED YET
 ###
-
-tag = 'roccor.Run2.v5'
-get_mu_rochester_sf = {}
-for year in ['2016postVFP', '2016preVFP', '2017','2018']:
-    if '2016postVFP' in year: 
-        fname = f'data/{tag}/RoccoR2016bUL.txt'
-    elif '2016preVFP' in year:  
-        fname = f'data/{tag}/RoccoR2016aUL.txt'
-    else:
-        fname = f'data/{tag}/RoccoR{year}UL.txt'
-    sfs = lookup_tools.txt_converters.convert_rochester_file(fname,loaduncs=True)
-    get_mu_rochester_sf[year] = lookup_tools.rochester_lookup.rochester_lookup(sfs)
-
+#
+#tag = 'roccor.Run2.v5'
+#get_mu_rochester_sf = {}
+#for year in ['2016postVFP', '2016preVFP', '2017','2018']:
+#    if '2016postVFP' in year: 
+#        fname = f'data/{tag}/RoccoR2016bUL.txt'
+#    elif '2016preVFP' in year:  
+#        fname = f'data/{tag}/RoccoR2016aUL.txt'
+#    else:
+#        fname = f'data/{tag}/RoccoR{year}UL.txt'
+#    sfs = lookup_tools.txt_converters.convert_rochester_file(fname,loaduncs=True)
+#    get_mu_rochester_sf[year] = lookup_tools.rochester_lookup.rochester_lookup(sfs)
+#
 ####
 # Photon ID scale factor
 # https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaSFJSON
@@ -693,34 +695,6 @@ def get_nnlo_nlo_wjet(channel, mass):
 #
 #    return evaluator.evaluate(eta, pt)
 #
-
-
-####
-# XY MET Correction
-# https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME
-# https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETRun2Corrections#xy_Shift_Correction_MET_phi_modu
-####
-
-# https://lathomas.web.cern.ch/lathomas/METStuff/XYCorrections/
-# correction_labels = ["metphicorr_pfmet_mc", "metphicorr_puppimet_mc", "metphicorr_pfmet_data", "metphicorr_puppimet_data"]
-
-#def XY_MET_Correction(year, npv, run, pt, phi, isData):
-#    
-#    npv = ak.where((npv>200),ak.full_like(npv,200),npv)
-#    pt  = ak.where((pt>1000.),ak.full_like(pt,1000.),pt)
-#
-#    evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'_UL/met.json.gz')
-#
-#    if isData:
-#        corrected_pt = evaluator['pt_metphicorr_pfmet_data'].evaluate(pt,phi,npv,run)
-#        corrected_phi = evaluator['phi_metphicorr_pfmet_data'].evaluate(pt,phi,npv,run)
-#
-#    if not isData:
-#        corrected_pt = evaluator['pt_metphicorr_pfmet_mc'].evaluate(pt,phi,npv,run)
-#        corrected_phi = evaluator['phi_metphicorr_pfmet_mc'].evaluate(pt,phi,npv,run)
-#
-#    return corrected_pt, corrected_phi
-
 
 
 ###
