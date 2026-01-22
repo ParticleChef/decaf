@@ -227,70 +227,6 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
 # /cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration
 ####
 
-def get_mu_highpt_id_sf (year, eta, pt):
-    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
-
-    eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
-    flateta, counts = ak.flatten(eta), ak.num(eta)
-
-    pt  = ak.where((pt<15.),ak.full_like(pt,15.),pt)
-    flatpt = ak.flatten(pt)
-    
-    weight = evaluator["NUM_HighPtID_DEN_TrackerMuons"].evaluate(flateta, flatpt, "nominal")
-
-    return ak.unflatten(weight, counts=counts)
-
-def get_mu_loose_iso_sf (year, eta, pt):
-    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
-
-    eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
-    flateta, counts = ak.flatten(eta), ak.num(eta)
-
-    pt  = ak.where((pt<15.),ak.full_like(pt,15.),pt)
-    flatpt = ak.flatten(pt)
-    
-    weight = evaluator["NUM_LooseRelTkIso_DEN_HighPtID"].evaluate(flateta, flatpt, "nominal")
-
-    return ak.unflatten(weight, counts=counts)
-
-def get_mu_hlt_sf (year, eta, pt):
-    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
-
-    eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
-    flateta, counts = ak.flatten(eta), ak.num(eta)
-
-    pt  = ak.where((pt<52.),ak.full_like(pt,52.),pt)
-    flatpt = ak.flatten(pt)
-    
-    weight = evaluator["NUM_Mu50_or_CascadeMu100_or_HighPtTkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose"].evaluate(flateta, flatpt, "nominal")
-
-    return ak.unflatten(weight, counts=counts)
-
-# All in one (Only three keys now)
-def get_mu_sf (year, corr, eta, pt):
-    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
-
-    eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
-    flateta, counts = ak.flatten(eta), ak.num(eta)
-
-    pt  = ak.where((pt<15.),ak.full_like(pt,15.),pt)
-    flatpt = ak.flatten(pt)
-
-    if 'highpt' in corr:
-        name = "NUM_HighPtID_DEN_TrackerMuons"
-    elif 'iso' in corr: ## binning edge start 15 GeV
-        name = "NUM_LooseRelTkIso_DEN_HighPtID"
-    elif 'hlt' in corr: ## binning edge start 52 GeV
-        name = "NUM_Mu50_or_CascadeMu100_or_HighPtTkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose"
-        pt  = ak.where((pt<52.),ak.full_like(pt,52.),pt)
-        flatpt = ak.flatten(pt)
-    else:
-        print("Wrong id")
-    
-    weight = evaluator[name].evaluate(flateta, flatpt, "nominal")
-
-    return ak.unflatten(weight, counts=counts)
-
 def get_mu_loose_id_sf (year, eta, pt):
     evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
 
@@ -317,6 +253,19 @@ def get_mu_tight_id_sf (year, eta, pt):
 
     return ak.unflatten(weight, counts=counts)
 
+def get_mu_loose_iso_sf (year, eta, pt):
+    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
+
+    eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+
+    pt  = ak.where((pt<15.),ak.full_like(pt,15.),pt)
+    flatpt = ak.flatten(pt)
+    
+    weight = evaluator["NUM_LoosePFIso_DEN_LooseID"].evaluate(flateta, flatpt, "nominal")
+
+    return ak.unflatten(weight, counts=counts)
+
 def get_mu_tight_iso_sf (year, eta, pt):
     evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
 
@@ -326,7 +275,32 @@ def get_mu_tight_iso_sf (year, eta, pt):
     pt  = ak.where((pt<15.),ak.full_like(pt,15.),pt)
     flatpt = ak.flatten(pt)
     
-    weight = evaluator["NUM_TightRelTkIso_DEN_HighPtID"].evaluate(flateta, flatpt, "nominal")
+    weight = evaluator["NUM_TightPFIso_DEN_TightID"].evaluate(flateta, flatpt, "nominal")
+
+    return ak.unflatten(weight, counts=counts)
+
+# High pT muon (For Nanoaod Study)
+def get_mu_sf (year, corr, eta, pt):
+    evaluator = correctionlib.CorrectionSet.from_file('data/MuonSF/'+year+'/muon_Z.json.gz')
+
+    eta = ak.where((eta>2.399), ak.full_like(eta,2.399), eta)
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+
+    pt  = ak.where((pt<15.),ak.full_like(pt,15.),pt)
+    flatpt = ak.flatten(pt)
+
+    if 'highpt' in corr:
+        name = "NUM_HighPtID_DEN_TrackerMuons"
+    elif 'iso' in corr: ## binning edge start 15 GeV
+        name = "NUM_LooseRelTkIso_DEN_HighPtID"
+    elif 'hlt' in corr: ## binning edge start 52 GeV
+        name = "NUM_Mu50_or_CascadeMu100_or_HighPtTkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose"
+        pt  = ak.where((pt<52.),ak.full_like(pt,52.),pt)
+        flatpt = ak.flatten(pt)
+    else:
+        print("Wrong id")
+    
+    weight = evaluator[name].evaluate(flateta, flatpt, "nominal")
 
     return ak.unflatten(weight, counts=counts)
 
@@ -348,6 +322,7 @@ def get_mu_tight_iso_sf (year, eta, pt):
 #    sfs = lookup_tools.txt_converters.convert_rochester_file(fname,loaduncs=True)
 #    get_mu_rochester_sf[year] = lookup_tools.rochester_lookup.rochester_lookup(sfs)
 #
+
 ####
 # Photon ID scale factor
 # https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaSFJSON
@@ -1092,19 +1067,15 @@ corrections = {
     'get_jec_correction':       get_jec_correction,
     'get_fjec_correction':      get_fjec_correction,
 
-    'get_mu_highpt_id_sf':      get_mu_highpt_id_sf,
-    'get_mu_loose_iso_sf':      get_mu_loose_iso_sf,
-    'get_mu_hlt_sf':            get_mu_hlt_sf,
     'get_mu_sf':                get_mu_sf,
 
     'get_mu_loose_id_sf':       get_mu_loose_id_sf,
     'get_mu_tight_id_sf':       get_mu_tight_id_sf,
+    'get_mu_loose_iso_sf':      get_mu_loose_iso_sf,
     'get_mu_tight_iso_sf':      get_mu_tight_iso_sf,
 
     'get_photon_id_sf':         get_photon_id_sf,
-    'get_ele_veto_id_sf':       get_ele_veto_id_sf,
     'get_ele_loose_id_sf':      get_ele_loose_id_sf,
-    'get_ele_medium_id_sf':     get_ele_medium_id_sf,
     'get_ele_tight_id_sf':      get_ele_tight_id_sf,
 
     'get_ele_reco_sf_below20':  get_ele_reco_sf_below20,
@@ -1112,11 +1083,11 @@ corrections = {
     'get_ele_reco_sf_Above75':  get_ele_reco_sf_Above75,
 
     'get_nnlo_nlo_wjet':         get_nnlo_nlo_wjet,
+#    'get_ele_medium_id_sf':     get_ele_medium_id_sf,
+#    'get_ele_veto_id_sf':       get_ele_veto_id_sf,
 #    'get_met_trig_weight':      get_met_trig_weight,
 #    'get_ele_trig_weight':      get_ele_trig_weight,
-#    'get_pho_tight_id_sf':      get_pho_tight_id_sf,
 #    'get_pho_trig_weight':      get_pho_trig_weight,
-#    'get_met_xy_correction':    XY_MET_Correction,
 #    'get_nlo_ewk_weight':       get_nlo_ewk_weight,
 #    'get_nnlo_nlo_weight':      get_nnlo_nlo_weight,
 #    'get_ttbar_weight':         get_ttbar_weight,
