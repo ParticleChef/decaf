@@ -19,12 +19,13 @@ def scale(filename):
     for dataset in hists['sumw'].keys():
         #scale[dataset]=hists['sumw'][dataset]
         ### This scale is only for 2024 samples
+        '''
         if 'TTto4Q' in dataset:
             scale[dataset] = 164126770000
         elif 'TTtoLNu2Q' in dataset:
             scale[dataset] = 161706980000
-        elif 'TTto2L2Nu' in dataset:
-            scale[dataset] = 37820105000
+        #elif 'TTto2L2Nu' in dataset:
+        #    scale[dataset] = 37820105000
         elif 'QCD_Bin-PT-15to20' in dataset:
             scale[dataset] = 99015416
         elif 'QCD_Bin-PT-20to30' in dataset:
@@ -119,6 +120,8 @@ def scale(filename):
             scale[dataset] = 517007970
         else:
             scale[dataset]=hists['sumw'][dataset]
+        '''
+        scale[dataset]=hists['sumw'][dataset]
     #print('Sumw extracted')
 
     for key in hists.keys():
@@ -139,32 +142,22 @@ def scale(filename):
     sig_map = {}
     bkg_map = {}
     data_map = {}
+    bkg_map['SMS-2Stop-Par-mStop-600'] = ["SMS-2Stop_Par-mStop-600"]
+    bkg_map['SMS-2Stop-Par-mStop-1000'] = ["SMS-2Stop_Par-mStop-1000"]
+    bkg_map['SMS-2Stop-Par-mStop-1500'] = ["SMS-2Stop_Par-mStop-1500"]
     bkg_map["QCD Multijet"] = ["QCD"]
     bkg_map["Z (inv)"] = ["Zto2Nu"]
     bkg_map["W (lnu)"] = ["WtoLNu"]
-    bkg_map["VV"] = ["_TuneCP5_13TeV-pythia8"]
+    bkg_map[r"$\gamma$ + Jets"] = ["GJ"]
+    bkg_map["VV"] = ["VV"]
     bkg_map["TT + V"] = ["TTZ","TTW"]
     bkg_map['TT'] = ["TTto"]
+    bkg_map['DY'] = ['DY']
     #bkg_map["TT (AH)"] = ["TTto4Q"]
     #bkg_map["TT (SL)"] = ["TTtoLNu2Q"]
     #bkg_map["TT (DL)"] = ["TTto2L2Nu"]
     bkg_map["Single Top"] = ["ST"]
-    bkg_map[r"W ($\ell\nu$) + Jets"] = ["WJetsToLNu_Pt"]
-    bkg_map[r"Z ($\ell\ell$) + Jets"] = ["DYJets"]
-    bkg_map[r"Z ($\nu\nu$) + Jets"] = ["JetsToNuNu"]
-    bkg_map[r"$\gamma$ + Jets"] = ["G1Jet"]
-    bkg_map["W+HF"] = ["HF--WJets"]
-    bkg_map["W+LF"] = ["LF--WJets"]
-    bkg_map["W+jetsLO"] = ["lo--WJets"]
-    bkg_map["W+jetsNNLO"] = ["nnlo--WJets"]
-    bkg_map["Z+HF"] = ["HF--ZJetsToNuNu"]
-    bkg_map["Z+LF"] = ["LF--ZJetsToNuNu"]
-    bkg_map["Z+jetsLO"] = ["lo--ZJets"]
-    bkg_map["Z+jetsNNLO"] = ["nnlo--ZJets"]
-    bkg_map["G+HF"] = ["HF--GJets"]
-    bkg_map["G+LF"] = ["LF--GJets"]
-    bkg_map["G+jetsLO"] = ["lo--GJets"]
-    bkg_map["G+jetsNNLO"] = ["nnlo--GJets"]
+
     data_map["JetMET"] = ["JetMET"]
     data_map["DoubleMuon"] = ["DoubleMuon"]
     data_map["MuonEG"] = ["MuonEG"]
@@ -172,10 +165,10 @@ def scale(filename):
     data_map["SinglePhoton"] = ["SinglePhoton"]
     data_map["EGamma"] = ["EGamma"]
     data_map["BTagMu"] = ["BTagMu"]
-    for signal in hists['sumw'].keys():
-        if 'TTY2To2l2v2x' not in signal: continue
-        print(signal)
-        sig_map[signal] = signal  ## signals
+    #for signal in hists['sumw'].keys():
+    #    if 'TTY2To2l2v2x' not in signal: continue
+    #    print(signal)
+    #    sig_map[signal] = signal  ## signals
     print('Processes defined')
     print(sig_map.keys())
     

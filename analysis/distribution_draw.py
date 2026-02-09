@@ -22,19 +22,19 @@ data = myhist['data']
 
 print('TT',bkg['metpt']['TT'][{'region':'cat1_preselection','systematic':'nominal'}].values())
 #print('Z (inv)',bkg['metpt']['Z (inv)'][{'region':'cat1_preselection','systematic':'nominal'}].values())
-#print('W (lnu)',bkg['metpt']['W (lnu)'][{'region':'cat1_preselection','systematic':'nominal'}].values())
+print('W (lnu)',bkg['metpt']['W (lnu)'][{'region':'cat1_preselection','systematic':'nominal'}].values())
 print('Single Top',bkg['metpt']['Single Top'][{'region':'cat1_preselection','systematic':'nominal'}].values())
 print('QCD Multijet',bkg['metpt']['QCD Multijet'][{'region':'cat1_preselection','systematic':'nominal'}].values())
 print('data',data['metpt']['JetMET'][{'region':'cat1_preselection','systematic':'nominal'}].values())
-
+#print(bkg['metpt'].keys())
 regions = 'cat1_preselection'
 systematics = 'nominal'
 #stacks = ['QCD Multijet','Z (inv)','W (lnu)','Single Top', 'TT']
 #colors= ['lightblue','salmon','green','orange','yellow']
 #stacks = ['Z (inv)', 'W (lnu)', 'TT','Single Top','QCD Multijet']
 #colors = ['salmon','green','yellow','orange','lightblue']
-stacks = ['QCD Multijet','TT', 'Single Top']
-colors = ['lightblue', 'yellow', 'orange']
+stacks = ['W (lnu)','QCD Multijet','TT', 'Single Top']
+colors = ['green','lightblue', 'yellow', 'orange']
 
 
 for key in bkg.keys():
@@ -157,13 +157,13 @@ for key in bkg.keys():
             color='black',
             markersize=8, capsize=5, capthick=1,
         )
-        #print(unc_low, unc_up)
         rax.fill_between(bins, (unc_low/total_bkg_forratio), (unc_up/total_bkg_forratio), **error_opts)
         rax.set_ylabel('Data/MC')
         rax.set_ylim(0, 2)
         rax.set_yticks([0, 0.5, 1, 1.5, 2])
         rax.grid(True, which='both', axis='y', ls='--', lw=0.5)
-        plt.xlabel(key)
+        lab = bkg[key]['TT'].axes.label[-1]
+        #plt.xlabel(f'${lab}$')
         plt.savefig('plots/'+key+'_'+regions+'.png')
         plt.close()
 

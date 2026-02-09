@@ -42,7 +42,7 @@ EGamma_2023 = get_trigger_efficiency('hists/2023_EGamma.scaled')
 EGamma_2024 = get_trigger_efficiency('hists/stop_2024.scaled')
 
 # Plotting the efficiency with error bars
-plt.figure(figsize=(8, 8))
+plt.figure(figsize=(8, 3))
 plt.style.use(mplhep.style.CMS)
 mplhep.cms.label(llabel='Work in progress', rlabel='(13.6 TeV)')
 '''
@@ -78,7 +78,7 @@ plt.errorbar(
     EGamma_2024[1], EGamma_2024[2],
     xerr = np.diff(EGamma_2024[0]) / 2,
     yerr=[np.abs(EGamma_2024[2] - EGamma_2024[3]), np.abs(EGamma_2024[4] - EGamma_2024[2])],
-    fmt='^', label='2024 EGamma (B,C,D,E,F,G,H,I)\n 109.08 fb$^{-1}$',
+    fmt='^', label='2024 EGamma (C,D,E,F,G,H,I)\n 108.95 fb$^{-1}$',
     markersize=8, capsize=5, capthick=1,
     color='blue',
 )
@@ -93,4 +93,4 @@ plt.ylim(0, 1.01)
 plt.grid()
 plt.legend(loc='lower right', fontsize=20)
 plt.tight_layout()
-plt.savefig('trigger_efficiency.png')
+plt.savefig('trigger_efficiency2.png')

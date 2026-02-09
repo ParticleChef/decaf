@@ -132,11 +132,11 @@ def isMediumPhoton(photon, year):
     eta = photon.eta
     cutBased = photon.cutBased
     mask = (
-            (pt > 10)
+            (pt > 220)
             & (abs(eta) < 1.4442)
             & (cutBased >= 3)
         ) | (
-            (pt > 10)
+            (pt > 220)
             & (abs(eta) > 1.5660)
             & (abs(eta) < 2.5)
             & (cutBased >= 3)

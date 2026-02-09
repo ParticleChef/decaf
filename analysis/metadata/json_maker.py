@@ -22,7 +22,7 @@ elif year == '2023post':
     storage_dirlist = ['/data/data/2023D/']
     mc_dir = '/data/mc/Run3Summer23BPixNanoAODv12'
 elif year == '2024':
-    storage_dirlist = ['/home/twkim/NPS_Stop_Analysis/decaf/analysis/ntuple_out/2024C/', '/home/twkim/NPS_Stop_Analysis/decaf/analysis/ntuple_out/2024D/', '/home/twkim/NPS_Stop_Analysis/decaf/analysis/ntuple_out/2024E/', '/home/twkim/NPS_Stop_Analysis/decaf/analysis/ntuple_out/2024F/', '/home/twkim/NPS_Stop_Analysis/decaf/analysis/ntuple_out/2024G/', '/home/twkim/NPS_Stop_Analysis/decaf/analysis/ntuple_out/2024H/', '/home/twkim/NPS_Stop_Analysis/decaf/analysis/ntuple_out/2024I/']
+    storage_dirlist = ['/scratch/twkim/data/2024C/', '/scratch/twkim/data/2024D/', '/scratch/twkim/data/2024E/', '/scratch/twkim/data/2024F/', '/scratch/twkim/data/2024G/', '/scratch/twkim/data/2024H/', '/scratch/twkim/data/2024I/']
     #mc_dir = '/data/mc/RunIII2024Summer24NanoAODv15'
     mc_dir = '/data/mc/stop_2024_nTuple'
 
@@ -55,33 +55,33 @@ for key in mc_ls:
     files = [mc_dir+'/'+key+'/'+f for f in files]
     ## TTto4Q
     if 'TTto4Q' in key:
-        if len(files) > 20:
+        if len(files) > 40:
             idx = 1
-            for i in range(0, len(files), 20):
+            for i in range(0, len(files), 40):
                 new_key = key + '____' + str(idx) + '_'
-                new_data = files[i:i+20]
+                new_data = files[i:i+40]
                 outdict.update({new_key: {'files': new_data, 'xs': 419.82}})
                 idx += 1
         else:
             outdict.update({key: {'files': files, 'xs': 419.82}})
     ## TTtoLNu2Q
     elif 'TTtoLNu2Q' in key:
-        if len(files) > 20:
+        if len(files) > 40:
             idx = 1
-            for i in range(0, len(files), 20):
+            for i in range(0, len(files), 40):
                 new_key = key + '____' + str(idx) + '_'
-                new_data = files[i:i+20]
+                new_data = files[i:i+40]
                 outdict.update({new_key: {'files': new_data, 'xs': 405.75}})
                 idx += 1
         else:
             outdict.update({key: {'files': files, 'xs': 405.75}})
     #TTto2L2Nu
     elif 'TTto2L2Nu' in key:
-        if len(files) > 20:
+        if len(files) > 40:
             idx = 1
-            for i in range(0, len(files), 20):
+            for i in range(0, len(files), 40):
                 new_key = key + '____' + str(idx) + '_'
-                new_data = files[i:i+20]
+                new_data = files[i:i+40]
                 outdict.update({new_key: {'files': new_data, 'xs': 98.04}})
                 idx += 1
         else:
@@ -473,6 +473,7 @@ for key in mc_ls:
                 idx += 1
         else:
             outdict.update({key: {'files': files, 'xs': 0.5259}})
+            
     elif 'ST-TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8' in key:
         if len(files) > 50:
             idx = 1
@@ -573,6 +574,314 @@ for key in mc_ls:
                 idx += 1
         else:
             outdict.update({key: {'files': files, 'xs': 23.34}})
+    ## Zto2Nu-2Jets_Bin-1J-PTNuNu-40to100
+    elif 'Zto2Nu-2Jets_Bin-1J-PTNuNu-40to100' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 885.7}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 885.7}})
+    ## Zto2Nu-2Jets_Bin-1J-PTNuNu-100to200
+    elif 'Zto2Nu-2Jets_Bin-1J-PTNuNu-100to200' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 78.91}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 78.91}})
+    ## Zto2Nu-2Jets_Bin-1J-PTNuNu-200to400
+    elif 'Zto2Nu-2Jets_Bin-1J-PTNuNu-200to400' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 5.406}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 5.406}})
+    ## Zto2Nu-2Jets_Bin-1J-PTNuNu-400to600
+    elif 'Zto2Nu-2Jets_Bin-1J-PTNuNu-400to600' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 0.1693}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 0.1693}})
+    ## Zto2Nu-2Jets_Bin-1J-PTNuNu-600
+    elif 'Zto2Nu-2Jets_Bin-1J-PTNuNu-600' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 0.01895}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 0.01895}})
+    ## Zto2Nu-2Jets_Bin-2J-PTNuNu-40to100
+    elif 'Zto2Nu-2Jets_Bin-2J-PTNuNu-40to100' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 328.6}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 328.6}})
+    ## Zto2Nu-2Jets_Bin-2J-PTNuNu-100to200
+    elif 'Zto2Nu-2Jets_Bin-2J-PTNuNu-100to200' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 100.2}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 100.2}})
+    ## Zto2Nu-2Jets_Bin-2J-PTNuNu-200to400
+    elif 'Zto2Nu-2Jets_Bin-2J-PTNuNu-200to400' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 13.76}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 13.76}})
+    ## Zto2Nu-2Jets_Bin-2J-PTNuNu-400to600
+    elif 'Zto2Nu-2Jets_Bin-2J-PTNuNu-400to600' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 0.775}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 0.775}})
+    ## Zto2Nu-2Jets_Bin-2J-PTNuNu-600
+    elif 'Zto2Nu-2Jets_Bin-2J-PTNuNu-600' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 0.1304}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 0.1304}})
+    ## WtoLNu-2Jets_Bin-1J-PTLNu-40to100
+    elif 'WtoLNu-2Jets_Bin-1J-PTLNu-40to100' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 4211.0}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 4211.0}})
+    ## WtoLNu-2Jets_Bin-1J-PTLNu-100to200
+    elif 'WtoLNu-2Jets_Bin-1J-PTLNu-100to200' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 342.3}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 342.3}})
+    ## WtoLNu-2Jets_Bin-1J-PTLNu-200to400
+    elif 'WtoLNu-2Jets_Bin-1J-PTLNu-200to400' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 21.84}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 21.84}})
+    ## WtoLNu-2Jets_Bin-1J-PTLNu-400to600
+    elif 'WtoLNu-2Jets_Bin-1J-PTLNu-400to600' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 0.6845}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 0.6845}})
+    ## WtoLNu-2Jets_Bin-1J-PTLNu-600
+    elif 'WtoLNu-2Jets_Bin-1J-PTLNu-600' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 0.07753}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 0.07753}})
+    ## WtoLNu-2Jets_Bin-2J-PTLNu-40to100
+    elif 'WtoLNu-2Jets_Bin-2J-PTLNu-40to100' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 1581.0}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 1581.0}})
+    ## WtoLNu-2Jets_Bin-2J-PTLNu-100to200
+    elif 'WtoLNu-2Jets_Bin-2J-PTLNu-100to200' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 411.1}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 411.1}})
+    elif 'WtoLNu-2Jets_Bin-2J-PTLNu-200to400' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 53.59}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 53.59}})
+    elif 'WtoLNu-2Jets_Bin-2J-PTLNu-400to600' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 3.099}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 3.099}})
+    elif 'WtoLNu-2Jets_Bin-2J-PTLNu-600' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 0.5259}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 0.5259}})
+
+
+mc_dir = '/data/mc/RunIII2024Summer24NanoAODv15'
+mc_ls = os.listdir(mc_dir)
+for key in mc_ls:
+    if 'backup' in key:
+        continue
+    print('Processing MC key:', key)
+    files = os.listdir(mc_dir+'/'+key)
+    files = [mc_dir+'/'+key+'/'+f for f in files]
+    if 'SMS-2Stop_Par-mStop-600' in key:
+        if len(files) > 100:
+            idx = 1
+            for i in range(0, len(files), 100):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+100]
+                outdict.update({new_key: {'files': new_data, 'xs': 10.0}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 10.0}})
+    elif 'SMS-2Stop_Par-mStop-1000' in key:
+        if len(files) > 100:
+            idx = 1
+            for i in range(0, len(files), 100):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+100]
+                outdict.update({new_key: {'files': new_data, 'xs': 10.0}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 10.0}})
+    elif 'SMS-2Stop_Par-mStop-1500' in key:
+        if len(files) > 100:
+            idx = 1
+            for i in range(0, len(files), 100):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+100]
+                outdict.update({new_key: {'files': new_data, 'xs': 10.0}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 10.0}})
+    elif 'TBbartoLplusNuBbar-s-channel-4FS' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 2.278}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 2.278}})
+    elif 'TbarBtoLminusNuB-s-channel-4FS' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 1.43}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 1.43}})
+    elif 'VV-WW_TuneCP5_13p6TeV_pythia8' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 80.23}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 80.23}})
+    elif 'VV-WZ_TuneCP5_13p6TeV_pythia8' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 29.1}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 29.1}})
+    elif 'VV-ZZ_TuneCP5_13p6TeV_pythia8' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 12.75}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 12.75}})                        
+
 
 # update json file
 with open('KNU_'+ str(year) +'_v1.json', 'w') as f:
@@ -581,3 +890,111 @@ with open('KNU_'+ str(year) +'_v1.json', 'w') as f:
 os.system('gzip -f KNU_'+ str(year) +'_v1.json')
 
 
+'''
+    elif 'WtoLNu-4Jets_Bin-1J_TuneCP5_13p6TeV_madgraphMLM-pythia8' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 9141.0}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 9141.0}})
+    elif 'WtoLNu-4Jets_Bin-2J_TuneCP5_13p6TeV_madgraphMLM-pythia8' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 2931.0}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 2931.0}})
+    elif 'WtoLNu-4Jets_Bin-3J_TuneCP5_13p6TeV_madgraphMLM-pythia8' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 864.6}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 864.6}})
+    elif 'WtoLNu-4Jets_Bin-4J_TuneCP5_13p6TeV_madgraphMLM-pythia8' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 417.8}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 417.8}})
+    ## Zto2Nu-4Jets_Bin-HT-100to200
+    elif 'Zto2Nu-4Jets_Bin-HT-100to200' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 272.8}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 272.8}})
+    ## Zto2Nu-4Jets_Bin-HT-200to400
+    elif 'Zto2Nu-4Jets_Bin-HT-200to400' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 75.66}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 75.66}})
+    ## Zto2Nu-4Jets_Bin-HT-400to800
+    elif 'Zto2Nu-4Jets_Bin-HT-400to800' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 13.08}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 13.08}})
+    ## Zto2Nu-4Jets_Bin-HT-800to1500
+    elif 'Zto2Nu-4Jets_Bin-HT-800to1500' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 1.362}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 1.362}})
+    ## Zto2Nu-4Jets_Bin-HT-1500to2500
+    elif 'Zto2Nu-4Jets_Bin-HT-1500to2500' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 0.09793}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 0.09793}})
+    ## Zto2Nu-4Jets_Bin-HT-2500
+    elif 'Zto2Nu-4Jets_Bin-HT-2500' in key:
+        if len(files) > 50:
+            idx = 1
+            for i in range(0, len(files), 50):
+                new_key = key + '____' + str(idx) + '_'
+                new_data = files[i:i+50]
+                outdict.update({new_key: {'files': new_data, 'xs': 0.006665}})
+                idx += 1
+        else:
+            outdict.update({key: {'files': files, 'xs': 0.006665}})
+'''

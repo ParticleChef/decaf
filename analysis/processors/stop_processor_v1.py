@@ -102,9 +102,11 @@ class AnalysisProcessor(processor.ProcessorABC):
         
         self._samples = {
             'cat1_preselection': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
-            'cat2_highDeltaM_mediumB': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
-            'cat3_highDeltaM_tightB': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
-            'cat4_highDeltaM_looseB': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
+            'cat2_LLCR_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
+            'cat3_QCDCR_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
+            'cat4_highDeltaM_mediumB': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
+            'cat5_highDeltaM_tightB': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
+            'cat6_highDeltaM_looseB': ('TT','QCD','Zto2Nu','WtoLNu','ST','JetMET','VV', 'SMS'),
         }
         self._signal_triggers ={
             '2022pre': [
@@ -675,6 +677,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         e_veto = e[e.isveto]
         e_medium = e[e.ismedium]
         #print(e_medium.pt)
+        mT_e = np.sqrt(2 * e_veto.pt * met.pt * (1 - np.cos(met.delta_phi(e_veto.T))))
         
         ### Muons
         m = events.Muon
@@ -686,6 +689,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         }, with_name='PolarTwoVector', behavior=vector.behavior)
         m_loose = m[m.isloose]
         m_medium = m[m.ismedium]
+        mT_m = np.sqrt(2 * m_loose.pt * met.pt * (1 - np.cos(met.delta_phi(m_loose.T))))
 
         ### Photons
         p = events.Photon
@@ -709,7 +713,8 @@ class AnalysisProcessor(processor.ProcessorABC):
         ### Jets
         j = events.Jet # Events/Jet_*
         ### Appling JECs
-        jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, j.rho, j.area, run, isData)
+        rho_density = events.Rho.fixedGridRhoFastjetAll
+        jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, rho_density, j.area, run, isData)
         j['pt'] = j.pt * jec_corr
         j['mass'] = j.mass * jec_corr
 
@@ -741,7 +746,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         ### FatJets
         fj = events.FatJet
         ### Appling JECs
-        fjec_corr = get_fjec_correction(self._year, fj.pt, fj.eta, fj.phi, fj.rho, fj.area, run, isData)
+        fjec_corr = get_fjec_correction(self._year, fj.pt, fj.eta, fj.phi, rho_density, fj.area, run, isData)
 
         fj['pt'] = fj.pt * fjec_corr
         fj['mass'] = fj.mass * fjec_corr
@@ -835,9 +840,12 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('five_j', n_j_good >= 5)
         selection.add('ht_300', scalarHT > 300)
         selection.add('met_250', met.pt > 250)
+        selection.add('mT_100', (ak.all(mT_m < 100, axis=1) & ak.all(mT_e < 100, axis=1)))
         selection.add('puppi/calo', met.pt / calo_met.pt < 5)
         selection.add('opening_angles_preselection', (j1_met_dphi > 0.5) & (j2_met_dphi > 0.15) & ak.fill_none(j3_met_dphi > 0.15, True))
-        selection.add('opening_angles_highDeltaM', (j1_met_dphi > 0.5) & (j2_met_dphi > 0.5) & (j3_met_dphi > 0.5) & (j4_met_dphi > 0.5) & (j5_met_dphi > 0.5))
+        selection.add('opening_angles_highDeltaM', (j1_met_dphi > 0.5) & (j2_met_dphi > 0.5) & (j3_met_dphi > 0.5) & (j4_met_dphi > 0.5))
+        selection.add('opening_angles_QCDCR', (j1_met_dphi < 0.5) | (j2_met_dphi < 0.15) | ak.fill_none(j3_met_dphi < 0.15, False))
+        selection.add('opening_angles_QCDCR_highDeltaM', (j1_met_dphi < 0.5) | (j2_met_dphi < 0.5) | (j3_met_dphi < 0.5) | (j4_met_dphi < 0.5))
 
         regions = {
             'cat1_preselection': [
@@ -848,16 +856,24 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'met_250', 'puppi/calo',
                 'ht_300', 'opening_angles_preselection'
             ],
-            'cat2_LLCR': [
+            'cat2_LLCR_highDeltaM': [
                 'lumimask', 'met_filters',
                 'signal_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
-                'zero_t', 'two_j',
-                'one_veto_lepton',
+                'zero_t', 'five_j', 'one_b',
+                'one_veto_lepton', 'mT_100',
                 'met_250', 'puppi/calo',
-                'ht_300', 'opening_angles_preselection'
+                'ht_300', 'opening_angles_highDeltaM'
             ],
-            'cat3_highDeltaM_mediumB': [
+            'cat3_QCDCR_highDeltaM': [
+                'lumimask', 'met_filters',
+                'signal_trigger',
+                'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
+                'zero_m', 'zero_t', 'zero_e', 'five_j', 'one_b',
+                'met_250', 'puppi/calo',
+                'ht_300', 'opening_angles_QCDCR_highDeltaM'
+            ],
+            'cat4_highDeltaM_mediumB': [
                 'lumimask', 'met_filters',
                 'signal_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
@@ -865,7 +881,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'met_250', 'puppi/calo',
                 'ht_300', 'opening_angles_highDeltaM'
             ],
-            'cat4_highDeltaM_tightB': [
+            'cat5_highDeltaM_tightB': [
                 'lumimask', 'met_filters',
                 'signal_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
@@ -873,7 +889,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'met_250', 'puppi/calo',
                 'ht_300', 'opening_angles_highDeltaM'
             ],
-            'cat5_highDeltaM_looseB': [
+            'cat6_highDeltaM_looseB': [
                 'lumimask', 'met_filters',
                 'signal_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',

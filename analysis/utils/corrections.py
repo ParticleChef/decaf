@@ -348,12 +348,17 @@ def get_photon_id_sf(year, wp, eta, pt, phi):
         '2022post': '2022Re-recoE+PromptFG',
         '2023pre' : '2023PromptC',
         '2023post': '2023PromptD'
+        '2024': '2024Prompt'
     }
     if '2022' in year:
         sf_nominal = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt)
         sf_up = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfup", wp, flateta, flatpt)
         sf_down = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfdown", wp, flateta, flatpt)
-    if '2023' in year:
+    elif '2023' in year:
+        sf_nominal = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt, flatphi)
+        sf_up = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfup", wp, flateta, flatpt, flatphi)
+        sf_down = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfdown", wp, flateta, flatpt, flatphi)
+    elif '2024' in year:
         sf_nominal = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt, flatphi)
         sf_up = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfup", wp, flateta, flatpt, flatphi)
         sf_down = evaluator["Photon-ID-SF"].evaluate(yr[year], "sfdown", wp, flateta, flatpt, flatphi)
@@ -376,12 +381,17 @@ def get_ele_veto_id_sf (year, eta, pt, phi):
         '2022post': '2022Re-recoE+PromptFG',
         '2023pre' : '2023PromptC',
         '2023post': '2023PromptD'
+        '2024': '2024Prompt'
     }
     if '2022' in year:
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Veto", flateta, flatpt)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Veto", flateta, flatpt)
-    if '2023' in year:
+    elif '2023' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Veto", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Veto", flateta, flatpt, flatphi)
+    elif '2024' in year:
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Veto", flateta, flatpt, flatphi)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Veto", flateta, flatpt, flatphi)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Veto", flateta, flatpt, flatphi)
@@ -397,12 +407,17 @@ def get_ele_loose_id_sf (year, eta, pt, phi):
         '2022post': '2022Re-recoE+PromptFG',
         '2023pre' : '2023PromptC',
         '2023post': '2023PromptD'
+        '2024': '2024Prompt'
     }
     if '2022' in year:
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Loose", flateta, flatpt)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Loose", flateta, flatpt)
-    if '2023' in year:
+    elif '2023' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Loose", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Loose", flateta, flatpt, flatphi)
+    elif '2024' in year:
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Loose", flateta, flatpt, flatphi)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Loose", flateta, flatpt, flatphi)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Loose", flateta, flatpt, flatphi)
@@ -423,7 +438,11 @@ def get_ele_medium_id_sf (year, eta, pt, phi):
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Medium", flateta, flatpt)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Medium", flateta, flatpt)
-    if '2023' in year:
+    elif '2023' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Medium", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Medium", flateta, flatpt, flatphi)
+    elif '2024' in year:
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Medium", flateta, flatpt, flatphi)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Medium", flateta, flatpt, flatphi)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Medium", flateta, flatpt, flatphi)
@@ -439,12 +458,17 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
         '2022post': '2022Re-recoE+PromptFG',
         '2023pre' : '2023PromptC',
         '2023post': '2023PromptD'
+        '2024': '2024Prompt'
     }
     if '2022' in year:
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Tight", flateta, flatpt)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Tight", flateta, flatpt)
-    if '2023' in year:
+    elif '2023' in year:
+        sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt, flatphi)
+        sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Tight", flateta, flatpt, flatphi)
+        sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Tight", flateta, flatpt, flatphi)
+    elif '2024' in year:
         sf_nominal = evaluator["Electron-ID-SF"].evaluate(yr[year], "sf", "Tight", flateta, flatpt, flatphi)
         sf_up = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfup", "Tight", flateta, flatpt, flatphi)
         sf_down = evaluator["Electron-ID-SF"].evaluate(yr[year], "sfdown", "Tight", flateta, flatpt, flatphi)
