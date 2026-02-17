@@ -41,29 +41,43 @@ systematics = 'nominal'
 #stacks = ['W (lnu)', 'QCD Multijet', 'TT', 'Single Top']
 #colors = ['green', 'lightblue', 'yellow', 'orange']
 #stacks = ['VV','Single Top', 'TT',r"$\gamma$ + Jets", 'W (lnu)','Z (inv)', 'QCD Multijet']
-stacks = ['VV','Single Top', 'TT','DY', 'W (lnu)','Z (inv)', 'QCD Multijet']
+stacks = ['VV','Single Top', 'TT','DY','Gamma + Jets', 'W (lnu)','Z (inv)', 'QCD Multijet']
 #colors = ['','orange', 'yellow', 'green','salmon', 'lightblue']
-colors = ['#6b705c','#8e7dbe', '#99c1b9','cyan', '#f1e3d3', '#f2d0a9', '#d88c9a']
+colors = ['#6b705c','#8e7dbe', '#99c1b9','cyan','purple' ,'#f1e3d3', '#f2d0a9', '#d88c9a']
 #stacks = ['Single Top', 'TT', 'QCD Multijet']
 #colors = ['orange', 'yellow', 'lightblue']
 signals = ['SMS-2Stop-Par-mStop-1000', 'SMS-2Stop-Par-mStop-1500', 'SMS-2Stop-Par-mStop-600']
 
+print(bkg['metpt']['W (lnu)'])
+
 ### print yields for checking
+total_bkg_yield = 0
 for process in stacks:
-    if process in bkg['metpt']:
-        h = bkg['metpt'][process][{
+    if process in bkg['nMuon']:
+        h = bkg['nMuon'][process][{
             'region': 'cat1_preselection',
             'systematic': 'nominal'
         }]
         yield_ = h.values().sum()
+        total_bkg_yield += yield_
         print(f'Yield for {process}: {yield_}')
+print(f'Total background yield: {total_bkg_yield}')
 ### print data yield
-h_data = data['metpt']['JetMET'][{
+h_data = data['nMuon']['JetMET'][{
     'region': 'cat1_preselection',
     'systematic': 'nominal'
 }]
 data_yield = h_data.values().sum()
 print(f'Data yield: {data_yield}')
+
+for signal in signals:
+    if signal in bkg['nMuon']:
+        h_sig = bkg['nMuon'][signal][{
+            'region': 'cat1_preselection',
+            'systematic': 'nominal'
+        }]
+        sig_yield = h_sig.values().sum()
+        print(f'Yield for {signal}: {sig_yield}')
 
 def reduce_to_1d(vals, vars_):
     """
@@ -80,7 +94,8 @@ def reduce_to_1d(vals, vars_):
 # ----------------------------------------------------------------------
 # Loop over variables in bkg (e.g. metpt, metphi, nJet, ...)
 # ----------------------------------------------------------------------
-for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDeltaM', 'cat4_GCR_highDeltaM', 'cat6_SR_highDeltaM']:
+for regions in ['cat6_DY2M_highDeltaM']:#['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDeltaM', 'cat4_GCR_highDeltaM', 'cat5_DY2E_highDeltaM', 'cat6_DY2M_highDeltaM', 'cat7_SR_highDeltaM']:
+    print(f"Plotting for region: {regions}")
     for key in bkg.keys():
         if 'sumw' in key:
             continue
@@ -89,7 +104,7 @@ for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDel
         elif 'nPV' in key:
             continue
         else:
-            print("Plotting ", key)
+            #print("Plotting ", key)
 
             plt.style.use(mplhep.style.CMS)
             fig, (ax, rax) = plt.subplots(
@@ -118,8 +133,10 @@ for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDel
             for mc in stacks:
                 if mc not in bkg[key]:
                     continue
-
-                h = bkg[key][mc][{'region': regions, 'systematic': systematics}]
+                try:
+                    h = bkg[key][mc][{'region': regions, 'systematic': systematics}]
+                except:
+                    continue
                 if key == 'j1pt':
                     # rebin for j1pt
                     h = h[{"j1pt": hist.rebin(5)}]
@@ -135,6 +152,9 @@ for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDel
                 elif key == 'metpt_10GeVbins':
                     # rebin for metpt_10GeVbins
                     h = h[{"metpt_10GeVbins": hist.rebin(5)}]
+                elif key == 'recoilpt':
+                    # rebin for recoilpt
+                    h = h[{"recoilpt": hist.rebin(5)}]
 
                 # 모든 축 중 마지막 축만 x축으로 두고, 나머지는 reduce_to_1d에서 합침
                 if bins is None:
@@ -227,18 +247,21 @@ for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDel
             # --------------------------------------------------------------
             ax.fill_between(bins, unc_low_ratio, unc_up_ratio, **error_opts)
 
-            labs = [r'$m_{\tilde{t}}$ = 1000 GeV'+"\n"+r'$m_{\tilde{\chi}}$ = 300 GeV', r'$m_{\tilde{t}}$ = 1500 GeV'+"\n"+r'$m_{\tilde{\chi}}$ = 100 GeV', r'$m_{\tilde{t}}$ = 600 GeV'+"\n"+r'$m_{\tilde{\chi}}$ = 500 GeV']
+            labs = [r'$m_{\tilde{t}}$ = 1000 GeV', r'$m_{\tilde{t}}$ = 1500 GeV', r'$m_{\tilde{t}}$ = 600 GeV']
             ltypes = ['solid', 'dashed', 'dotted']
             scolors = ['red', 'darkred', 'maroon']
 
             ## signal draw
-            if 'CR' in regions:
+            if 'CR' in regions or 'DY' in regions:
                 pass
             else:
                 for signal in signals:
                     if signal not in bkg[key]:
                         continue
-                    h_sig = bkg[key][signal][{'region': regions, 'systematic': systematics}]
+                    try:
+                        h_sig = bkg[key][signal][{'region': regions, 'systematic': systematics}]
+                    except:
+                        continue
                     if key == 'j1pt':
                         # rebin for j1pt
                         h_sig = h_sig[{"j1pt": hist.rebin(5)}]
@@ -254,16 +277,19 @@ for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDel
                     elif key == 'metpt_10GeVbins':
                         # rebin for metpt_10GeVbins
                         h_sig = h_sig[{"metpt_10GeVbins": hist.rebin(5)}]
+                    elif key == 'recoilpt':
+                        # rebin for recoilpt
+                        h_sig = h_sig[{"recoilpt": hist.rebin(5)}]
 
 
                     vals_sig = h_sig.values()
                     ## scaling to original cross-section
-                    if '600' in signal:
-                        vals_sig *= (2.560e-01 / 10)
-                    elif '1000' in signal:
-                        vals_sig *= (9.123e-03 / 10)
-                    elif '1500' in signal:
-                        vals_sig *= (3.912e-04 / 10)
+                    #if '600' in signal:
+                    #    vals_sig *= (2.560e-01 / 10)
+                    #elif '1000' in signal:
+                    #    vals_sig *= (9.123e-03 / 10)
+                    #elif '1500' in signal:
+                    #    vals_sig *= (3.912e-04 / 10)
                     vals_sig_1d, _ = reduce_to_1d(vals_sig, None)
 
                     # bins는 MC 기준으로 통일 (data와 같다고 가정)
@@ -284,8 +310,10 @@ for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDel
             # --------------------------------------------------------------
             # 5) Data points + error bars (배열로 reduce)
             # --------------------------------------------------------------
-            if 'GCR' in regions:
+            if 'GCR' in regions or 'DY2E' in regions:
                 h_data = data[key]['EGamma'][{'region': regions, 'systematic': systematics}]
+            elif 'DY2M' in regions:
+                h_data = data[key]['Muon'][{'region': regions, 'systematic': systematics}]
             else:
                 h_data = data[key]['JetMET'][{'region': regions, 'systematic': systematics}]
             if key == 'j1pt':
@@ -303,6 +331,9 @@ for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDel
             elif key == 'metpt_10GeVbins':
                 # rebin for metpt_10GeVbins
                 h_data = h_data[{"metpt_10GeVbins": hist.rebin(5)}]
+            elif key == 'recoilpt':
+                # rebin for recoilpt
+                h_data = h_data[{"recoilpt": hist.rebin(5)}]
 
 
             bins_data = h_data.axes[-1].edges
@@ -337,7 +368,7 @@ for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDel
             ax.legend(ncol=3, fontsize=14, loc='upper right')
             ax.set_yscale('log')
             ax.set_yticks([1, 10, 1e+2, 1e+3, 1e+4, 1e+5, 1e+6, 1e+7, 1e+8, 1e+9, 1e+10])
-            if 'CR' in regions:
+            if 'CR' in regions or 'DY' in regions:
                 ax.set_ylim(0.1, 1e+8)
             elif 'SR' in regions:
                 ax.set_ylim(0.1, 1e+8)
@@ -422,8 +453,10 @@ for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDel
             if 'metpt' in key:
                 #rax.set_xlabel('Missing $p_{T}$ [GeV]')
                 rax.set_xlabel(r"$E\!\!\!/_{T}\ \mathrm{(GeV)}$")
+            elif 'recoilpt' in key:
+                rax.set_xlabel(r"$U\!\!\!/_{T}\ \mathrm{(GeV)}$")
             elif 'ht' in key and not 'tight' in key:
-                rax.set_xlabel('H$_{T}$ [GeV]')
+                rax.set_xlabel('H$_{T}$ (GeV)')
                 ax.set_xlim(300, 1500)
                 rax.set_xlim(300, 1500)
             elif 'nJet' in key:

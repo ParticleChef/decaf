@@ -347,8 +347,8 @@ def get_photon_id_sf(year, wp, eta, pt, phi):
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
         '2023pre' : '2023PromptC',
-        '2023post': '2023PromptD'
-        '2024': '2024Prompt'
+        '2023post': '2023PromptD',
+        '2024': '2024'
     }
     if '2022' in year:
         sf_nominal = evaluator["Photon-ID-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt)
@@ -380,7 +380,7 @@ def get_ele_veto_id_sf (year, eta, pt, phi):
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
         '2023pre' : '2023PromptC',
-        '2023post': '2023PromptD'
+        '2023post': '2023PromptD',
         '2024': '2024Prompt'
     }
     if '2022' in year:
@@ -406,7 +406,7 @@ def get_ele_loose_id_sf (year, eta, pt, phi):
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
         '2023pre' : '2023PromptC',
-        '2023post': '2023PromptD'
+        '2023post': '2023PromptD',
         '2024': '2024Prompt'
     }
     if '2022' in year:
@@ -457,7 +457,7 @@ def get_ele_tight_id_sf (year, eta, pt, phi):
         '2022pre' : '2022Re-recoBCD',
         '2022post': '2022Re-recoE+PromptFG',
         '2023pre' : '2023PromptC',
-        '2023post': '2023PromptD'
+        '2023post': '2023PromptD',
         '2024': '2024Prompt'
     }
     if '2022' in year:

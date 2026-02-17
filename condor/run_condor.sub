@@ -1,0 +1,40 @@
+universe = vanilla
+
+executable = run_condor.sh
+arguments  = $(dataset)
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_executable = TRUE
+
+# inputs: tarballs + proxy
+transfer_input_files = \
+  /eos/user/t/taiwoo/decaf/condor/analysis.tgz, \
+  /eos/user/t/taiwoo/decaf/condor/py38.tgz, \
+  /eos/user/t/taiwoo/decaf/analysis/proxy/x509up_u147757
+
+# output: always the same local name
+transfer_output_files = out.futures
+
+# remap to per-job unique path on EOS (충돌 방지)
+# dataset 문자열이 길고 특수문자/슬래시가 없으니 파일명으로 OK
+transfer_output_remaps = "out.futures=$(dataset).futures"
+
+# futures 저장 위치 (미리 존재해야 함)
+initialdir = /eos/user/t/taiwoo/decaf/analysis/hists/stop_new2024/condor_stage
+
+# condor logs는 EOS에 직접 쓰지 않음
+output = job.$(ClusterId).$(ProcId).out
+error  = job.$(ClusterId).$(ProcId).err
+log    = condor.$(ClusterId).log
+
+request_cpus   = 1
+request_memory = 6000
+request_disk   = 12000
+
+use_x509userproxy = true
+getenv = true
++JobFlavour = "workday"
+
+# 전체 dataset queue
+queue dataset from /eos/user/t/taiwoo/decaf/analysis/datasets.txt

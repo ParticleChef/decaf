@@ -105,8 +105,9 @@ class AnalysisProcessor(processor.ProcessorABC):
             'cat2_LLCR_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','GJ','DY','JetMET','VV', 'SMS'),
             'cat3_QCDCR_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','GJ','DY','JetMET','VV', 'SMS'),
             'cat4_GCR_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','GJ','DY','EGamma','VV', 'SMS'),
-            'cat5_DYCR_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','GJ','DY','EGamma','VV', 'SMS'),
-            'cat6_SR_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','GJ','DY','JetMET','VV', 'SMS'),
+            'cat5_DY2E_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','GJ','DY','EGamma','VV', 'SMS'),
+            'cat6_DY2M_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','GJ','DY','Muon','VV', 'SMS'),
+            'cat7_SR_highDeltaM': ('TT','QCD','Zto2Nu','WtoLNu','ST','GJ','DY','JetMET','VV', 'SMS'),
         }
         self._signal_triggers ={
             '2022pre': [
@@ -563,6 +564,18 @@ class AnalysisProcessor(processor.ProcessorABC):
                 hist.axis.Variable([300,350,400,500,600,700,800,900,1000,1200,1500,2000], name='ht', label=r'$H_{T}$ (GeV)'),
                 storage=hist.storage.Weight(),
             ),
+            'mll': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(100,50,250, name='mll', label='Dilepton Invariant Mass (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
+            'pll': hist.Hist(
+                hist.axis.StrCategory([], name='region', growth=True),
+                hist.axis.StrCategory([], name='systematic', growth=True),
+                hist.axis.Regular(100,0,1000, name='pll', label='Dilepton System $p_{T}$ (GeV)'),
+                storage=hist.storage.Weight(),
+            ),
             'nPV': hist.Hist(
                 hist.axis.StrCategory([], name='region', growth=True),
                 hist.axis.StrCategory([], name='systematic', growth=True),
@@ -634,10 +647,17 @@ class AnalysisProcessor(processor.ProcessorABC):
             output['sumw'] = ak.sum(events.genWeight)
         
         dataset = events.metadata['dataset']
+        group = dataset
+        ## Grouping Single top samples as ST
+        if 'TWminus' in dataset or 'TbarWplus' in dataset or 'TBbar' in dataset or 'TbarB' in dataset:
+            group = 'ST-' + dataset
+        ## Grouping WW, WZ, ZZ samples as VV
+        if 'WW' in dataset or 'WZ' in dataset or 'ZZ' in dataset:
+            group = 'VV-' + dataset
         selected_regions = []
         for region, samples in self._samples.items():
             for sample in samples:
-                if sample in dataset:
+                if sample in group:
                     selected_regions.append(region)
                     break
                     
@@ -690,9 +710,10 @@ class AnalysisProcessor(processor.ProcessorABC):
         e_medium = e[e.ismedium]
         #print(e_medium.pt)
         mT_e = np.sqrt(2 * e_veto.pt * met.pt * (1 - np.cos(met.delta_phi(e_veto.T))))
-        leading_e = ak.firsts(e_veto)
-        second_e = ak.pad_none(e_veto, target=2)[:,1]
+        leading_e = ak.firsts(e_medium)
+        second_e = ak.pad_none(e_medium, target=2)[:,1]
         mee = (leading_e + second_e).mass
+        pee = (leading_e + second_e).pt
         
         ### Muons
         m = events.Muon
@@ -705,9 +726,10 @@ class AnalysisProcessor(processor.ProcessorABC):
         m_loose = m[m.isloose]
         m_medium = m[m.ismedium]
         mT_m = np.sqrt(2 * m_loose.pt * met.pt * (1 - np.cos(met.delta_phi(m_loose.T))))
-        leading_m = ak.firsts(m_loose)
-        second_m = ak.pad_none(m_loose, target=2)[:,1]
+        leading_m = ak.firsts(m_medium)
+        second_m = ak.pad_none(m_medium, target=2)[:,1]
         mmm = (leading_m + second_m).mass
+        pmm = (leading_m + second_m).pt
 
         ### Photons
         p = events.Photon
@@ -778,20 +800,57 @@ class AnalysisProcessor(processor.ProcessorABC):
         nfj_good = ak.num(fj_good, axis=1)
 
         ### Photon cleaning for AK4 and AK8 jets
-        j['isclean'] = (
+        j['isclean_p'] = (
             ak.all(j.metric_table(p_medium) > 0.2, axis=2)
         )
-        fj['isclean'] = (
+        fj['isclean_p'] = (
             ak.all(fj.metric_table(p_medium) > 0.4, axis=2)
         )
-        j_clean = j[j.isclean]
-        fj_clean = fj[fj.isclean]
+        j['isclean_l'] = (
+            ak.all(j.metric_table(e_medium) > 0.2, axis=2) &
+            ak.all(j.metric_table(m_medium) > 0.2, axis=2)
+        )
+        fj['isclean_l'] = (
+            ak.all(fj.metric_table(e_medium) > 0.4, axis=2) &
+            ak.all(fj.metric_table(m_medium) > 0.4, axis=2)
+        )
+
+        j_clean_p = j[j.isclean_p]
+        fj_clean_p = fj[fj.isclean_p]
+        j_clean_l = j[j.isclean_l]
+        fj_clean_l = fj[fj.isclean_l]
 
         ### Scalar HT
-        scalarHT = ak.sum(j_good.pt, axis=1)
+        scalarHT = {
+            'cat1_preselection': ak.sum(j_good.pt, axis=1),
+            'cat2_LLCR_highDeltaM': ak.sum(j_good.pt, axis=1),
+            'cat3_QCDCR_highDeltaM': ak.sum(j_good.pt, axis=1),
+            'cat4_GCR_highDeltaM': ak.sum(j_clean_p.pt, axis=1),
+            'cat5_DY2E_highDeltaM': ak.sum(j_clean_l.pt, axis=1),
+            'cat6_DY2M_highDeltaM': ak.sum(j_clean_l.pt, axis=1),
+            'cat7_SR_highDeltaM': ak.sum(j_good.pt, axis=1),
+        }
 
         ### Hadronic Recoil
-        uT = met + leading_p.T
+        uT = {
+            'cat1_preselection': met,
+            'cat2_LLCR_highDeltaM': met,
+            'cat3_QCDCR_highDeltaM': met,
+            'cat4_GCR_highDeltaM': met+leading_p.T,
+            'cat5_DY2E_highDeltaM': met+leading_e.T+second_e.T,
+            'cat6_DY2M_highDeltaM': met+leading_m.T+second_m.T,
+            'cat7_SR_highDeltaM': met,
+        }
+
+        mll = {
+            'cat5_DY2E_highDeltaM': mee,
+            'cat6_DY2M_highDeltaM': mmm,
+        }
+
+        pll = {
+            'cat5_DY2E_highDeltaM': pee,
+            'cat6_DY2M_highDeltaM': pmm,
+        }
 
         """ Variables for selection """
         ### lumimask
@@ -828,16 +887,19 @@ class AnalysisProcessor(processor.ProcessorABC):
             reference_triggers = reference_triggers | events.HLT[path]
         selection.add('reference_trigger', reference_triggers)
 
-        dilepton_triggers = np.zeros(len(events), dtype=bool)
+        electron_triggers = np.zeros(len(events), dtype=bool)
         for path in self._electron_triggers[self._year]:
             if not hasattr(events.HLT, path):
                 continue
-            dilepton_triggers = dilepton_triggers | events.HLT[path]
+            electron_triggers = electron_triggers | events.HLT[path]
+        selection.add('electron_trigger', electron_triggers)
+
+        muon_triggers = np.zeros(len(events), dtype=bool)
         for path in self._muon_triggers[self._year]:
             if not hasattr(events.HLT, path):
                 continue
-            dilepton_triggers = dilepton_triggers | events.HLT[path]
-        selection.add('dilepton_trigger', dilepton_triggers)
+            muon_triggers = muon_triggers | events.HLT[path]
+        selection.add('muon_trigger', muon_triggers)
 
         ### Number of objects
         n_trk_e = ak.num(trk_e, axis=1)
@@ -850,7 +912,8 @@ class AnalysisProcessor(processor.ProcessorABC):
         n_p_medium = ak.num(p_medium, axis=1)
         n_t_medium = ak.num(t_medium, axis=1)
         n_j_good = ak.num(j_good, axis=1)
-        n_j_clean = ak.num(j_clean, axis=1)
+        n_j_clean_p = ak.num(j_clean_p, axis=1)
+        n_j_clean_l = ak.num(j_clean_l, axis=1)
         n_b = ak.num(b, axis=1)
 
         ### Opening angle between jets and MET
@@ -865,15 +928,25 @@ class AnalysisProcessor(processor.ProcessorABC):
         j4_met_dphi = np.abs(j4.delta_phi(met))
 
         ### opening angle for cleaned jets
-        j1_clean = ak.firsts(j_clean)
-        j2_clean = ak.pad_none(j_clean, target=2)[:,1]
-        j3_clean = ak.pad_none(j_clean, target=3)[:,2]
-        j4_clean = ak.pad_none(j_clean, target=4)[:,3]
+        j1_clean_p = ak.firsts(j_clean_p)
+        j2_clean_p = ak.pad_none(j_clean_p, target=2)[:,1]
+        j3_clean_p = ak.pad_none(j_clean_p, target=3)[:,2]
+        j4_clean_p = ak.pad_none(j_clean_p, target=4)[:,3]
 
-        j1_clean_met_dphi = np.abs(j1_clean.delta_phi(met))
-        j2_clean_met_dphi = np.abs(j2_clean.delta_phi(met))
-        j3_clean_met_dphi = np.abs(j3_clean.delta_phi(met))
-        j4_clean_met_dphi = np.abs(j4_clean.delta_phi(met))
+        j1_clean_l = ak.firsts(j_clean_l)
+        j2_clean_l = ak.pad_none(j_clean_l, target=2)[:,1]
+        j3_clean_l = ak.pad_none(j_clean_l, target=3)[:,2]
+        j4_clean_l = ak.pad_none(j_clean_l, target=4)[:,3]
+
+        j1_clean_p_dphi = np.abs(j1_clean_p.delta_phi(met))
+        j2_clean_p_dphi = np.abs(j2_clean_p.delta_phi(met))
+        j3_clean_p_dphi = np.abs(j3_clean_p.delta_phi(met))
+        j4_clean_p_dphi = np.abs(j4_clean_p.delta_phi(met))
+
+        j1_clean_l_dphi = np.abs(j1_clean_l.delta_phi(met))
+        j2_clean_l_dphi = np.abs(j2_clean_l.delta_phi(met))
+        j3_clean_l_dphi = np.abs(j3_clean_l.delta_phi(met))
+        j4_clean_l_dphi = np.abs(j4_clean_l.delta_phi(met))
         
         """ Define the selections """
 
@@ -887,8 +960,18 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('one_e', n_e_medium == 1)
         selection.add('one_m', n_m_medium == 1)
         selection.add('one_p', n_p_medium == 1)
-        selection.add('mZ_window15', ( (mee > 76) & (mee < 106) ) | ( (mmm > 76) & (mmm < 106) ) )
-        selection.add('ossf', ( (n_e_veto == 2) & ( (leading_e.charge != second_e.charge) ) ) | ( (n_m_loose == 2) & ( (leading_m.charge != second_m.charge) ) ) )
+        selection.add('two_e', n_e_medium == 2)
+        selection.add('two_m', n_m_medium == 2)
+        selection.add('leading_e_pt40', leading_e.pt > 40)
+        selection.add('second_e_pt20', second_e.pt > 20)
+        selection.add('ossf_ee', (leading_e.charge != second_e.charge))
+        selection.add('leading_m_pt50', leading_m.pt > 50)
+        selection.add('second_m_pt20', second_m.pt > 20)
+        selection.add('ossf_mm', (leading_m.charge != second_m.charge))
+        selection.add('mee_50', mee > 50)
+        selection.add('pee_200', pee > 200)
+        selection.add('mmm_50', mmm > 50)
+        selection.add('pmm_200', pmm > 200)
         selection.add('zero_b', n_b == 0)
         selection.add('one_b', n_b >= 1)
         selection.add('one_b_tight', ak.num(b_tight, axis=1) >=1)
@@ -897,8 +980,9 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('two_b', n_b >= 2)
         selection.add('two_j', n_j_good >= 2)
         selection.add('five_j', n_j_good >= 5)
-        selection.add('five_j_clean', n_j_clean >= 5)
-        selection.add('ht_300', scalarHT > 300)
+        selection.add('five_j_clean_p', n_j_clean_p >= 5)
+        selection.add('five_j_clean_l', n_j_clean_l >= 5)
+        #selection.add('ht_300', scalarHT > 300)
         selection.add('met_250', met.pt > 250)
         selection.add('met_250_reverse', met.pt < 250)
         selection.add('mT_100', (ak.all(mT_m < 100, axis=1) & ak.all(mT_e < 100, axis=1)))
@@ -907,7 +991,8 @@ class AnalysisProcessor(processor.ProcessorABC):
         selection.add('opening_angles_highDeltaM', (j1_met_dphi > 0.5) & (j2_met_dphi > 0.5) & (j3_met_dphi > 0.5) & (j4_met_dphi > 0.5))
         selection.add('opening_angles_QCDCR', (j1_met_dphi < 0.5) | (j2_met_dphi < 0.15) | ak.fill_none(j3_met_dphi < 0.15, False))
         selection.add('opening_angles_QCDCR_highDeltaM', (j1_met_dphi < 0.5) | (j2_met_dphi < 0.5) | (j3_met_dphi < 0.5) | (j4_met_dphi < 0.5))
-        selection.add('opening_angles_GCR_highDeltaM', (j1_clean_met_dphi > 0.5) | (j2_clean_met_dphi > 0.5) | (j3_clean_met_dphi > 0.5) | (j4_clean_met_dphi > 0.5))
+        selection.add('opening_angles_GCR_highDeltaM', (j1_clean_p_dphi > 0.5) & (j2_clean_p_dphi > 0.5) & (j3_clean_p_dphi > 0.5) & (j4_clean_p_dphi > 0.5))
+        selection.add('opening_angles_DYCR_highDeltaM', (j1_clean_l_dphi > 0.5) & (j2_clean_l_dphi > 0.5) & (j3_clean_l_dphi > 0.5) & (j4_clean_l_dphi > 0.5))
 
         regions = {
             'cat1_preselection': [
@@ -916,7 +1001,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
                 'zero_m', 'zero_t', 'zero_e', 'two_j',
                 'met_250', 'puppi/calo',
-                'ht_300', 'opening_angles_preselection'
+                'opening_angles_preselection'
             ],
             'cat2_LLCR_highDeltaM': [
                 'lumimask', 'met_filters',
@@ -925,7 +1010,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'zero_t', 'five_j', 'one_b',
                 'one_veto_lepton', 'mT_100',
                 'met_250', 'puppi/calo',
-                'ht_300', 'opening_angles_highDeltaM'
+                'opening_angles_highDeltaM'
             ],
             'cat3_QCDCR_highDeltaM': [
                 'lumimask', 'met_filters',
@@ -933,33 +1018,41 @@ class AnalysisProcessor(processor.ProcessorABC):
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
                 'zero_m', 'zero_t', 'zero_e', 'five_j', 'one_b',
                 'met_250', 'puppi/calo',
-                'ht_300', 'opening_angles_QCDCR_highDeltaM'
+                'opening_angles_QCDCR_highDeltaM'
             ],
             'cat4_GCR_highDeltaM': [
                 'lumimask', 'met_filters',
                 'photon_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi', 'one_p',
-                'zero_m', 'zero_t', 'zero_e', 'five_j_clean', 'one_b',
+                'zero_m', 'zero_t', 'zero_e', 'five_j_clean_p', 'one_b',
                 'met_250_reverse', 'puppi/calo',
-                'ht_300', 'opening_angles_GCR_highDeltaM'
+                'opening_angles_GCR_highDeltaM'
             ],
-            'cat5_DYCR_highDeltaM': [
+            'cat5_DY2E_highDeltaM': [
                 'lumimask', 'met_filters',
-                'dilepton_trigger',
+                'electron_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
-                'zero_t','five_j', 'one_b',
-                'ossf', 'mZ_window15',
-                'met_250', 'puppi/calo',
-                'ht_300', 'opening_angles_highDeltaM'
+                'zero_t','five_j_clean_l', 'one_b',
+                'leading_e_pt40', 'second_e_pt20', 'mee_50', 'ossf_ee', 'pee_200',
+                'puppi/calo',
+                'opening_angles_DYCR_highDeltaM'
             ],
-
-            'cat6_SR_highDeltaM': [
+            'cat6_DY2M_highDeltaM': [
+                'lumimask', 'met_filters',
+                'muon_trigger',
+                'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
+                'zero_t','five_j_clean_l', 'one_b',
+                'leading_m_pt50', 'second_m_pt20', 'mmm_50', 'ossf_mm', 'pmm_200',
+                'puppi/calo',
+                'opening_angles_DYCR_highDeltaM'
+            ],
+            'cat7_SR_highDeltaM': [
                 'lumimask', 'met_filters',
                 'signal_trigger',
                 'zero_trk_e', 'zero_trk_m', 'zero_trk_pi',
                 'zero_m', 'zero_t', 'zero_e', 'five_j', 'one_b',
                 'met_250', 'puppi/calo',
-                'ht_300', 'opening_angles_highDeltaM'
+                'opening_angles_highDeltaM'
             ],
         }
         if not isData:
@@ -1000,8 +1093,8 @@ class AnalysisProcessor(processor.ProcessorABC):
                 variables = {
                     'metpt_10GeVbins': met.pt,
                     'metphi': met.phi,
-                    'recoilpt': uT.r,
-                    'recoilphi': uT.phi,
+                    'recoilpt': uT[region].r,
+                    'recoilphi': uT[region].phi,
                     'nElectron': n_e_medium,
                     'nMuon': n_m_medium,
                     'nJet': n_j_good,
@@ -1023,7 +1116,7 @@ class AnalysisProcessor(processor.ProcessorABC):
                     'b1_loose_pt': b1_loose.pt,
                     'b1_loose_eta': b1_loose.eta,
                     'b1_loose_phi': b1_loose.phi,
-                    'ht': scalarHT,
+                    'ht': scalarHT[region],
                     'nPV': npv,
                     'nfj': nfj_good,
                     'fj1pt': ak.fill_none(ak.firsts(fj_good).pt, -99),
@@ -1035,6 +1128,10 @@ class AnalysisProcessor(processor.ProcessorABC):
                     'fj1WvsQCD': ak.fill_none(ak.firsts(fj_good).particleNetWithMass_WvsQCD, -99),
                     'fj1QCD': ak.fill_none(ak.firsts(fj_good).particleNetWithMass_QCD, -99),
                 }
+                if region in mll:
+                    variables['mll'] = mll[region]
+                if region in pll:
+                    variables['pll'] = pll[region]
                 for variable in output:
                     if variable not in variables:
                         continue
@@ -1053,6 +1150,10 @@ class AnalysisProcessor(processor.ProcessorABC):
         for region in regions:
             if region not in selected_regions:
                 continue
+            ### Adding HT 300 cut
+            selection.add('ht_300_'+region, scalarHT[region] > 300)
+            regions[region].append('ht_300_'+region)
+
             for systematic in systematics:
                 if isData and systematic is not None:
                     continue
