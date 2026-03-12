@@ -60,19 +60,34 @@ def get_met_xy_correction(year, met_type, isData, met_pt, met_phi, npvGood):
 # https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME
 ####
 def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
+    jecTag = {
+        "2022pre":  "Summer22_22Sep2023",
+        "2022post": "Summer22EE_22Sep2023",
+        "2023pre":  "Summer23Prompt23",
+        "2023post": "Summer23BPixPrompt23",
+        }
     evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jet_jerc.json.gz')
     counts = ak.num(pt)
     run, _ = ak.broadcast_arrays(run, pt)
     rho, _ = ak.broadcast_arrays(rho, pt)
     pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
-    if year == '2022pre':
+    if '2022' in year:
         ## DATA Correction
         if isData:
+            if run[0] >= 355794 and run[0] <= 359021:
+                dataArea = "RunCD"
+            if run[0] >= 359022 and run[0] <= 360331:
+                dataArea = "RunE"
+            if run[0] >= 360332 and run[0] <= 362180:
+                dataArea = "RunF"
+            if run[0] >= 362350 and run[0] <= 362760:
+                dataArea = "RunG"
+
             jec_names = {
-                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L1FastJet_AK4PFPuppi",
-                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK4PFPuppi",
-                'L3Absolute' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK4PFPuppi",
-                'L2L3Residual' : "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK4PFPuppi"
+                'L1FastJet'   : f"{jecTag[year]}_{dataArea}_V3_DATA_L1FastJet_AK4PFPuppi",
+                'L2Relative'  : f"{jecTag[year]}_{dataArea}_V3_DATA_L2Relative_AK4PFPuppi",
+                'L3Absolute'  : f"{jecTag[year]}_{dataArea}_V3_DATA_L3Absolute_AK4PFPuppi",
+                'L2L3Residual': f"{jecTag[year]}_{dataArea}_V3_DATA_L2L3Residual_AK4PFPuppi"
             }
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
@@ -86,9 +101,9 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
         ## MC Correction
         else:
             jec_names = {
-                'L1FastJet' : "Summer22_22Sep2023_V3_MC_L1FastJet_AK4PFPuppi",
-                'L2Relative' : "Summer22_22Sep2023_V3_MC_L2Relative_AK4PFPuppi",
-                'L3Absolute' : "Summer22_22Sep2023_V3_MC_L3Absolute_AK4PFPuppi"
+                'L1FastJet'  : f"{jecTag[year]}_V3_MC_L1FastJet_AK4PFPuppi",
+                'L2Relative' : f"{jecTag[year]}_V3_MC_L2Relative_AK4PFPuppi",
+                'L3Absolute' : f"{jecTag[year]}_V3_MC_L3Absolute_AK4PFPuppi"
             }
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
@@ -98,12 +113,39 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3
 
-    elif year == '2022post':
-        pass
-    elif year == '2023pre':
-        pass
-    elif year == '2023post':
-        pass
+    if '2023' in year:
+        ## DATA Correction
+        if isData:
+            jec_names = {
+                'L1FastJet'   : f"{jecTag[year]}_V3_DATA_L1FastJet_AK4PFPuppi",
+                'L2Relative'  : f"{jecTag[year]}_V3_DATA_L2Relative_AK4PFPuppi",
+                'L3Absolute'  : f"{jecTag[year]}_V3_DATA_L3Absolute_AK4PFPuppi",
+                'L2L3Residual': f"{jecTag[year]}_V3_DATA_L2L3Residual_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            # L2L3Residual Correction
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
+        ## MC Correction
+        else:
+            jec_names = {
+                'L1FastJet'  : "{jecTag[year]}_V3_MC_L1FastJet_AK4PFPuppi",
+                'L2Relative' : "{jecTag[year]}_V3_MC_L2Relative_AK4PFPuppi",
+                'L3Absolute' : "{jecTag[year]}_V3_MC_L3Absolute_AK4PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3
+
     if year == '2024':
         ## DATA Correction
         if isData:
@@ -140,19 +182,34 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
     return ak.unflatten(corr, counts)
 
 def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
+    jecTag = {
+        "2022pre":  "Summer22_22Sep2023",
+        "2022post": "Summer22EE_22Sep2023",
+        "2023pre":  "Summer23Prompt23",
+        "2023post": "Summer23BPixPrompt23",
+        }
     evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/fatJet_jerc.json.gz')
     counts = ak.num(pt)
     run, _ = ak.broadcast_arrays(run, pt)
     rho, _ = ak.broadcast_arrays(rho, pt)
     pt, eta, phi, rho, area, run = ak.flatten(pt), ak.flatten(eta), ak.flatten(phi), ak.flatten(rho), ak.flatten(area), ak.flatten(run)
-    if year == '2022pre':
+    if '2022' in year:
         ## DATA Correction
         if isData:
+            if run[0] >= 355794 and run[0] <= 359021:
+                dataArea = "RunCD"
+            if run[0] >= 359022 and run[0] <= 360331:
+                dataArea = "RunE"
+            if run[0] >= 360332 and run[0] <= 362180:
+                dataArea = "RunF"
+            if run[0] >= 362350 and run[0] <= 362760:
+                dataArea = "RunG"
+
             jec_names = {
-                'L1FastJet' : "Summer22_22Sep2023_RunCD_V3_DATA_L1FastJet_AK8PFPuppi",
-                'L2Relative' : "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK8PFPuppi",
-                'L3Absolute' : "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
-                'L2L3Residual' : "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK8PFPuppi"
+                'L1FastJet'   : f"{jecTag[year]}_{dataArea}_V3_DATA_L1FastJet_AK8PFPuppi",
+                'L2Relative'  : f"{jecTag[year]}_{dataArea}_V3_DATA_L2Relative_AK8PFPuppi",
+                'L3Absolute'  : f"{jecTag[year]}_{dataArea}_V3_DATA_L3Absolute_AK8PFPuppi",
+                'L2L3Residual': f"{jecTag[year]}_{dataArea}_V3_DATA_L2L3Residual_AK8PFPuppi"
             }
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
@@ -166,9 +223,9 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
         ## MC Correction
         else:
             jec_names = {
-                'L1FastJet' : "Summer22_22Sep2023_V3_MC_L1FastJet_AK8PFPuppi",
-                'L2Relative' : "Summer22_22Sep2023_V3_MC_L2Relative_AK8PFPuppi",
-                'L3Absolute' : "Summer22_22Sep2023_V3_MC_L3Absolute_AK8PFPuppi"
+                'L1FastJet'  : f"{jecTag[year]}_V3_MC_L1FastJet_AK8PFPuppi",
+                'L2Relative' : f"{jecTag[year]}_V3_MC_L2Relative_AK8PFPuppi",
+                'L3Absolute' : f"{jecTag[year]}_V3_MC_L3Absolute_AK8PFPuppi"
             }
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
@@ -178,12 +235,39 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3
 
-    elif year == '2022post':
-        pass
-    elif year == '2023pre':
-        pass
-    elif year == '2023post':
-        pass
+    if '2023' in year:
+        ## DATA Correction
+        if isData:
+            jec_names = {
+                'L1FastJet'   : f"{jecTag[year]}_V3_DATA_L1FastJet_AK8PFPuppi",
+                'L2Relative'  : f"{jecTag[year]}_V3_DATA_L2Relative_AK8PFPuppi",
+                'L3Absolute'  : f"{jecTag[year]}_V3_DATA_L3Absolute_AK8PFPuppi",
+                'L2L3Residual': f"{jecTag[year]}_V3_DATA_L2L3Residual_AK8PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            # L2L3Residual Correction
+            corr_L2L3 = evaluator[jec_names['L2L3Residual']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3 * corr_L2L3
+        ## MC Correction
+        else:
+            jec_names = {
+                'L1FastJet'  : "{jecTag[year]}_V3_MC_L1FastJet_AK8PFPuppi",
+                'L2Relative' : "{jecTag[year]}_V3_MC_L2Relative_AK8PFPuppi",
+                'L3Absolute' : "{jecTag[year]}_V3_MC_L3Absolute_AK8PFPuppi"
+            }
+            # L1FastJet Correction
+            corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
+            # L2Relative Correction
+            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
+            # L3Absolute Correction
+            corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
+            corr = corr_L1 * corr_L2 * corr_L3
+
     if year == '2024':
         ## DATA Correction
         if isData:
@@ -560,7 +644,7 @@ def get_ele_reco_sf_Above75(year, eta, pt, phi):
 # V+jets NLO k-factors
 # Combination of NNLO QCD and NLO EWK
 ###
-def get_nnlo_nlo_wjet(channel, mass):
+def get_nnlo_nlo_wjet_AN24_075(channel, mass):
     # The W background K factors and uncertainties for electron and muon channel.
     # Combination of NNLO QCD and NLO EWK is done with additive + mixed term approach.
     # Provided by AN2024_075_v11.
@@ -690,7 +774,7 @@ def get_nnlo_nlo_wjet(channel, mass):
 #    ext.add_weight_sets(nlo_ewk_hists[p])
 #    ext.finalize()
 #    get_nlo_ewk_weight[p] = ext.make_evaluator()["kfactor_monojet_ewk"]
-#
+
 ####
 ## V+jets NNLO weights
 ## The schema is process_NNLO_NLO_QCD1QCD2QCD3_EW1EW2EW3_MIX, where 'n' stands for 'nominal', 'u' for 'up', and 'd' for 'down'
@@ -1082,7 +1166,7 @@ corrections = {
     'get_ele_reco_sf_20to75':  get_ele_reco_sf_20to75,
     'get_ele_reco_sf_Above75':  get_ele_reco_sf_Above75,
 
-    'get_nnlo_nlo_wjet':         get_nnlo_nlo_wjet,
+#    'get_nnlo_nlo_wjet':         get_nnlo_nlo_wjet,
 #    'get_ele_medium_id_sf':     get_ele_medium_id_sf,
 #    'get_ele_veto_id_sf':       get_ele_veto_id_sf,
 #    'get_met_trig_weight':      get_met_trig_weight,

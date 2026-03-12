@@ -74,7 +74,9 @@ class AnalysisProcessor(processor.ProcessorABC):
 		self._met_ref_triggers = {
 			'2022pre':
 				[
-				'IsoMu24'
+				'IsoMu20', 'IsoMu24', 'IsoMu27', 'IsoMu24_eta2p1',
+				'HighPtTkMu100',
+				'Mu50', 'Mu55'
 			]
 		}
 		self._corrections = corrections
@@ -194,12 +196,16 @@ class AnalysisProcessor(processor.ProcessorABC):
 		isGoodAK4	   = self._ids['isGoodAK4']
 
 		get_met_xy_correction	= self._corrections['get_met_xy_correction']
+		get_jec_correction = self._corrections['get_jec_correction']
+
+		PNetUParTWPs = self._common['btagWPs']['PNetUParT'][self._year]
 
 		###
 		#Initialize global quantities (MET ecc.)
 		###
 
 		npv = events.PV.npvsGood
+		run = events.run
 		met = events.MET
 		met['pt'] , met['phi'] = get_met_xy_correction(self._year, 'MET', isData,  met.pt, met.phi, npv)
 
@@ -232,12 +238,79 @@ class AnalysisProcessor(processor.ProcessorABC):
 		
 		dimu = leading_mu + second_mu
 		dimu_mass = dimu.mass
+		dimu_mass = ak.fill_none(dimu_mass, 0)
 
+		e = events.Electron
+		e['isloose'] = isLooseElectron(e,self._year)
+		e['istight'] = isTightElectron(e,self._year)
 
-		u = {
+		e_loose = e[e.isloose]
+		e_tight = e[e.istight]
+		e_ntot = ak.num(e, axis=1)
+		e_nloose = ak.num(e_loose, axis=1)
+		e_ntight = ak.num(e_tight, axis=1)
+		leading_e = ak.firsts(e_tight)
+
+		pho = events.Photon
+		pho['isloose'] = isLoosePhoton(pho,self._year)
+		pho['istight'] = isTightPhoton(pho,self._year)
+		pho['T'] = ak.zip(
+			{
+				"r": pho.pt,
+				"phi": pho.phi,
+			},
+			with_name="PolarTwoVector",
+			behavior=vector.behavior,
+		)
+
+		pho_loose=pho[pho.isloose]
+		pho_tight=pho[pho.istight]
+		pho_ntot = ak.num(pho, axis=1)
+		pho_nloose = ak.num(pho_loose, axis=1)
+		pho_ntight = ak.num(pho_tight, axis=1)
+		leading_pho = ak.firsts(pho_tight)
+
+		j = events.Jet
+		rho_density = events.Rho.fixedGridRhoFastjetAll
+		jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, rho_density, j.area, run, isData)
+		j['pt'] = j.pt * jec_corr
+		j['mass'] = j.mass * jec_corr
+		j['T'] = ak.zip(
+			{
+				"r": j.pt,
+				"phi": j.phi,
+			},
+			with_name="PolarTwoVector",
+			behavior=vector.behavior,
+		)
+
+		j['isgood'] = isGoodAK4(j, self._year)
+		j['isclean'] = (
+			ak.all(j.metric_table(mu_loose) > 0.4, axis=2)
+			& ak.all(j.metric_table(e_loose) > 0.4, axis=2)
+		)
+		j['isbtagvL'] = (j.btagPNetB>PNetUParTWPs['loose'])
+
+		j_good = j[j.isgood]
+		j_clean = j_good[j_good.isclean]
+		j_btagvL = j_clean[j_clean.isbtagvL]
+		leading_j = ak.firsts(j_clean)
+
+		j_ntot=ak.num(j, axis=1)
+		j_ngood=ak.num(j_good, axis=1)
+		j_nclean=ak.num(j_clean, axis=1)
+		j_nbtagvL=ak.num(j_btagvL, axis=1)
+
+		uu = {
 			'basic'  : met+leading_mu.T,
 			'muon'  : met+leading_mu.T,
 			'dimu'  : met+leading_mu.T+second_mu.T,
+		}
+
+		u = {
+			'basic' : ak.fill_none(uu['basic'].pt,0),
+			'muon'  : ak.fill_none(uu['muon'].pt,0),
+			'dimu'  : ak.fill_none(uu['dimu'].pt,0),
 		}
 
 		
@@ -262,12 +335,12 @@ class AnalysisProcessor(processor.ProcessorABC):
 		selection.add('met_triggers', triggers)
 
 		## Reference trigger
-		triggers = np.zeros(len(events), dtype='bool')
+		ref_triggers = np.zeros(len(events), dtype='bool')
 		for path in self._met_ref_triggers[self._year]:
 			if path not in events.HLT.fields:
 				continue
-			triggers = triggers | events.HLT[path]
-		selection.add('reference_triggers', ak.to_numpy(triggers))
+			ref_triggers = ref_triggers | events.HLT[path]
+		selection.add('reference_triggers', ak.to_numpy(ref_triggers))
 
 
 		
@@ -278,8 +351,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 		selection.add('dimuon_selection', (mu_npt30==2))
 		selection.add('mu1pt30', (ak.firsts(mu).pt > 30))
 		selection.add('dimu_mass',(dimu_mass>60)&(dimu_mass<120))
-		selection.add('recoil_muon', (u['muon'].pt > 70))
-		selection.add('recoil_dimu', (u['dimu'].pt > 70))
+		selection.add('recoil_muon', (u['muon'] > 70))
+		selection.add('recoil_dimu', (u['dimu'] > 70))
+
+		selection.add('iszeroL', (e_nloose==0)&(pho_nloose==0))
+		selection.add('one_ak4', (j_nclean>0))
+
+		selection.add('noextrab', (j_nbtagvL==0))
+
 
 
 		regions = {
@@ -290,13 +369,16 @@ class AnalysisProcessor(processor.ProcessorABC):
 			'muon': [
 					'lumimask',
 					'met_filters',
+					#'iszeroL',
 					'recoil_muon',
 					'muon_selection',
 					'met100',
+					#'noextrab',
 			],
 			'dimu': [
 					'lumimask',
 					'met_filters',
+					#'iszeroL',
 					'recoil_dimu',
 					'dimuon_selection',
 					'met120',
@@ -318,55 +400,55 @@ class AnalysisProcessor(processor.ProcessorABC):
 			output['template'].fill(
 				  region=region,
 				  mupt=normalize(leading_mu.pt, cut),
-				  IsoMu24 =normalize(events.HLT.IsoMu24,cut),
+				  IsoMu24 =normalize(ref_triggers,cut),
 				  PFMETNoMu120=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight,cut),
 			)
 			output['mupt'].fill(
 				  region=region,
 				  mupt=normalize(leading_mu.pt, cut),
-				  IsoMu =normalize(events.HLT.IsoMu24,cut),
+				  IsoMu =normalize(ref_triggers,cut),
 				  PFMETNoMu120=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight,cut),
 				  PFMETNoMu120PFHT60=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,cut),
 			)
 			output['muphi'].fill(
 				  region=region,
 				  muphi=normalize(leading_mu.phi, cut),
-				  IsoMu =normalize(events.HLT.IsoMu24,cut),
+				  IsoMu =normalize(ref_triggers,cut),
 				  PFMETNoMu120=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight,cut),
 				  PFMETNoMu120PFHT60=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,cut),
 			)
 			output['mueta'].fill(
 				  region=region,
 				  mueta=normalize(leading_mu.eta, cut),
-				  IsoMu =normalize(events.HLT.IsoMu24,cut),
+				  IsoMu =normalize(ref_triggers,cut),
 				  PFMETNoMu120=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight,cut),
 				  PFMETNoMu120PFHT60=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,cut),
 			)
 			output['recoilpt'].fill(
 				  region=region,
-				  recoilpt=normalize(u[region].pt, cut),
-				  IsoMu =normalize(events.HLT.IsoMu24,cut),
+				  recoilpt=normalize(u[region], cut),
+				  IsoMu =normalize(ref_triggers,cut),
 				  PFMETNoMu120=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight,cut),
 				  PFMETNoMu120PFHT60=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,cut),
 			)
 			output['recoilphi'].fill(
 				  region=region,
-				  recoilphi=normalize(u[region].phi, cut),
-				  IsoMu =normalize(events.HLT.IsoMu24,cut),
+				  recoilphi=normalize(uu[region].phi, cut),
+				  IsoMu =normalize(ref_triggers,cut),
 				  PFMETNoMu120=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight,cut),
 				  PFMETNoMu120PFHT60=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,cut),
 			)
 			output['metpt'].fill(
 				  region=region,
 				  metpt=normalize(met.pt, cut),
-				  IsoMu =normalize(events.HLT.IsoMu24,cut),
+				  IsoMu =normalize(ref_triggers,cut),
 				  PFMETNoMu120=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight,cut),
 				  PFMETNoMu120PFHT60=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,cut),
 			)
 			output['metphi'].fill(
 				  region=region,
 				  metphi=normalize(met.phi, cut),
-				  IsoMu =normalize(events.HLT.IsoMu24,cut),
+				  IsoMu =normalize(ref_triggers,cut),
 				  PFMETNoMu120=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight,cut),
 				  PFMETNoMu120PFHT60=normalize(events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,cut),
 			)

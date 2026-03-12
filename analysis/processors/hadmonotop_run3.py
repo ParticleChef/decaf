@@ -29,6 +29,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 		'2022pre' : 7.980,
 		'2022post': 26.67,
 		'2023pre' : 17.794,
+		'2023post': 9.451,
 	}
 
 	lumiMasks = {
@@ -71,24 +72,24 @@ class AnalysisProcessor(processor.ProcessorABC):
 		}
 		
 
-		self._met_triggers = { 
+		self._met_triggers = { ## Name is same 22/23 
 			'2022pre': [
 				'PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60',
 				'PFMETNoMu120_PFMHTNoMu120_IDTight'
-			]
+			],
 		}
-		self._electron_triggers = {
+		self._electron_triggers = { ## Name is same 22/23
 			'2022pre':
 				[
 				'Ele30_WPTight_Gsf',
 				'Photon200',
-			]
+			],
 		}
-		self._photon_triggers = {
+		self._photon_triggers = { ## Name is same 22/23
 			'2022pre':
 				[
 				'Photon200'
-			]
+			],
 		}
 		self._corrections = corrections
 		self._ids = ids
@@ -745,25 +746,27 @@ class AnalysisProcessor(processor.ProcessorABC):
 		selection.add('lumimask', lumimask)
 
 		met_filters =  np.ones(len(events), dtype='bool')
-		for flag in AnalysisProcessor.met_filters[self._year]:
+		for flag in AnalysisProcessor.met_filters['2022pre']:
 			met_filters = met_filters & events.Flag[flag]
 		selection.add('met_filters',met_filters)
 
 		triggers = np.zeros(len(events), dtype='bool')
-		for path in self._met_triggers[self._year]:
+		#for path in self._met_triggers[self._year]:
+		for path in self._met_triggers['2022pre']:
 			if not hasattr(events.HLT, path): continue
 			triggers = triggers | events.HLT[path]
 		selection.add('met_triggers', triggers)
 
 		triggers = np.zeros(len(events), dtype='bool')
-		for path in self._electron_triggers[self._year]:
+		#for path in self._electron_triggers[self._year]:
+		for path in self._electron_triggers['2022pre']:
 			if path not in events.HLT.fields:
 				continue
 			triggers = triggers | events.HLT[path]
 		selection.add('single_electron_triggers', ak.to_numpy(triggers))
 
 		triggers = np.zeros(len(events), dtype='bool')
-		for path in self._photon_triggers[self._year]:
+		for path in self._photon_triggers['2022pre']:
 			if path not in events.HLT.fields:
 				continue
 			triggers = triggers | events.HLT[path]

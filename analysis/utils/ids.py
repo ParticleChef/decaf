@@ -114,8 +114,7 @@ def isLooseMuon(mu, year):
         
     pt=mu.pt
     eta=mu.eta
-    #iso=mu.pfRelIso04_all
-    #iso=mu.pfIsoId
+    iso=mu.pfIsoId
     loose_id=mu.looseId
     isTracker=mu.isTracker
     ispfcan=mu.isPFcand
@@ -123,9 +122,9 @@ def isLooseMuon(mu, year):
     
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2022":
-        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal  #& (iso >= 2)
+        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal & (iso >= 2)
     else:
-        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal
+        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal & (iso >= 2)
     return mask
 
 
@@ -138,15 +137,16 @@ def isTightMuon(mu, year):
         
     pt=mu.pt
     eta=mu.eta
-    #iso=mu.pfIsoId
-    iso=mu.pfRelIso04_all # (iso < 0.15)
+    iso=mu.pfIsoId
     tight_id=mu.tightId
+    ispfcan=mu.isPFcand
+    isglobal=mu.isGlobal
     
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2022":
-        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & (iso < 0.1)
+        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & ispfcan & isglobal & (iso >= 4) 
     else:
-        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & (iso < 0.1)
+        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & ispfcan & isglobal & (iso >= 4) 
     return mask
 
 
@@ -208,17 +208,6 @@ def isLooseTau(tau, year):
 
     mask = ~np.isnan(ak.ones_like(pt))
     if year == "2022":
-        mask = (
-            (pt > 20)
-            & (abs(eta) < 2.3)
-            #& ~(decayMode == 5)
-            #& ~(decayMode == 6)
-            & decayModeDMs
-            #& ((ide & 16) == 16)
-            & ((idj & 4) == 4)
-            #& ((idm & 2) == 2)
-        )
-    elif year == "2017":
         mask = (
             (pt > 20)
             & (abs(eta) < 2.3)

@@ -200,9 +200,16 @@ class AnalysisProcessor(processor.ProcessorABC):
 			ak.all(j.metric_table(mu_loose) > 0.4, axis=2)
 			& ak.all(j.metric_table(e_loose) > 0.4, axis=2)
 		)
+		triggers = np.zeros(len(events), dtype='bool')
+		for path in self._photon_ref_triggers[self._year]:
+			if path not in events.HLT.fields:
+				continue
+			triggers = triggers | events.HLT[path]
+		j['isHT1050'] = ak.to_numpy(triggers) 
 		j_good = j[j.isgood]
 		j_clean = j_good[j_good.isclean]
-		j_ht = ak.sum(j_clean.pt, axis=1)
+		j_ref = j_clean[j_clean.isHT1050]
+		j_ht = ak.sum(j_ref.pt, axis=1)
 
 		
 		###
