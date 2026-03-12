@@ -11,7 +11,7 @@ from data.process import *
 ## data: /data/data/privatedata and mc: /data/data/privatemc.
 #####
 
-year = 2022
+year = '2022EE'
 name_key = '_private_v1'
 json_name = str(year) + name_key # It will be json file name
 
@@ -69,10 +69,12 @@ for k, v in processes.items():
 ### Data Loop
 # search directory
 storage_dirdata = {
-    '2022': '/data/data/privatedata/2022'
+    '2022': '/data/data/privatedata/2022',
+    '2022EE': '/data/data/privatedata/2022EE',
 }
 for k, v in processes.items():
     if nodata: break
+    if 'Muon' in k: continue
     if 'Mphi' in k: continue
     if not v[2] == 1: continue
     print(k, v)

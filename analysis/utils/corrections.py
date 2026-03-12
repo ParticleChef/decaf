@@ -639,6 +639,29 @@ def get_ele_reco_sf_Above75(year, eta, pt, phi):
     return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 
+####
+# Electron Trigger weight
+# https://twiki.cern.ch/twiki/bin/view/CMS/EgammSFandSSRun3#Scale_factors_and_correction_AN2
+# edges eta [-2.5, -2.0, -1.566, -1.444, -0.8, 0.0, 0.8, 1.444, 1.566, 2.0, 2.5]
+#        pt [25.0, 30.0, 32.0, 35.0, 40.0, 45.0, 50.0, 75.0, 100.0, 200.0, 500.0]
+####
+
+def get_ele_trig_weight(year, eta, pt, cutbased):
+    evaluator = correctionlib.CorrectionSet.from_file("data/ElectronTrigEff/"+year+"/"+cutbased+"/egammaEffi"+cutbased+year+".json.gz")
+
+    pt = ak.where((pt<25.0), ak,full_like(pt,25.), pt)
+    pt = ak.where((pt>500.0), ak,full_like(pt,499.9), pt)
+
+    eta = ak.where((eta>2.5), ak.full_like(eta,2.499), eta)
+    eta = ak.where((eta<-2.5), ak.full_like(eta,-2.499), eta)
+
+    flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+    
+    sf = evaluator["h2_scaleFactorsEGamma"].evaluate(flateta, flatpt)
+
+    return ak.unflatten(sf, counts=counts)
+
 
 ###
 # V+jets NLO k-factors
@@ -1166,11 +1189,12 @@ corrections = {
     'get_ele_reco_sf_20to75':  get_ele_reco_sf_20to75,
     'get_ele_reco_sf_Above75':  get_ele_reco_sf_Above75,
 
+    'get_ele_trig_weight':      get_ele_trig_weight,
+
 #    'get_nnlo_nlo_wjet':         get_nnlo_nlo_wjet,
 #    'get_ele_medium_id_sf':     get_ele_medium_id_sf,
 #    'get_ele_veto_id_sf':       get_ele_veto_id_sf,
 #    'get_met_trig_weight':      get_met_trig_weight,
-#    'get_ele_trig_weight':      get_ele_trig_weight,
 #    'get_pho_trig_weight':      get_pho_trig_weight,
 #    'get_nlo_ewk_weight':       get_nlo_ewk_weight,
 #    'get_nnlo_nlo_weight':      get_nnlo_nlo_weight,
