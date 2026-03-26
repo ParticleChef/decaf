@@ -47,10 +47,13 @@ print(f"Found               : {len(found)}")
 print(f"Missing             : {len(missing)}")
 print(f"Extra               : {len(extra)}")
 
-if missing:
-    print("\n=== Missing datasets ===")
-    for m in missing:
-        print(m)
+with open("missing.txt", "w") as f:
+    if missing:
+        print("\n=== Missing datasets ===")
+        for m in missing:
+            print(m)
+            f.write(m + "\n")
+
 
 if extra:
     print("\n=== Extra futures (not in dataset list) ===")

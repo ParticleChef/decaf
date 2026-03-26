@@ -38,3 +38,4 @@ getenv = true
 
 # 전체 dataset queue
 queue dataset from /eos/user/t/taiwoo/decaf/analysis/datasets.txt
+#queue dataset from /eos/user/t/taiwoo/decaf/condor/missing.txt
