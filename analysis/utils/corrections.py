@@ -649,19 +649,22 @@ def get_ele_reco_sf_Above75(year, eta, pt, phi):
 def get_ele_trig_weight(year, eta, pt, cutbased):
     evaluator = correctionlib.CorrectionSet.from_file("data/ElectronTrigEff/"+year+"/"+cutbased+"/egammaEffi"+cutbased+year+".json.gz")
 
-    pt = ak.where((pt<25.0), ak,full_like(pt,25.), pt)
-    pt = ak.where((pt>500.0), ak,full_like(pt,499.9), pt)
+    pt = ak.where((pt<25.0), ak.full_like(pt,25.), pt)
+    pt = ak.where((pt>500.0), ak.full_like(pt,499.9), pt)
 
-    eta = ak.where((eta>2.5), ak.full_like(eta,2.499), eta)
-    eta = ak.where((eta<-2.5), ak.full_like(eta,-2.499), eta)
+    eta = ak.where((eta>=2.5), ak.full_like(eta,2.499), eta)
+    eta = ak.where((eta<=-2.5), ak.full_like(eta,-2.499), eta)
 
-    flatphi, flatpt = ak.flatten(phi), ak.flatten(pt)
+    flatpt = ak.flatten(pt)
     flateta, counts = ak.flatten(eta), ak.num(eta)
     
     sf = evaluator["h2_scaleFactorsEGamma"].evaluate(flateta, flatpt)
 
     return ak.unflatten(sf, counts=counts)
 
+#
+def get_ttbar_weight(pt):
+   return (0.103*np.exp(-0.0118 * np.clip(pt, 0, 800))-0.000134*np.clip(pt, 0, 800)+0.973)*(0.991+0.000075*np.clip(pt, 0, 800))
 
 ###
 # V+jets NLO k-factors
@@ -912,9 +915,6 @@ def get_nnlo_nlo_wjet_AN24_075(channel, mass):
 #
 #
 #
-#def get_ttbar_weight(pt):
-#    return np.exp(0.0615 - 0.0005 * np.clip(pt, 0, 800))
-#
 #
 ## Soft drop mass correction updated for UL. Copied from:
 ## https://github.com/jennetd/hbb-coffea/blob/master/boostedhiggs/corrections.py
@@ -941,229 +941,235 @@ def get_nnlo_nlo_wjet_AN24_075(channel, mass):
 #
 #    return corrected_mass
 #
-#from coffea.lookup_tools.correctionlib_wrapper import correctionlib_wrapper
-#from coffea.lookup_tools.dense_lookup import dense_lookup
-#
-#class BTagCorrector:
-#
-#    def __init__(self, tagger, year, workingpoint):
-#        self._year = year
-#
-#        wp = {}
-#        wp['loose'] = 'L'
-#        wp['medium'] = 'M'
-#        wp['tight'] = 'T'
-#        self._wp = wp[workingpoint]
-#
-#        btvjson = {}
-#        btvjson['deepflav'] = {
-#            'incl': correctionlib.CorrectionSet.from_file('data/BtagSF/'+year+'_UL/btagging.json.gz')["deepJet_incl"],
-#            'comb': correctionlib.CorrectionSet.from_file('data/BtagSF/'+year+'_UL/btagging.json.gz')["deepJet_comb"],
-#        }
-#        btvjson['deepcsv'] = {
-#            'incl': correctionlib.CorrectionSet.from_file('data/BtagSF/'+year+'_UL/btagging.json.gz')["deepCSV_incl"],
-#            'comb': correctionlib.CorrectionSet.from_file('data/BtagSF/'+year+'_UL/btagging.json.gz')["deepCSV_comb"],
-#        }
-#        self.sf = btvjson[tagger]
-#
-#        files = {
-#            '2016preVFP': 'btageff2016preVFP.merged',
-#            '2016postVFP': 'btageff2016postVFP.merged',
-#            '2017': 'btageff2017.merged',
-#            '2018': 'btageff2018.merged',
-#        }
-#        filename = 'hists/'+files[year]
-#        btag_file = load(filename)
-#        for k in btag_file[tagger]:
-#            try:
-#                btag += btag_file[tagger][k]
-#            except:
-#                btag = btag_file[tagger][k]
-#        bpass = btag[{"wp": workingpoint, "btag": "pass"}].view()
-#        ball = btag[{"wp": workingpoint, "btag": sum}].view()
-#        ball[ball<=0.]=1.
-#        ratio = bpass / np.maximum(ball, 1.)
-#        nom = hist.Hist(*btag.axes[2:], data=ratio)
-#        nom.name = "ratios"  
-#        nom.label = "out"
-#        self.eff = convert.from_histogram(nom).to_evaluator()
-#
-#    def btag_weight(self, pt, eta, flavor, istag):
-#
-#        abseta = abs(eta)
-#        flateta, counts = ak.fill_none(ak.flatten(abseta), 0.), ak.num(abseta)
-#
-#        pt = ak.where((pt>999.99), ak.full_like(pt,999.99), pt)
-#        flatpt =  ak.fill_none(ak.flatten(pt), 30.)
-#
-#        flatflavor = ak.fill_none(ak.flatten(flavor), 0)
-#        
-#        #https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagSFMethods#1b_Event_reweighting_using_scale
-#        def P(eff):
-#            weight = ak.where(istag, eff, 1-eff)
-#            return ak.prod(weight, axis=1)
-#
-#        '''
-#        Correction deepJet_comb has 5 inputs
-#        Input systematic (string): 
-#        Input working_point (string): L/M/T
-#        Input flavor (int): hadron flavor definition: 5=b, 4=c, 0=udsg
-#        Input abseta (real):
-#        Input pt (real):
-#        '''
-#
-#        eff = ak.where(
-#            ~np.isnan(ak.fill_none(pt, np.nan)),
-#            ak.unflatten(self.eff.evaluate(flatflavor, flatpt, flateta), counts=counts),
-#            ak.zeros_like(pt)
-#        )
-#        sf_nom = ak.where(
-#            (flavor==0),
-#            ak.unflatten(self.sf['incl'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
-#            ak.where(
-#                (flavor==4),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
-#            )
-#        )
-#        sf_bc_up_correlated = ak.where(
-#            (flavor==0),
-#            ak.unflatten(self.sf['incl'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
-#            ak.where(
-#                (flavor==4),
-#                ak.unflatten(self.sf['comb'].evaluate('up_correlated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-#                ak.unflatten(self.sf['comb'].evaluate('up_correlated', self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
-#            )
-#        )
-#        sf_bc_down_correlated = ak.where(
-#            (flavor==0),
-#            ak.unflatten(self.sf['incl'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
-#            ak.where(
-#                (flavor==4),
-#                ak.unflatten(self.sf['comb'].evaluate('down_correlated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-#                ak.unflatten(self.sf['comb'].evaluate('down_correlated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts)
-#            )
-#        )
-#        sf_bc_up_uncorrelated = ak.where(
-#            (flavor==0),
-#            ak.unflatten(self.sf['incl'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
-#            ak.where(
-#                (flavor==4),
-#                ak.unflatten(self.sf['comb'].evaluate('up_uncorrelated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-#                ak.unflatten(self.sf['comb'].evaluate('up_uncorrelated', self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
-#            )
-#        )
-#        sf_bc_down_uncorrelated = ak.where(
-#            (flavor==0),
-#            ak.unflatten(self.sf['incl'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
-#            ak.where(
-#                (flavor==4),
-#                ak.unflatten(self.sf['comb'].evaluate('down_uncorrelated',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-#                ak.unflatten(self.sf['comb'].evaluate('down_uncorrelated',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)        
-#            )
-#        )
-#        sf_light_up_correlated = ak.where(
-#            (flavor==0),
-#            ak.unflatten(self.sf['incl'].evaluate('up_correlated', self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
-#            ak.where(
-#                (flavor==4),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
-#            )
-#        )
-#        sf_light_down_correlated = ak.where(
-#            (flavor==0),
-#            ak.unflatten(self.sf['incl'].evaluate('down_correlated', self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
-#            ak.where(
-#                (flavor==4),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
-#            )
-#        )
-#        sf_light_up_uncorrelated = ak.where(
-#            (flavor==0),
-#            ak.unflatten(self.sf['incl'].evaluate('up_uncorrelated', self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
-#            ak.where(
-#                (flavor==4),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
-#            )
-#        )
-#        sf_light_down_uncorrelated = ak.where(
-#            (flavor==0),
-#            ak.unflatten(self.sf['incl'].evaluate('down_uncorrelated', self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
-#            ak.where(
-#                (flavor==4),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-#                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
-#            )
-#        )
-#        
-#        eff_data_nom  = ak.where(
-#            (sf_nom*eff>1.), 
-#            ak.ones_like(eff), 
-#            sf_nom*eff
-#        )
-#        eff_data_bc_up_correlated   = ak.where(
-#            (sf_bc_up_correlated*eff>1.), 
-#            ak.ones_like(eff), 
-#            sf_bc_up_correlated*eff
-#        )
-#        eff_data_bc_down_correlated = ak.where(
-#            (sf_bc_down_correlated*eff>1.), 
-#            ak.ones_like(eff), 
-#            sf_bc_down_correlated*eff
-#        )
-#        eff_data_bc_up_uncorrelated = ak.where(
-#            (sf_bc_up_uncorrelated*eff>1.), 
-#            ak.ones_like(eff), 
-#            sf_bc_up_uncorrelated*eff
-#        )
-#        eff_data_bc_down_uncorrelated = ak.where(
-#            (sf_bc_down_uncorrelated*eff>1.), 
-#            ak.ones_like(eff), 
-#            sf_bc_down_uncorrelated*eff
-#        )
-#        eff_data_light_up_correlated   = ak.where(
-#            (sf_light_up_correlated*eff>1.), 
-#            ak.ones_like(eff), 
-#            sf_light_up_correlated*eff
-#        )
-#        eff_data_light_down_correlated = ak.where(
-#            (sf_light_down_correlated*eff>1.), 
-#            ak.ones_like(eff), 
-#            sf_light_down_correlated*eff
-#        )
-#        eff_data_light_up_uncorrelated = ak.where(
-#            (sf_light_up_uncorrelated*eff>1.), 
-#            ak.ones_like(eff), 
-#            sf_light_up_uncorrelated*eff
-#        )
-#        eff_data_light_down_uncorrelated = ak.where(
-#            (sf_light_down_uncorrelated*eff>1.), 
-#            ak.ones_like(eff), 
-#            sf_light_down_uncorrelated*eff
-#        )
-#       
-#        nom = P(eff_data_nom)/P(eff)
-#        bc_up_correlated = P(eff_data_bc_up_correlated)/P(eff)
-#        bc_down_correlated = P(eff_data_bc_down_correlated)/P(eff)
-#        bc_up_uncorrelated = P(eff_data_bc_up_uncorrelated)/P(eff)
-#        bc_down_uncorrelated = P(eff_data_bc_down_uncorrelated)/P(eff)
-#        light_up_correlated = P(eff_data_light_up_correlated)/P(eff)
-#        light_down_correlated = P(eff_data_light_down_correlated)/P(eff)
-#        light_up_uncorrelated = P(eff_data_light_up_uncorrelated)/P(eff)
-#        light_down_uncorrelated = P(eff_data_light_down_uncorrelated)/P(eff)
-#        
-#        return np.nan_to_num(nom, nan=1.), \
-#        np.nan_to_num(bc_up_correlated, nan=1.), \
-#        np.nan_to_num(bc_down_correlated, nan=1.), \
-#        np.nan_to_num(bc_up_uncorrelated, nan=1.), \
-#        np.nan_to_num(bc_down_uncorrelated, nan=1.), \
-#        np.nan_to_num(light_up_correlated, nan=1.), \
-#        np.nan_to_num(light_down_correlated, nan=1.), \
-#        np.nan_to_num(light_up_uncorrelated, nan=1.), \
-#        np.nan_to_num(light_down_uncorrelated, nan=1.)
+
+from coffea.lookup_tools.correctionlib_wrapper import correctionlib_wrapper
+from coffea.lookup_tools.dense_lookup import dense_lookup
+
+class BTagCorrector:
+
+    def __init__(self, tagger, year, workingpoint):
+        self._year = year
+
+        wp = {}
+        wp['loose'] = 'L'
+        wp['medium'] = 'M'
+        wp['tight'] = 'T'
+        wp['verytight'] = 'XT'
+        wp['veryverytight'] = 'XXT'
+        self._wp = wp[workingpoint]
+
+        btvjson = {}
+        if year == 2024:
+            btvjson['PNetUParT'] = {
+                'comb': correctionlib.CorrectionSet.from_file('data/BtagSF/'+year+'/btagging.json.gz')["UParTAK4_comb"],
+                'ligh': correctionlib.CorrectionSet.from_file('data/BtagSF/'+year+'/btagging.json.gz')["UParTAK4_light"],
+            }
+        else:
+            btvjson['PNetUParT'] = {
+                'comb': correctionlib.CorrectionSet.from_file('data/BtagSF/'+year+'/btagging.json.gz')["particleNet_comb"],
+                'ligh': correctionlib.CorrectionSet.from_file('data/BtagSF/'+year+'/btagging.json.gz')["particleNet_light"],
+            }
+        self.sf = btvjson[tagger]
+
+        files = {
+            '2022pre' : 'btageff2022pre.merged',
+            '2022post': 'btageff2022post.merged',
+            '2023pre' : 'btageff2023pre.merged',
+            '2023post': 'btageff2023post.merged',
+        }
+        filename = 'hists/'+files[year]
+        btag_file = load(filename)
+        for k in btag_file[tagger]:
+            try:
+                btag += btag_file[tagger][k]
+            except:
+                btag = btag_file[tagger][k]
+        bpass = btag[{"wp": workingpoint, "btag": "pass"}].view()
+        ball = btag[{"wp": workingpoint, "btag": sum}].view()
+        ball[ball<=0.]=1.
+        ratio = bpass / np.maximum(ball, 1.)
+        nom = hist.Hist(*btag.axes[2:], data=ratio)
+        nom.name = "ratios"  
+        nom.label = "out"
+        self.eff = convert.from_histogram(nom).to_evaluator()
+
+    def btag_weight(self, pt, eta, flavor, istag):
+
+        abseta = abs(eta)
+        flateta, counts = ak.fill_none(ak.flatten(abseta), 0.), ak.num(abseta)
+
+        pt = ak.where((pt>999.99), ak.full_like(pt,999.99), pt)
+        pt = ak.where((pt<20.0), ak.full_like(pt,20.0), pt)
+        flatpt =  ak.fill_none(ak.flatten(pt), 20.)
+
+        flatflavor = ak.fill_none(ak.flatten(flavor), 0)
+        
+        #https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagSFMethods
+        def P(eff):
+            weight = ak.where(istag, eff, 1-eff)
+            return ak.prod(weight, axis=1)
+
+        '''
+        particleNet_comb
+         =>  systematic ,
+         =>  working_point ,  L/M/T/XT/XXT
+         =>  flavor ,  hadron flavor definition: 5=b, 4=c, 0=udsg
+         =>  abseta ,
+         =>  pt ,
+        '''
+
+        eff = ak.where(
+            ~np.isnan(ak.fill_none(pt, np.nan)),
+            ak.unflatten(self.eff.evaluate(flatflavor, flatpt, flateta), counts=counts),
+            ak.zeros_like(pt)
+        )
+        sf_nom = ak.where(
+            (flavor==0),
+            ak.unflatten(self.sf['ligh'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
+            ak.where(
+                (flavor==4),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
+            )
+        )
+        sf_bc_up_correlated = ak.where(
+            (flavor==0),
+            ak.unflatten(self.sf['ligh'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
+            ak.where(
+                (flavor==4),
+                ak.unflatten(self.sf['comb'].evaluate('up_correlated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
+                ak.unflatten(self.sf['comb'].evaluate('up_correlated', self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
+            )
+        )
+        sf_bc_down_correlated = ak.where(
+            (flavor==0),
+            ak.unflatten(self.sf['ligh'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
+            ak.where(
+                (flavor==4),
+                ak.unflatten(self.sf['comb'].evaluate('down_correlated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
+                ak.unflatten(self.sf['comb'].evaluate('down_correlated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts)
+            )
+        )
+        sf_bc_up_uncorrelated = ak.where(
+            (flavor==0),
+            ak.unflatten(self.sf['ligh'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
+            ak.where(
+                (flavor==4),
+                ak.unflatten(self.sf['comb'].evaluate('up_uncorrelated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
+                ak.unflatten(self.sf['comb'].evaluate('up_uncorrelated', self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
+            )
+        )
+        sf_bc_down_uncorrelated = ak.where(
+            (flavor==0),
+            ak.unflatten(self.sf['ligh'].evaluate('central',self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
+            ak.where(
+                (flavor==4),
+                ak.unflatten(self.sf['comb'].evaluate('down_uncorrelated',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
+                ak.unflatten(self.sf['comb'].evaluate('down_uncorrelated',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)        
+            )
+        )
+        sf_light_up_correlated = ak.where(
+            (flavor==0),
+            ak.unflatten(self.sf['ligh'].evaluate('up_correlated', self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
+            ak.where(
+                (flavor==4),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
+            )
+        )
+        sf_light_down_correlated = ak.where(
+            (flavor==0),
+            ak.unflatten(self.sf['ligh'].evaluate('down_correlated', self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
+            ak.where(
+                (flavor==4),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
+            )
+        )
+        sf_light_up_uncorrelated = ak.where(
+            (flavor==0),
+            ak.unflatten(self.sf['ligh'].evaluate('up_uncorrelated', self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
+            ak.where(
+                (flavor==4),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
+            )
+        )
+        sf_light_down_uncorrelated = ak.where(
+            (flavor==0),
+            ak.unflatten(self.sf['ligh'].evaluate('down_uncorrelated', self._wp, ak.full_like(flatflavor, 0.), flateta, flatpt), counts=counts),
+            ak.where(
+                (flavor==4),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
+                ak.unflatten(self.sf['comb'].evaluate('central',self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
+            )
+        )
+        
+        eff_data_nom  = ak.where(
+            (sf_nom*eff>1.), 
+            ak.ones_like(eff), 
+            sf_nom*eff
+        )
+        eff_data_bc_up_correlated   = ak.where(
+            (sf_bc_up_correlated*eff>1.), 
+            ak.ones_like(eff), 
+            sf_bc_up_correlated*eff
+        )
+        eff_data_bc_down_correlated = ak.where(
+            (sf_bc_down_correlated*eff>1.), 
+            ak.ones_like(eff), 
+            sf_bc_down_correlated*eff
+        )
+        eff_data_bc_up_uncorrelated = ak.where(
+            (sf_bc_up_uncorrelated*eff>1.), 
+            ak.ones_like(eff), 
+            sf_bc_up_uncorrelated*eff
+        )
+        eff_data_bc_down_uncorrelated = ak.where(
+            (sf_bc_down_uncorrelated*eff>1.), 
+            ak.ones_like(eff), 
+            sf_bc_down_uncorrelated*eff
+        )
+        eff_data_light_up_correlated   = ak.where(
+            (sf_light_up_correlated*eff>1.), 
+            ak.ones_like(eff), 
+            sf_light_up_correlated*eff
+        )
+        eff_data_light_down_correlated = ak.where(
+            (sf_light_down_correlated*eff>1.), 
+            ak.ones_like(eff), 
+            sf_light_down_correlated*eff
+        )
+        eff_data_light_up_uncorrelated = ak.where(
+            (sf_light_up_uncorrelated*eff>1.), 
+            ak.ones_like(eff), 
+            sf_light_up_uncorrelated*eff
+        )
+        eff_data_light_down_uncorrelated = ak.where(
+            (sf_light_down_uncorrelated*eff>1.), 
+            ak.ones_like(eff), 
+            sf_light_down_uncorrelated*eff
+        )
+       
+        nom = P(eff_data_nom)/P(eff)
+        bc_up_correlated = P(eff_data_bc_up_correlated)/P(eff)
+        bc_down_correlated = P(eff_data_bc_down_correlated)/P(eff)
+        bc_up_uncorrelated = P(eff_data_bc_up_uncorrelated)/P(eff)
+        bc_down_uncorrelated = P(eff_data_bc_down_uncorrelated)/P(eff)
+        light_up_correlated = P(eff_data_light_up_correlated)/P(eff)
+        light_down_correlated = P(eff_data_light_down_correlated)/P(eff)
+        light_up_uncorrelated = P(eff_data_light_up_uncorrelated)/P(eff)
+        light_down_uncorrelated = P(eff_data_light_down_uncorrelated)/P(eff)
+        
+        return np.nan_to_num(nom, nan=1.), \
+        np.nan_to_num(bc_up_correlated, nan=1.), \
+        np.nan_to_num(bc_down_correlated, nan=1.), \
+        np.nan_to_num(bc_up_uncorrelated, nan=1.), \
+        np.nan_to_num(bc_down_uncorrelated, nan=1.), \
+        np.nan_to_num(light_up_correlated, nan=1.), \
+        np.nan_to_num(light_down_correlated, nan=1.), \
+        np.nan_to_num(light_up_uncorrelated, nan=1.), \
+        np.nan_to_num(light_down_uncorrelated, nan=1.)
 
 
 
@@ -1191,6 +1197,8 @@ corrections = {
 
     'get_ele_trig_weight':      get_ele_trig_weight,
 
+    'get_btag_weight':          BTagCorrector,
+
 #    'get_nnlo_nlo_wjet':         get_nnlo_nlo_wjet,
 #    'get_ele_medium_id_sf':     get_ele_medium_id_sf,
 #    'get_ele_veto_id_sf':       get_ele_veto_id_sf,
@@ -1200,7 +1208,6 @@ corrections = {
 #    'get_nnlo_nlo_weight':      get_nnlo_nlo_weight,
 #    'get_ttbar_weight':         get_ttbar_weight,
 #    'get_msd_corr':             get_msd_corr,
-#    'get_btag_weight':          BTagCorrector,
 #    'get_mu_rochester_sf':      get_mu_rochester_sf,
 }
 
