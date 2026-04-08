@@ -129,7 +129,7 @@ def scale(filename):
         #print(hists[key].keys())
         for dataset in hists[key].keys():
             print('Scaling',dataset,'for variable',key)
-            if 'MET' in dataset or 'SingleElectron' in dataset or 'SinglePhoton' in dataset or 'EGamma' in dataset or 'BTagMu' in dataset or 'MuonEG' in dataset or 'DoubleMuon' in dataset or 'SingleMuon' in dataset: continue
+            if 'MET' in dataset or 'SingleElectron' in dataset or 'SinglePhoton' in dataset or 'EGamma' in dataset or 'BTagMu' in dataset or 'MuonEG' in dataset or 'Muon' in dataset or 'SingleMuon' in dataset: continue
             hists[key][dataset] *= 1/scale[dataset]
             print('Scaled',dataset,'for variable',key, 'by',scale[dataset])
     #print('Histograms scaled')
@@ -150,8 +150,8 @@ def scale(filename):
     bkg_map["W (lnu)"] = ["WtoLNu"]
     bkg_map["Gamma + Jets"] = ["GJ"]
     bkg_map["VV"] = ["WW", "WZ", "ZZ"]
-    bkg_map["TT + V"] = ["TTZ","TTW"]
-    bkg_map['TT'] = ["TTto"]
+    #bkg_map["TT + V"] = ["TTZ","TTW"]
+    bkg_map['TT'] = ["TTto", 'TTW', 'TTZ','TTTT','TTBB']
     bkg_map['DY'] = ['DY']
     #bkg_map["TT (AH)"] = ["TTto4Q"]
     #bkg_map["TT (SL)"] = ["TTtoLNu2Q"]
@@ -165,7 +165,7 @@ def scale(filename):
         "TbarBto",  # s-channel
     ]
     data_map["JetMET"] = ["JetMET"]
-    data_map["DoubleMuon"] = ["DoubleMuon"]
+    data_map["Muon"] = ["Muon"]
     data_map["MuonEG"] = ["MuonEG"]
     data_map["SingleElectron"] = ["SingleElectron"]
     data_map["SinglePhoton"] = ["SinglePhoton"]

@@ -1091,7 +1091,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         if not isData:
             ## Top pt reweighting for ttbar
             gen = events.GenPart
-            gen['isTop'] = (abs(gen.pdgId)==6)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
+            gen['isTop'] = (abs(gen.pdgId) == 6) & gen.hasFlags(['fromHardProcess', 'isLastCopy'])
             genTops = gen[gen.isTop]
             top_pt_sf = np.ones(len(events), dtype='float')
             if ('TTto' in dataset):
@@ -1101,6 +1101,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 
             # PU reweighting
             pu_nom, pu_up, pu_down = get_pu_weight(self._year, events.Pileup.nTrueInt)
+
         def normalize(val, cut):
             if cut is None:
                 ar = ak.to_numpy(ak.fill_none(val, np.nan))
@@ -1109,122 +1110,12 @@ class AnalysisProcessor(processor.ProcessorABC):
                 ar = ak.to_numpy(ak.fill_none(val[cut], np.nan))
                 return ar
 
-        def build_region_weights(region):
-            region_weights = Weights(len(events), storeIndividual=True)
-
-            # Always include genweight for MC
-            region_weights.add('genweight', events.genWeight)
-
-            # Top pt reweighting for ttbar
-            if ('TTto' in dataset):
-                region_weights.add('top_pt', top_pt_sf)
-
-            # PU reweighting
-            region_weights.add('pileup', pu_nom, pu_up, pu_down)
-
-            # Electron ID scale factors
-            Electron_ID = {
-                'cat1_preselection': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-                'cat2_LLCR_highDeltaM': (
-                    ak.fill_none(ak.firsts(e_veto.veto_id_sf), 1.0),
-                    ak.fill_none(ak.firsts(e_veto.veto_id_sf_up), 1.0),
-                    ak.fill_none(ak.firsts(e_veto.veto_id_sf_down), 1.0)
-                ),
-                'cat3_QCDCR_highDeltaM': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-                'cat4_GCR_highDeltaM': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-                'cat5_DY2E_highDeltaM': (
-                    ak.fill_none(leading_e.medium_id_sf * second_e.medium_id_sf, 1.0),
-                    ak.fill_none(leading_e.medium_id_sf_up * second_e.medium_id_sf_up, 1.0),
-                    ak.fill_none(leading_e.medium_id_sf_down * second_e.medium_id_sf_down, 1.0)
-                ),
-                'cat6_DY2M_highDeltaM': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-                'cat7_SR_highDeltaM': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-            }
-            electron_id, electron_id_up, electron_id_down = Electron_ID[region]
-            region_weights.add('electron_id', electron_id, electron_id_up, electron_id_down)
-
-            # Electron HLT scale factors
-            Electron_HLT = {
-                'cat1_preselection': np.ones(len(events), dtype='float'),
-                'cat2_LLCR_highDeltaM': np.ones(len(events), dtype='float'),
-                'cat3_QCDCR_highDeltaM': np.ones(len(events), dtype='float'),
-                'cat4_GCR_highDeltaM': np.ones(len(events), dtype='float'),
-                'cat5_DY2E_highDeltaM': ak.fill_none(leading_e.hlt_sf, 1.0),
-                'cat6_DY2M_highDeltaM': np.ones(len(events), dtype='float'),
-                'cat7_SR_highDeltaM': np.ones(len(events), dtype='float'),
-            }
-            region_weights.add('electron_hlt', Electron_HLT[region])
-
-            # Muon ID scale factors
-            Muon_ID = {
-                'cat1_preselection': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-                'cat2_LLCR_highDeltaM': (
-                    ak.fill_none(ak.firsts(m_loose.loose_id_sf), 1.0),
-                    ak.fill_none(ak.firsts(m_loose.loose_id_sf_up), 1.0),
-                    ak.fill_none(ak.firsts(m_loose.loose_id_sf_down), 1.0)
-                ),
-                'cat3_QCDCR_highDeltaM': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-                'cat4_GCR_highDeltaM': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-                'cat5_DY2E_highDeltaM': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-                'cat6_DY2M_highDeltaM': (
-                    ak.fill_none(leading_m.medium_id_sf * second_m.medium_id_sf, 1.0),
-                    ak.fill_none(leading_m.medium_id_sf_up * second_m.medium_id_sf_up, 1.0),
-                    ak.fill_none(leading_m.medium_id_sf_down * second_m.medium_id_sf_down, 1.0)
-                ),
-                'cat7_SR_highDeltaM': (
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float'),
-                    np.ones(len(events), dtype='float')
-                ),
-            }
-            muon_id, muon_id_up, muon_id_down = Muon_ID[region]
-            region_weights.add('muon_id', muon_id, muon_id_up, muon_id_down)
-
-            return region_weights
-
         def fill(region, systematic, region_weights):
             cut = selection.all(*regions[region])
             sys_name = 'nominal' if systematic is None else systematic
 
-            # weight systematic이면 modifier 적용, 아니면 nominal
             if region_weights is None:
-                weight = np.ones(np.count_nonzero(cut), dtype='float')
+                weight = np.ones(np.count_nonzero(ak.to_numpy(cut)), dtype='float')
             elif systematic in region_weights.variations:
                 weight = region_weights.weight(modifier=systematic)[cut]
             else:
@@ -1312,7 +1203,112 @@ class AnalysisProcessor(processor.ProcessorABC):
                 systematics = [None]
                 region_weights = None
             else:
-                region_weights = build_region_weights(region)
+                region_weights = Weights(len(events), storeIndividual=True)
+
+                # Always include genweight for MC
+                region_weights.add('genweight', events.genWeight)
+
+                # Top pt reweighting for ttbar
+                if ('TTto' in dataset):
+                    region_weights.add('top_pt', top_pt_sf)
+
+                # PU reweighting
+                region_weights.add('pileup', pu_nom, pu_up, pu_down)
+
+                # Electron ID scale factors
+                Electron_ID = {
+                    'cat1_preselection': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                    'cat2_LLCR_highDeltaM': (
+                        ak.fill_none(ak.firsts(e_veto.veto_id_sf), 1.0),
+                        ak.fill_none(ak.firsts(e_veto.veto_id_sf_up), 1.0),
+                        ak.fill_none(ak.firsts(e_veto.veto_id_sf_down), 1.0)
+                    ),
+                    'cat3_QCDCR_highDeltaM': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                    'cat4_GCR_highDeltaM': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                    'cat5_DY2E_highDeltaM': (
+                        ak.fill_none(leading_e.medium_id_sf * second_e.medium_id_sf, 1.0),
+                        ak.fill_none(leading_e.medium_id_sf_up * second_e.medium_id_sf_up, 1.0),
+                        ak.fill_none(leading_e.medium_id_sf_down * second_e.medium_id_sf_down, 1.0)
+                    ),
+                    'cat6_DY2M_highDeltaM': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                    'cat7_SR_highDeltaM': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                }
+                electron_id, electron_id_up, electron_id_down = Electron_ID[region]
+                region_weights.add('electron_id', electron_id, electron_id_up, electron_id_down)
+
+                # Electron HLT scale factors
+                Electron_HLT = {
+                    'cat1_preselection': np.ones(len(events), dtype='float'),
+                    'cat2_LLCR_highDeltaM': np.ones(len(events), dtype='float'),
+                    'cat3_QCDCR_highDeltaM': np.ones(len(events), dtype='float'),
+                    'cat4_GCR_highDeltaM': np.ones(len(events), dtype='float'),
+                    'cat5_DY2E_highDeltaM': ak.fill_none(leading_e.hlt_sf, 1.0),
+                    'cat6_DY2M_highDeltaM': np.ones(len(events), dtype='float'),
+                    'cat7_SR_highDeltaM': np.ones(len(events), dtype='float'),
+                }
+                region_weights.add('electron_hlt', Electron_HLT[region])
+
+                # Muon ID scale factors
+                Muon_ID = {
+                    'cat1_preselection': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                    'cat2_LLCR_highDeltaM': (
+                        ak.fill_none(ak.firsts(m_loose.loose_id_sf), 1.0),
+                        ak.fill_none(ak.firsts(m_loose.loose_id_sf_up), 1.0),
+                        ak.fill_none(ak.firsts(m_loose.loose_id_sf_down), 1.0)
+                    ),
+                    'cat3_QCDCR_highDeltaM': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                    'cat4_GCR_highDeltaM': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                    'cat5_DY2E_highDeltaM': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                    'cat6_DY2M_highDeltaM': (
+                        ak.fill_none(leading_m.medium_id_sf * second_m.medium_id_sf, 1.0),
+                        ak.fill_none(leading_m.medium_id_sf_up * second_m.medium_id_sf_up, 1.0),
+                        ak.fill_none(leading_m.medium_id_sf_down * second_m.medium_id_sf_down, 1.0)
+                    ),
+                    'cat7_SR_highDeltaM': (
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float'),
+                        np.ones(len(events), dtype='float')
+                    ),
+                }
+                muon_id, muon_id_up, muon_id_down = Muon_ID[region]
+                region_weights.add('muon_id', muon_id, muon_id_up, muon_id_down)
+
                 if shift_name is None:
                     systematics = [None] + list(region_weights.variations)
                 else:

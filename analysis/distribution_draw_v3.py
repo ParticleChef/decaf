@@ -21,6 +21,7 @@ error_opts = {
 # ----------------------------------------------------------------------
 # Load histograms
 # ----------------------------------------------------------------------
+#myhist = load('hists/stop_new2024.scaled')
 myhist = load('hists/stop_new2024.scaled')
 bkg = myhist['bkg']
 data = myhist['data']
@@ -94,7 +95,7 @@ def reduce_to_1d(vals, vars_):
 # ----------------------------------------------------------------------
 # Loop over variables in bkg (e.g. metpt, metphi, nJet, ...)
 # ----------------------------------------------------------------------
-for regions in ['cat6_DY2M_highDeltaM']:#['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDeltaM', 'cat4_GCR_highDeltaM', 'cat5_DY2E_highDeltaM', 'cat6_DY2M_highDeltaM', 'cat7_SR_highDeltaM']:
+for regions in ['cat1_preselection', 'cat2_LLCR_highDeltaM', 'cat3_QCDCR_highDeltaM', 'cat4_GCR_highDeltaM', 'cat5_DY2E_highDeltaM', 'cat6_DY2M_highDeltaM', 'cat7_SR_highDeltaM']:
     print(f"Plotting for region: {regions}")
     for key in bkg.keys():
         if 'sumw' in key:
@@ -393,6 +394,10 @@ for regions in ['cat6_DY2M_highDeltaM']:#['cat1_preselection', 'cat2_LLCR_highDe
             if 'vs' in key:
                 ax.set_xlim(0, 1)
             if key == 'fj1pt':
+                ax.set_xlim(200, 1000)
+            if 'mll' in key:
+                ax.set_xlim(50, 250)
+            if 'pll' in key:
                 ax.set_xlim(200, 1000)
 
             ax.grid(True, which='both', axis='y', ls='--', lw=0.5)

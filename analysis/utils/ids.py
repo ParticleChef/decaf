@@ -188,16 +188,9 @@ def isGoodJet(jet, year):
     neMultiplicity = jet.neMultiplicity
     multiplicity = chMultiplicity + neMultiplicity
 
-    def getJetVeto(eta,phi):
-        evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jetvetomaps.json.gz')
-        corr = evaluator["Summer24Prompt24_RunBCDEFGHI_V1"]
-        counts = ak.num(eta)
-        eta, phi = ak.flatten(eta), ak.flatten(phi)
-        out = corr.evaluate('jetvetomap',eta,phi)
-        return ak.unflatten(out, counts)
-
     def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
         evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jetid.json.gz')
+        #evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/2022pre/jetid.json.gz')
         corr = evaluator["AK4PUPPI_TightLeptonVeto"]
         counts = ak.num(eta)
         eta, chHEF, neHEF, chEmEF, neEmEF, muEF = ak.flatten(eta), ak.flatten(chHEF), ak.flatten(neHEF), ak.flatten(chEmEF), ak.flatten(neEmEF), ak.flatten(muEF)
@@ -211,9 +204,22 @@ def isGoodJet(jet, year):
         return ak.unflatten(out, counts)
         
     jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
-    vetoMap = getJetVeto(eta, phi)
-    mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1) & (vetoMap == 0)
+    mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1)
     return mask
+
+def isJetVeto(jet, year):
+    pt = jet.pt
+    eta = jet.eta
+    phi = jet.phi
+    evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jetvetomaps.json.gz')
+    corr = evaluator["Summer24Prompt24_RunBCDEFGHI_V1"]
+    counts = ak.num(eta)
+    pt = ak.flatten(pt)
+    eta, phi = ak.flatten(eta), ak.flatten(phi)
+    out = corr.evaluate('jetvetomap',eta,phi)
+    mask = ((pt > 30) & (out != 0))
+    return ak.unflatten(mask, counts)
+
 
 def isGoodFatJet(jet, year):
     pt = jet.pt
@@ -229,13 +235,6 @@ def isGoodFatJet(jet, year):
     neMultiplicity = jet.neMultiplicity
     multiplicity = chMultiplicity + neMultiplicity
 
-    def getJetVeto(eta,phi):
-        evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jetvetomaps.json.gz')
-        corr = evaluator["Summer24Prompt24_RunBCDEFGHI_V1"]
-        counts = ak.num(eta)
-        eta, phi = ak.flatten(eta), ak.flatten(phi)
-        out = corr.evaluate('jetvetomap',eta,phi)
-        return ak.unflatten(out, counts)
     def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
         evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jetid.json.gz')
         corr = evaluator["AK8PUPPI_TightLeptonVeto"]
@@ -250,8 +249,7 @@ def isGoodFatJet(jet, year):
         out = corr.evaluate(*args)
         return ak.unflatten(out, counts)
     jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
-    vetoMap = getJetVeto(eta, phi)
-    mask = (pt > 200) & (abs(eta) < 2.0) & (jetId == 1) & (vetoMap == 0) & (msd > 60)
+    mask = (pt > 200) & (abs(eta) < 2.0) & (jetId == 1) & (msd > 60)
     return mask
 
 ids = {}
@@ -266,4 +264,5 @@ ids['isMediumPhoton'] = isMediumPhoton
 ids['isMediumTau'] = isMediumTau
 ids['isGoodJet'] = isGoodJet
 ids['isGoodFatJet'] = isGoodFatJet
+ids['isJetVeto'] = isJetVeto
 save(ids, 'data/ids.coffea')
