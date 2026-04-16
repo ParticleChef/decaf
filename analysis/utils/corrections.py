@@ -388,25 +388,6 @@ def get_mu_sf (year, corr, eta, pt):
 
     return ak.unflatten(weight, counts=counts)
 
-###
-# Muon scale and resolution (i.e. Rochester)
-# https://twiki.cern.ch/twiki/bin/view/CMS/RochcorMuon
-# RUN3 NOT UPDATED YET
-###
-#
-#tag = 'roccor.Run2.v5'
-#get_mu_rochester_sf = {}
-#for year in ['2016postVFP', '2016preVFP', '2017','2018']:
-#    if '2016postVFP' in year: 
-#        fname = f'data/{tag}/RoccoR2016bUL.txt'
-#    elif '2016preVFP' in year:  
-#        fname = f'data/{tag}/RoccoR2016aUL.txt'
-#    else:
-#        fname = f'data/{tag}/RoccoR{year}UL.txt'
-#    sfs = lookup_tools.txt_converters.convert_rochester_file(fname,loaduncs=True)
-#    get_mu_rochester_sf[year] = lookup_tools.rochester_lookup.rochester_lookup(sfs)
-#
-
 ####
 # Photon ID scale factor
 # https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaSFJSON
@@ -709,28 +690,26 @@ def get_nnlo_nlo_wjet_AN24_075(channel, mass):
 
 
 ###
-# MET trigger efficiency SFs, 2017/18 from monojet. Depends on recoil.
+# MET trigger efficiency SFs. Depends on recoil.
 ###
 #
-#def get_met_trig_weight(year, met):
-#    met_trig_hists = {
-#        '2016postVFP': "data/trigger_eff/metTriggerEfficiency_recoil_monojet_TH1F.root:hden_monojet_recoil_clone_passed",
-#        '2016preVFP': "data/trigger_eff/metTriggerEfficiency_recoil_monojet_TH1F.root:hden_monojet_recoil_clone_passed",
-#        '2017': "data/trigger_eff/met_trigger_sf.root:120pfht_hltmu_1m_2017",
-#        '2018': "data/trigger_eff/met_trigger_sf.root:120pfht_hltmu_1m_2018"
-#    }
-#    corr = convert.from_uproot_THx(met_trig_hists[year])
-#    evaluator = corr.to_evaluator()
-#
-#    met  = ak.fill_none(met, 0.)
-#    met  = ak.where((met>950.), ak.full_like(met,950.), met)
-#
-#    weight = ak.where(
-#        ~np.isnan(ak.fill_none(met, np.nan)),
-#        evaluator.evaluate(met),
-#        ak.zeros_like(met)
-#    )
-#    return weight
+def get_met_trig_weight(year, met):
+    corrname = {
+        '2022pre' : "recoil_trigger_sf_22pre",
+        '2022post': "recoil_trigger_sf_22post",
+        '2023pre' : "recoil_trigger_sf_23pre",
+        '2023post': "recoil_trigger_sf_23post"
+    }
+    cset = CorrectionSet.from_file(f"data/METTrigEff/recoil_trigger_sf_{year}.json.gz")
+    corr = cset[corrname[year]]
+
+    met  = ak.fill_none(met, 0.)
+
+    weight = corr.evaluate(met, "nominal")
+    weight_up   = corr.evaluate(met, "up")
+    weight_down = corr.evaluate(met, "down")
+
+    return weight, weight_up, weight_down
 
 ####
 # Electron Trigger weight
@@ -947,7 +926,7 @@ from coffea.lookup_tools.dense_lookup import dense_lookup
 
 class BTagCorrector:
 
-    def __init__(self, tagger, year, workingpoint):
+    def __init__(self, tagger, year, workingpoint, caller):
         self._year = year
 
         wp = {}
@@ -957,6 +936,7 @@ class BTagCorrector:
         wp['verytight'] = 'XT'
         wp['veryverytight'] = 'XXT'
         self._wp = wp[workingpoint]
+        self._mc = caller 
 
         btvjson = {}
         if year == 2024:
@@ -979,11 +959,12 @@ class BTagCorrector:
         }
         filename = 'hists/'+files[year]
         btag_file = load(filename)
-        for k in btag_file[tagger]:
-            try:
-                btag += btag_file[tagger][k]
-            except:
-                btag = btag_file[tagger][k]
+        #for k in btag_file[tagger]:
+        #    try:
+        #        btag += btag_file[tagger][k]
+        #    except:
+        #        btag = btag_file[tagger][k]
+        btag = btag_file[tagger][caller]
         bpass = btag[{"wp": workingpoint, "btag": "pass"}].view()
         ball = btag[{"wp": workingpoint, "btag": sum}].view()
         ball[ball<=0.]=1.
@@ -1047,7 +1028,7 @@ class BTagCorrector:
             ak.where(
                 (flavor==4),
                 ak.unflatten(self.sf['comb'].evaluate('down_correlated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts),
-                ak.unflatten(self.sf['comb'].evaluate('down_correlated', self._wp, ak.full_like(flatflavor, 4.), flateta, flatpt), counts=counts)
+                ak.unflatten(self.sf['comb'].evaluate('down_correlated', self._wp, ak.full_like(flatflavor, 5.), flateta, flatpt), counts=counts)
             )
         )
         sf_bc_up_uncorrelated = ak.where(
@@ -1171,6 +1152,25 @@ class BTagCorrector:
         np.nan_to_num(light_up_uncorrelated, nan=1.), \
         np.nan_to_num(light_down_uncorrelated, nan=1.)
 
+###
+# Muon scale and resolution (i.e. Rochester)
+# https://twiki.cern.ch/twiki/bin/view/CMS/RochcorMuon
+# RUN3 NOT UPDATED YET
+###
+#
+#tag = 'roccor.Run2.v5'
+#get_mu_rochester_sf = {}
+#for year in ['2016postVFP', '2016preVFP', '2017','2018']:
+#    if '2016postVFP' in year: 
+#        fname = f'data/{tag}/RoccoR2016bUL.txt'
+#    elif '2016preVFP' in year:  
+#        fname = f'data/{tag}/RoccoR2016aUL.txt'
+#    else:
+#        fname = f'data/{tag}/RoccoR{year}UL.txt'
+#    sfs = lookup_tools.txt_converters.convert_rochester_file(fname,loaduncs=True)
+#    get_mu_rochester_sf[year] = lookup_tools.rochester_lookup.rochester_lookup(sfs)
+#
+
 
 
 corrections = {}
@@ -1196,6 +1196,8 @@ corrections = {
     'get_ele_reco_sf_Above75':  get_ele_reco_sf_Above75,
 
     'get_ele_trig_weight':      get_ele_trig_weight,
+    
+    'get_ttbar_weight':         get_ttbar_weight,
 
     'get_btag_weight':          BTagCorrector,
 
@@ -1206,7 +1208,6 @@ corrections = {
 #    'get_pho_trig_weight':      get_pho_trig_weight,
 #    'get_nlo_ewk_weight':       get_nlo_ewk_weight,
 #    'get_nnlo_nlo_weight':      get_nnlo_nlo_weight,
-#    'get_ttbar_weight':         get_ttbar_weight,
 #    'get_msd_corr':             get_msd_corr,
 #    'get_mu_rochester_sf':      get_mu_rochester_sf,
 }
