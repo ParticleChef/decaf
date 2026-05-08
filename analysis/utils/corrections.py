@@ -133,6 +133,24 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
 
     return ak.unflatten(corr, counts)
 
+def get_jec_uncertainty(year, pt, eta):
+    evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/jet_jerc.json.gz')
+    counts = ak.num(pt)
+    pt, eta = ak.flatten(pt), ak.flatten(eta)
+    if year == '2022pre':
+        pass
+    elif year == '2022post':
+        pass
+    elif year == '2023pre':
+        pass
+    elif year == '2023post':
+        pass
+    elif year == '2024':
+        unc_name = "Summer24Prompt24_V2_MC_Total_AK4PFPuppi"
+    unc = evaluator[unc_name].evaluate(eta, pt)
+
+    return ak.unflatten(unc, counts)
+
 def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
     evaluator = correctionlib.CorrectionSet.from_file('data/JMESF/'+year+'/fatJet_jerc.json.gz')
     counts = ak.num(pt)
@@ -728,7 +746,7 @@ class BTagCorrector:
             ak.ones_like(eff), 
             sf_light_down_uncorrelated*eff
         )
-       
+
         nom = P(eff_data_nom)/P(eff)
         bc_up_correlated = P(eff_data_bc_up_correlated)/P(eff)
         bc_down_correlated = P(eff_data_bc_down_correlated)/P(eff)
@@ -739,8 +757,16 @@ class BTagCorrector:
         light_up_uncorrelated = P(eff_data_light_up_uncorrelated)/P(eff)
         light_down_uncorrelated = P(eff_data_light_down_uncorrelated)/P(eff)
 
-        return np.nan_to_num(nom), np.nan_to_num(bc_up_correlated), np.nan_to_num(bc_down_correlated), np.nan_to_num(bc_up_uncorrelated), np.nan_to_num(bc_down_uncorrelated), np.nan_to_num(light_up_correlated), np.nan_to_num(light_down_correlated), np.nan_to_num(light_up_uncorrelated), np.nan_to_num(light_down_uncorrelated)
-
+        return np.nan_to_num(nom, nan=1.), \
+        np.nan_to_num(bc_up_correlated, nan=1.), \
+        np.nan_to_num(bc_down_correlated, nan=1.), \
+        np.nan_to_num(bc_up_uncorrelated, nan=1.), \
+        np.nan_to_num(bc_down_uncorrelated, nan=1.), \
+        np.nan_to_num(light_up_correlated, nan=1.), \
+        np.nan_to_num(light_down_correlated, nan=1.), \
+        np.nan_to_num(light_up_uncorrelated, nan=1.), \
+        np.nan_to_num(light_down_uncorrelated, nan=1.)
+        
 corrections = {}
 corrections = {
     'get_pu_weight':            get_pu_weight,
