@@ -620,6 +620,30 @@ def get_ele_reco_sf_Above75(year, eta, pt, phi):
     return ak.unflatten(sf_nominal, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 
+###
+# MET trigger efficiency SFs. Depends on recoil.
+###
+#
+def get_met_trig_weight(year, met):
+    corrname = {
+        '2022pre' : "recoil_trigger_sf_22pre",
+        '2022post': "recoil_trigger_sf_22post",
+        '2023pre' : "recoil_trigger_sf_23pre",
+        '2023post': "recoil_trigger_sf_23post"
+    }
+    cset = correctionlib.CorrectionSet.from_file(f"data/METTrigEff/recoil_trigger_sf_{year}.json.gz")
+    corr = cset[corrname[year]]
+
+    met  = ak.fill_none(met, 0.)
+
+    sf = corr.evaluate(met, "nominal")
+    sf_up   = corr.evaluate(met, "up")
+    sf_down = corr.evaluate(met, "down")
+
+    return sf, sf_up, sf_down
+
+
+
 ####
 # Electron Trigger weight
 # https://twiki.cern.ch/twiki/bin/view/CMS/EgammSFandSSRun3#Scale_factors_and_correction_AN2
@@ -628,22 +652,52 @@ def get_ele_reco_sf_Above75(year, eta, pt, phi):
 ####
 
 def get_ele_trig_weight(year, eta, pt, cutbased):
-    evaluator = correctionlib.CorrectionSet.from_file("data/ElectronTrigEff/"+year+"/"+cutbased+"/egammaEffi"+cutbased+year+".json.gz")
+    evaluator = correctionlib.CorrectionSet.from_file("data/EGammaSF/"+year+"/electronHlt.json.gz")
+    yr = {
+    '2022pre' : '2022Re-recoBCD',
+    '2022post': '2022Re-recoE+PromptFG',
+    '2023pre' : '2023PromptC',
+    '2023post': '2023PromptD'
+    }
+
+    wp = "HLT_SF_Ele30_"+str(cutbased)+"ID"
 
     pt = ak.where((pt<25.0), ak.full_like(pt,25.), pt)
-    pt = ak.where((pt>500.0), ak.full_like(pt,499.9), pt)
-
-    eta = ak.where((eta>=2.5), ak.full_like(eta,2.499), eta)
-    eta = ak.where((eta<=-2.5), ak.full_like(eta,-2.499), eta)
 
     flatpt = ak.flatten(pt)
     flateta, counts = ak.flatten(eta), ak.num(eta)
     
-    sf = evaluator["h2_scaleFactorsEGamma"].evaluate(flateta, flatpt)
+    sf = evaluator["Electron-HLT-SF"].evaluate(yr[year], "sf", wp, flateta, flatpt)
+    sf_up   = evaluator["Electron-HLT-SF"].evaluate(yr[year], "sfup",   wp, flateta, flatpt)
+    sf_down = evaluator["Electron-HLT-SF"].evaluate(yr[year], "sfdown", wp, flateta, flatpt)
 
-    return ak.unflatten(sf, counts=counts)
+    return ak.unflatten(sf, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
-#
+####
+# Photon Trigger weight
+# Measured using MET, GJ (trg: Photon200, ref: PFHT1050)
+####
+
+def get_pho_trig_weight(year, pt):
+    corrname = {
+        "2022pre" : "photon_trigger_sf_2022pre",
+        "2022post": "photon_trigger_sf_2022post"
+    }
+
+    cset = correctionlib.CorrectionSet.from_file(f"data/PhotonTrigEff/photon_trigger_sf_{year}.json.gz")
+    corr = corr = cset[corrname[year]]
+
+    pt = ak.fill_none(pt, 0.)
+
+    sf      = corr.evaluate(pt, "nominal")
+    sf_up   = corr.evaluate(pt, "up")
+    sf_down = corr.evaluate(pt, "down")
+
+
+    return sf, sf_up, sf_down
+
+
+
 def get_ttbar_weight(pt):
    return (0.103*np.exp(-0.0118 * np.clip(pt, 0, 800))-0.000134*np.clip(pt, 0, 800)+0.973)*(0.991+0.000075*np.clip(pt, 0, 800))
 
@@ -688,97 +742,24 @@ def get_nnlo_nlo_wjet_AN24_075(channel, mass):
     return ak.unflatten(k, ak.num(mass, axis=-1))
 
 
-
-###
-# MET trigger efficiency SFs. Depends on recoil.
-###
-#
-def get_met_trig_weight(year, met):
-    corrname = {
-        '2022pre' : "recoil_trigger_sf_22pre",
-        '2022post': "recoil_trigger_sf_22post",
-        '2023pre' : "recoil_trigger_sf_23pre",
-        '2023post': "recoil_trigger_sf_23post"
-    }
-    cset = CorrectionSet.from_file(f"data/METTrigEff/recoil_trigger_sf_{year}.json.gz")
-    corr = cset[corrname[year]]
-
-    met  = ak.fill_none(met, 0.)
-
-    weight = corr.evaluate(met, "nominal")
-    weight_up   = corr.evaluate(met, "up")
-    weight_down = corr.evaluate(met, "down")
-
-    return weight, weight_up, weight_down
-
-####
-# Electron Trigger weight
-# https://twiki.cern.ch/twiki/bin/view/CMS/EgammaUL2016To2018
-# Copy from previous correctionsUL.py file
-####
-
-#def get_ele_trig_weight(year, eta, pt):
-#    ele_trig_hists = {
-#        '2016postVFP': "data/ElectronTrigEff/egammaEffi.txt_EGM2D-2016postVFP.root:EGamma_SF2D",
-#        '2016preVFP' : "data/ElectronTrigEff/egammaEffi.txt_EGM2D-2016preVFP.root:EGamma_SF2D",
-#        '2017': "data/ElectronTrigEff/egammaEffi.txt_EGM2D-2017.root:EGamma_SF2D",#monojet measurement for the combined trigger path
-#        '2018': "data/ElectronTrigEff/egammaEffi.txt_EGM2D-2018.root:EGamma_SF2D" #approved by egamma group: https://indico.cern.ch/event/924522/
-#    }
-#    corr = convert.from_uproot_THx(ele_trig_hists[year])
-#    evaluator = corr.to_evaluator()
-#
-#    eta = ak.fill_none(eta, 0.)
-#    pt = ak.fill_none(pt, 40.)
-#    pt  = ak.where((pt>250.),ak.full_like(pt,250.),pt)
-#
-#    weight = ak.where(
-#        ~np.isnan(ak.fill_none(pt, np.nan)),
-#        evaluator.evaluate(eta, pt),
-#        ak.zeros_like(pt)
-#    )
-#    return weight
-
-
-    
-
-####
-# Photon Trigger weight
-# Copy from previous decaf version
-####
-
-#def get_pho_trig_weight(year, pt):
-#    pho_trig_files = {
-#        '2016postVFP': "data/trigger_eff/photonTriggerEfficiency_photon_TH1F.root:hden_photonpt_clone_passed",
-#        '2016preVFP': "data/trigger_eff/photonTriggerEfficiency_photon_TH1F.root:hden_photonpt_clone_passed",
-#        "2017": "data/trigger_eff/photonTriggerEfficiency_photon_TH1F.root:hden_photonpt_clone_passed",
-#        "2018": "data/trigger_eff/photonTriggerEfficiency_photon_TH1F.root:hden_photonpt_clone_passed"
-#    }
-#
-#    corr = convert.from_uproot_THx(pho_trig_files[year])
-#    evaluator = corr.to_evaluator()
-#
-#    return evaluator.evaluate(eta, pt)
-#
-
-
 ###
 # V+jets NLO k-factors
 # Only use nlo ewk sf
 ###
 
-#nlo_ewk_hists = {
-#        'dy': ["* * data/vjets_SFs/merged_kfactors_zjets.root"],
-#        'w': ["* * data/vjets_SFs/merged_kfactors_wjets.root"],
-#        'z': ["* * data/vjets_SFs/merged_kfactors_zjets.root"],
-#        'a': ["* * data/vjets_SFs/merged_kfactors_gjets.root"],
-#}    
-#get_nlo_ewk_weight = {}
-#for p in ['dy','w','z','a']:
-#    print(nlo_ewk_hists[p])
-#    ext = extractor()
-#    ext.add_weight_sets(nlo_ewk_hists[p])
-#    ext.finalize()
-#    get_nlo_ewk_weight[p] = ext.make_evaluator()["kfactor_monojet_ewk"]
+nlo_ewk_hists = {
+        'dy': ["* * data/Run2Files/vjets_SFs/merged_kfactors_zjets.root"],
+        'w':  ["* * data/Run2Files/vjets_SFs/merged_kfactors_wjets.root"],
+        'z':  ["* * data/Run2Files/vjets_SFs/merged_kfactors_zjets.root"],
+        'a':  ["* * data/Run2Files/vjets_SFs/merged_kfactors_gjets.root"],
+}    
+get_nlo_ewk_weight = {}
+for p in ['dy','w','z','a']:
+    print(nlo_ewk_hists[p])
+    ext = extractor()
+    ext.add_weight_sets(nlo_ewk_hists[p])
+    ext.finalize()
+    get_nlo_ewk_weight[p] = ext.make_evaluator()["kfactor_monojet_ewk"]
 
 ####
 ## V+jets NNLO weights
@@ -1195,18 +1176,18 @@ corrections = {
     'get_ele_reco_sf_20to75':  get_ele_reco_sf_20to75,
     'get_ele_reco_sf_Above75':  get_ele_reco_sf_Above75,
 
+    'get_met_trig_weight':      get_met_trig_weight,
     'get_ele_trig_weight':      get_ele_trig_weight,
+    'get_pho_trig_weight':      get_pho_trig_weight,
     
     'get_ttbar_weight':         get_ttbar_weight,
 
     'get_btag_weight':          BTagCorrector,
 
+    'get_nlo_ewk_weight':       get_nlo_ewk_weight,
 #    'get_nnlo_nlo_wjet':         get_nnlo_nlo_wjet,
 #    'get_ele_medium_id_sf':     get_ele_medium_id_sf,
 #    'get_ele_veto_id_sf':       get_ele_veto_id_sf,
-#    'get_met_trig_weight':      get_met_trig_weight,
-#    'get_pho_trig_weight':      get_pho_trig_weight,
-#    'get_nlo_ewk_weight':       get_nlo_ewk_weight,
 #    'get_nnlo_nlo_weight':      get_nnlo_nlo_weight,
 #    'get_msd_corr':             get_msd_corr,
 #    'get_mu_rochester_sf':      get_mu_rochester_sf,

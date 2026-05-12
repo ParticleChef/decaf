@@ -1,6 +1,8 @@
 import numpy as np
 from coffea.util import save
 import awkward as ak
+import correctionlib
+from correctionlib import convert
 
 ######
 ## Electron
@@ -12,93 +14,93 @@ import awkward as ak
 
 def isLooseElectron(e, year):
 
-    if '2022' in year:
-        year='2022'
-    if '2023' in year:
-        year='2023'
+	if '2022' in year:
+		year='2022'
+	if '2023' in year:
+		year='2023'
 
-    pt=e.pt
-    eta=e.eta+e.deltaEtaSC
-    #dxy=e.dxy ## (abs(dxy) < 0.05), (abs(dxy) < 0.1)
-    #dz=e.dz ## (abs(dz) < 0.1), (abs(dz) < 0.2)
-    loose_id=e.cutBased
-    
-    mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2022":
-        mask = (
-            (pt > 10)
-            & (abs(eta) < 1.4442)
-            & (loose_id >= 1)
-        ) | (
-            (pt > 10)
-            & (abs(eta) > 1.5660)
-            & (abs(eta) < 2.5)
-            & (loose_id >= 1)
-        )
-    elif year == "2023":
-        mask = (
-            (pt > 10)
-            & (abs(eta) < 1.4442)
-            & (loose_id >= 1)
-        ) | (
-            (pt > 10)
-            & (abs(eta) > 1.5660)
-            & (abs(eta) < 2.5)
-            & (loose_id >= 1) # original is 2
-        )
-    return mask
+	pt=e.pt
+	eta=e.eta+e.deltaEtaSC
+	#dxy=e.dxy ## (abs(dxy) < 0.05), (abs(dxy) < 0.1)
+	#dz=e.dz ## (abs(dz) < 0.1), (abs(dz) < 0.2)
+	loose_id=e.cutBased
+	
+	mask = ~np.isnan(ak.ones_like(pt))
+	if year == "2022":
+		mask = (
+			(pt > 10)
+			& (abs(eta) < 1.4442)
+			& (loose_id >= 1)
+		) | (
+			(pt > 10)
+			& (abs(eta) > 1.5660)
+			& (abs(eta) < 2.5)
+			& (loose_id >= 1)
+		)
+	elif year == "2023":
+		mask = (
+			(pt > 10)
+			& (abs(eta) < 1.4442)
+			& (loose_id >= 1)
+		) | (
+			(pt > 10)
+			& (abs(eta) > 1.5660)
+			& (abs(eta) < 2.5)
+			& (loose_id >= 1) # original is 2
+		)
+	return mask
 
 
 def isTightElectron(e, year):
-    if '2022' in year:
-        year='2022'
-    if '2023' in year:
-        year='2023'
+	if '2022' in year:
+		year='2022'
+	if '2023' in year:
+		year='2023'
 
-    pt=e.pt
-    eta=e.eta+e.deltaEtaSC
-    #dxy=e.dxy
-    #dz=e.dz
-    tight_id=e.cutBased
-    
-    mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2022":  
-        mask = (
-            (pt > 40)
-            & (abs(eta) < 1.4442)
-#            & (abs(dxy) < 0.05)
-#            & (abs(dz) < 0.1)
-            & (tight_id == 4)
-        ) | (
-            (pt > 40)
-            & (abs(eta) > 1.5660)
-            & (abs(eta) < 2.4)
-#            & (abs(dxy) < 0.1)
-#            & (abs(dz) < 0.2)
-            & (tight_id == 4)
-        )
-    elif year == "2023":  
-        mask = (
-            (pt > 40)
-            & (abs(eta) < 1.4442)
-#            & (abs(dxy) < 0.05)
-#            & (abs(dz) < 0.1)
-            & (tight_id == 4)
-        ) | (
-            (pt > 40)
-            & (abs(eta) > 1.5660)
-            & (abs(eta) < 2.4)
-#            & (abs(dxy) < 0.1)
-#            & (abs(dz) < 0.2)
-            & (tight_id == 4)
-        )
-    return mask
+	pt=e.pt
+	eta=e.eta+e.deltaEtaSC
+	#dxy=e.dxy
+	#dz=e.dz
+	tight_id=e.cutBased
+	
+	mask = ~np.isnan(ak.ones_like(pt))
+	if year == "2022":  
+		mask = (
+			(pt > 40)
+			& (abs(eta) < 1.4442)
+#			& (abs(dxy) < 0.05)
+#			& (abs(dz) < 0.1)
+			& (tight_id == 4)
+		) | (
+			(pt > 40)
+			& (abs(eta) > 1.5660)
+			& (abs(eta) < 2.4)
+#			& (abs(dxy) < 0.1)
+#			& (abs(dz) < 0.2)
+			& (tight_id == 4)
+		)
+	elif year == "2023":  
+		mask = (
+			(pt > 40)
+			& (abs(eta) < 1.4442)
+#			& (abs(dxy) < 0.05)
+#			& (abs(dz) < 0.1)
+			& (tight_id == 4)
+		) | (
+			(pt > 40)
+			& (abs(eta) > 1.5660)
+			& (abs(eta) < 2.4)
+#			& (abs(dxy) < 0.1)
+#			& (abs(dz) < 0.2)
+			& (tight_id == 4)
+		)
+	return mask
 
 
 #######
 ## Muon
 ## slimmedMuons after basic selection (pt > 15 || (pt > 3 && (passed('CutBasedIdLoose') || passed('SoftCutBasedId') || 
-##                                    passed('SoftMvaId') || passed('CutBasedIdGlobalHighPt') || passed('CutBasedIdTrkHighPt'))))
+##									passed('SoftMvaId') || passed('CutBasedIdGlobalHighPt') || passed('CutBasedIdTrkHighPt'))))
 ## Muon POG Recommendations:
 ## https://muon-wiki.docs.cern.ch/guidelines/recommendations/#medium-muon-id
 ## pfIsoId: (1=PFIsoVeryLoose, 2=PFIsoLoose, 3=PFIsoMedium, 4=PFIsoTight, 5=PFIsoVeryTight, 6=PFIsoVeryVeryTight)
@@ -106,68 +108,68 @@ def isTightElectron(e, year):
 #######
 
 def isLooseMuon(mu, year):
-    
-    if '2022' in year:
-        year='2022'
-    if '2023' in year:
-        year='2023'
-        
-    pt=mu.pt
-    eta=mu.eta
-    iso=mu.pfIsoId
-    loose_id=mu.looseId
-    isTracker=mu.isTracker
-    ispfcan=mu.isPFcand
-    isglobal=mu.isGlobal
-    
-    mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2022":
-        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal & (iso >= 2)
-    else:
-        mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal & (iso >= 2)
-    return mask
+	
+	if '2022' in year:
+		year='2022'
+	if '2023' in year:
+		year='2023'
+		
+	pt=mu.pt
+	eta=mu.eta
+	iso=mu.pfIsoId
+	loose_id=mu.looseId
+	isTracker=mu.isTracker
+	ispfcan=mu.isPFcand
+	isglobal=mu.isGlobal
+	
+	mask = ~np.isnan(ak.ones_like(pt))
+	if year == "2022":
+		mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal & (iso >= 2)
+	else:
+		mask = (pt > 10) & (abs(eta) < 2.4) & loose_id & isTracker & ispfcan & isglobal & (iso >= 2)
+	return mask
 
 
 def isTightMuon(mu, year):
-    
-    if '2022' in year:
-        year='2022'
-    if '2023' in year:
-        year='2023'
-        
-    pt=mu.pt
-    eta=mu.eta
-    iso=mu.pfIsoId
-    tight_id=mu.tightId
-    ispfcan=mu.isPFcand
-    isglobal=mu.isGlobal
-    
-    mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2022":
-        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & ispfcan & isglobal & (iso >= 4) 
-    else:
-        mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & ispfcan & isglobal & (iso >= 4) 
-    return mask
+	
+	if '2022' in year:
+		year='2022'
+	if '2023' in year:
+		year='2023'
+		
+	pt=mu.pt
+	eta=mu.eta
+	iso=mu.pfIsoId
+	tight_id=mu.tightId
+	ispfcan=mu.isPFcand
+	isglobal=mu.isGlobal
+	
+	mask = ~np.isnan(ak.ones_like(pt))
+	if year == "2022":
+		mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & ispfcan & isglobal & (iso >= 4) 
+	else:
+		mask = (pt > 30) & (abs(eta) < 2.4) & tight_id & ispfcan & isglobal & (iso >= 4) 
+	return mask
 
 
 def isSoftMuon(mu, year):
-    
-    if '2022' in year:
-        year='2022'
-    if '2023' in year:
-        year='2023'
-        
-    pt=mu.pt
-    eta=mu.eta
-    iso=mu.pfRelIso04_all
-    loose_id=mu.tightId
-    
-    mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2022":
-        mask = (pt > 5) & (abs(eta) < 2.4) & tight_id & (iso > 0.15)
-    else:
-        mask = (pt > 5) & (abs(eta) < 2.4) & tight_id & (iso > 0.15)
-    return mask
+	
+	if '2022' in year:
+		year='2022'
+	if '2023' in year:
+		year='2023'
+		
+	pt=mu.pt
+	eta=mu.eta
+	iso=mu.pfRelIso04_all
+	loose_id=mu.tightId
+	
+	mask = ~np.isnan(ak.ones_like(pt))
+	if year == "2022":
+		mask = (pt > 5) & (abs(eta) < 2.4) & tight_id & (iso > 0.15)
+	else:
+		mask = (pt > 5) & (abs(eta) < 2.4) & tight_id & (iso > 0.15)
+	return mask
 
 
 ######
@@ -191,45 +193,45 @@ def isSoftMuon(mu, year):
 
 
 def isLooseTau(tau, year):
-    
-    if '2022' in year:
-        year='2022'
-        
-    pt = tau.pt
-    eta = tau.eta
-    ide = tau.idDeepTau2017v2p1VSe
-    idj = tau.idDeepTau2017v2p1VSjet
-    idm = tau.idDeepTau2017v2p1VSmu
-    decayMode = tau.decayMode
-    try:
-        decayModeDMs=tau.decayModeFindingNewDMs
-    except:
-        decayModeDMs=~np.isnan(ak.ones_like(pt))
+	
+	if '2022' in year:
+		year='2022'
+		
+	pt = tau.pt
+	eta = tau.eta
+	ide = tau.idDeepTau2017v2p1VSe
+	idj = tau.idDeepTau2017v2p1VSjet
+	idm = tau.idDeepTau2017v2p1VSmu
+	decayMode = tau.decayMode
+	try:
+		decayModeDMs=tau.decayModeFindingNewDMs
+	except:
+		decayModeDMs=~np.isnan(ak.ones_like(pt))
 
-    mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2022":
-        mask = (
-            (pt > 20)
-            & (abs(eta) < 2.3)
-            #& ~(decayMode == 5)
-            #& ~(decayMode == 6)
-            & decayModeDMs
-            #& ((ide & 16) == 16)
-            & ((idj & 4) == 4)
-            #& ((idm & 2) == 2)
-        )
-    elif year == "2018":
-        mask = (
-            (pt > 20)
-            & (abs(eta) < 2.3)
-            #& ~(decayMode == 5)
-            #& ~(decayMode == 6)
-            & decayModeDMs
-            #& ((ide & 16) == 16)
-            & ((idj & 4) == 4)
-            #& ((idm & 2) == 2)
-        )
-    return mask
+	mask = ~np.isnan(ak.ones_like(pt))
+	if year == "2022":
+		mask = (
+			(pt > 20)
+			& (abs(eta) < 2.3)
+			#& ~(decayMode == 5)
+			#& ~(decayMode == 6)
+			& decayModeDMs
+			#& ((ide & 16) == 16)
+			& ((idj & 4) == 4)
+			#& ((idm & 2) == 2)
+		)
+	elif year == "2018":
+		mask = (
+			(pt > 20)
+			& (abs(eta) < 2.3)
+			#& ~(decayMode == 5)
+			#& ~(decayMode == 6)
+			& decayModeDMs
+			#& ((ide & 16) == 16)
+			& ((idj & 4) == 4)
+			#& ((idm & 2) == 2)
+		)
+	return mask
 
 
 ######
@@ -242,50 +244,50 @@ def isLooseTau(tau, year):
 
 
 def isLoosePhoton(pho, year):
-    
-    if '2022' in year:
-        year='2022'
-    if '2023' in year:
-        year='2023'
+	
+	if '2022' in year:
+		year='2022'
+	if '2023' in year:
+		year='2023'
 
-    pt=pho.pt
-    eta=pho.eta
-    loose_id=pho.cutBased
-    
-    mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2022":
-        mask = (
-            (pt > 20)
-            & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660))
-            & (abs(eta) < 2.5)
-            & (loose_id >= 1)
-        )
-    elif year == "2023":
-        mask = (
-            (pt > 20)
-            & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660))
-            & (abs(eta) < 2.5)
-            & (loose_id >= 1)
-        )
-    return mask&(pho.electronVeto)
+	pt=pho.pt
+	eta=pho.eta
+	loose_id=pho.cutBased
+	
+	mask = ~np.isnan(ak.ones_like(pt))
+	if year == "2022":
+		mask = (
+			(pt > 20)
+			& (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660))
+			& (abs(eta) < 2.5)
+			& (loose_id >= 1)
+		)
+	elif year == "2023":
+		mask = (
+			(pt > 20)
+			& (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660))
+			& (abs(eta) < 2.5)
+			& (loose_id >= 1)
+		)
+	return mask&(pho.electronVeto)
 
 
 def isTightPhoton(pho, year):
-    if '2022' in year:
-        year='2022'
-    if '2023' in year:
-        year='2023'
+	if '2022' in year:
+		year='2022'
+	if '2023' in year:
+		year='2023'
 
-    pt=pho.pt
-    eta=pho.eta
-    tight_id=pho.cutBased
-    
-    mask = ~np.isnan(ak.ones_like(pt))
-    if year == "2022":
-        mask = (pt > 200) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
-    elif year == "2023":
-        mask = (pt > 200) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
-    return mask&(pho.electronVeto)&(pho.isScEtaEB) #tight photons are barrel only
+	pt=pho.pt
+	eta=pho.eta
+	tight_id=pho.cutBased
+	
+	mask = ~np.isnan(ak.ones_like(pt))
+	if year == "2022":
+		mask = (pt > 200) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
+	elif year == "2023":
+		mask = (pt > 200) & (tight_id >= 2) & (~(abs(eta) > 1.4442) | (abs(eta) > 1.5660)) & (abs(eta) < 1.479)
+	return mask&(pho.electronVeto)&(pho.isScEtaEB) #tight photons are barrel only
 
 
 ######
@@ -296,17 +298,17 @@ def isTightPhoton(pho, year):
 
 
 def isGoodAK15(fj):
-    
-    pt=fj.pt
-    eta=fj.eta
-    jet_id=fj.jetId
-    #nhf=fj.neHEF
-    #chf=fj.chHEF
-    
-    mask = (
-        (pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6 )# & (nhf < 0.8) & (chf > 0.1)
-    )
-    return mask
+	
+	pt=fj.pt
+	eta=fj.eta
+	jet_id=fj.jetId
+	#nhf=fj.neHEF
+	#chf=fj.chHEF
+	
+	mask = (
+		(pt > 160) & (abs(eta) < 2.4) & ((jet_id & 6) == 6 )# & (nhf < 0.8) & (chf > 0.1)
+	)
+	return mask
 
 
 ######
@@ -324,25 +326,59 @@ def isGoodAK15(fj):
 
 
 def isGoodAK4(j, year):
-    if '2022' in year:
-        year='2022'
-    if '2023' in year:
-        year='2023'
-    
-    pt=j.pt
-    eta=j.eta
-    jet_id=j.jetId
-    #pu_id=j.puId
-    nhf=j.neHEF
-    chf=j.chHEF
-    
-    mask = (pt > 30) & (abs(eta) < 2.4) & ((jet_id & 6) == 6)
-    if year == "2022":
-        mask = ((pt >= 50) & mask) | ((pt < 50) & mask) # & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1)
-    else:
-        mask = ((pt >= 50) & mask) | ((pt < 50) & mask) # & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1)
+	
+	pt	= j.pt
+	eta   = j.eta
+	jet_id= j.jetId
+	#pu_id=j.puId
+	chHEF  = j.chHEF
+	neHEF  = j.neHEF
+	chEmEF = j.chEmEF
+	neEmEF = j.neEmEF
+	muEF   = j.muEF
+	chMultiplicity = j.chMultiplicity
+	neMultiplicity = j.neMultiplicity
+	multiplicity   = neMultiplicity + chMultiplicity
+#
+#	def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
+#		evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jetid.json.gz')
+#		corr = evaluator["AK4PUPPI_TightLeptonVeto"]
+#		counts = ak.num(eta)
+#		eta, chHEF, neHEF, chEmEF, neEmEF, muEF = ak.flatten(eta), ak.flatten(chHEF), ak.flatten(neHEF), ak.flatten(chEmEF), ak.flatten(neEmEF), ak.flatten(muEF)
+#		chMultiplicity, neMultiplicity, multiplicity = ak.flatten(chMultiplicity), ak.flatten(neMultiplicity), ak.flatten(multiplicity)
+#		args = (
+#			eta,
+#			chHEF, neHEF, chEmEF, neEmEF, muEF,
+#			chMultiplicity, neMultiplicity, multiplicity
+#		)
+#		out = corr.evaluate(*args)
+#		return ak.unflatten(out, counts)
+#	
+#	jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
+#	mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1)
+	mask = (pt > 30) & (abs(eta) < 2.4) & ((jet_id & 6) == 6) ##((pt >= 50) & mask) | ((pt < 50) & mask) # & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1) #((jet_id & 6) == 6)
 
-    return mask
+	return mask
+
+def isJetVeto(jet, year):
+	era = {
+		'2022pre' : 'Summer22_23Sep2023_RunCD_V1',
+		'2022post': 'Summer22EE_23Sep2023_RunEFG_V1',
+		'2023pre' : 'Summer23Prompt23_RunC_V1',
+		'2023post': 'Summer23BPixPrompt23_RunD_V1',
+		'2024'	  : 'Summer24Prompt24_RunBCDEFGHI_V1'
+	}
+	eta = jet.eta
+	phi = jet.phi
+
+	evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jetvetomaps.json.gz')
+	corr = evaluator[era[year]]
+	counts = ak.num(eta)
+	eta, phi = ak.flatten(eta), ak.flatten(phi)
+	out = corr.evaluate('jetvetomap',eta,phi)
+	mask = (out != 0)
+
+	return ak.unflatten(mask, counts)
 
 
 
@@ -357,4 +393,5 @@ ids["isLoosePhoton"] = isLoosePhoton
 ids["isTightPhoton"] = isTightPhoton
 ids["isGoodAK4"] = isGoodAK4
 ids["isGoodAK15"] = isGoodAK15
+ids["isJetVeto"] = isJetVeto
 save(ids, "data/ids.coffea")
