@@ -69,9 +69,18 @@ deepcsvWPs = {
     },
 }
 
+UParTAK4WPs = {
+    '2024': {
+        'loose' : 0.0246,
+        'medium': 0.1272,
+        'tight' : 0.4648
+    }
+}
+
 btagWPs = {
     'deepflav': deepflavWPs,
-    'deepcsv' : deepcsvWPs
+    'deepcsv' : deepcsvWPs,
+    'UParTAK4' : UParTAK4WPs
 }
     
 common = {}

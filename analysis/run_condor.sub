@@ -1,0 +1,27 @@
+universe = vanilla
+
+executable = run_condor.sh
+arguments  = JetMET0-Run2024C-MINIv6NANOv15-v1____1_
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_executable = TRUE
+
+transfer_input_files = \
+  /eos/user/t/taiwoo/decaf/analysis.tgz, \
+  /eos/user/t/taiwoo/decaf/py38.tgz, \
+  /eos/user/t/taiwoo/decaf/analysis/proxy/x509up_u147757
+
+output = condor.$(ClusterId).$(ProcId).out
+error  = condor.$(ClusterId).$(ProcId).err
+log    = condor.$(ClusterId).log
+
+request_cpus   = 1
+request_memory = 4000
+request_disk   = 8000
+
+use_x509userproxy = true
+getenv = true
++JobFlavour = "workday"
+
+queue 1

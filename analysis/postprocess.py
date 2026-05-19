@@ -13,4 +13,4 @@ os.system("rm -f "+ args.input + "/*.merged")
 
 os.system("python3 reduce.py -f "+ args.input)
 os.system("python3 merge.py -f "+ args.input)
-os.system("python3 scale.py -f "+ args.input + ".merged")
+#os.system("python3 scale.py -f "+ args.input + ".merged")
