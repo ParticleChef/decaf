@@ -3,8 +3,12 @@
 processes = {
 
     ## Data
-    'JetMET':('JetMET','Data',-1),
-    'EGamma':('EGamma','Data',-1),
+#    'JetMET':('JetMET','Data',-1),
+    'JetMET0':('JetMET0','Data',-1),
+    'JetMET1':('JetMET1','Data',-1),
+#    'EGamma':('EGamma','Data',-1),
+    'EGamma0':('EGamma0','Data',-1),
+    'EGamma1':('EGamma1','Data',-1),
     'Muon':('Muon','Data',-1),
     'Muon0':('Muon0','Data',-1),
     'Muon1':('Muon1','Data',-1),

@@ -133,7 +133,10 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
             # L2Relative Correction
-            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
+            if 'post' in year:
+                corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            else:
+                corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
             # L3Absolute Correction
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             # L2L3Residual Correction
@@ -149,7 +152,10 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
             # L2Relative Correction
-            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
+            if 'post' in year:
+                corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            else:
+                corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
             # L3Absolute Correction
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3
@@ -256,7 +262,10 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
             # L2Relative Correction
-            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
+            if 'post' in year:
+                corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            else:
+                corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
             # L3Absolute Correction
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             # L2L3Residual Correction
@@ -272,7 +281,10 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
             # L1FastJet Correction
             corr_L1 = evaluator[jec_names['L1FastJet']].evaluate(area, eta, pt, rho)
             # L2Relative Correction
-            corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
+            if 'post' in year:
+                corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, phi, pt)
+            else:
+                corr_L2 = evaluator[jec_names['L2Relative']].evaluate(eta, pt)
             # L3Absolute Correction
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3
