@@ -4,75 +4,102 @@
 
 ---
 
-## Initial Setup
+*README updating now*
 
-First, log into an LPC node:
+## Initial Setup for `coffea 0.7.22` with Python 3.8.x
 
-```
-ssh -L 9094:localhost:9094 <USERNAME>@cmslpc-sl7.fnal.gov
-```
+This branch of decaf relies on an older Python/coffea software stack that is no longer available in the default CMS AlmaLinux environment. To ensure compatibility, users should create a dedicated Python 3.8.18 virtual environment and install the required dependencies as described below.
 
-The command will also start forwarding the port 9094 (or whatever number you choose)to be able to use applications like jupyter once on the cluster. Then move into your `nobackup` area on `uscms_data`:
+To avoid `xrootd` error, **conda** also can be used for setup.
 
-```
-cd /uscms_data/d?/<USERNAME>
-```
+Move to your working area:
 
-where '?' can be [1,2,3]. Install `CMSSW_11_3_4` (Note: `CMSSW 11_3_X` runs on slc7, which can be setup using apptainer on non-slc7 nodes ([see detailed instructions](https://cms-sw.github.io/singularity.html)):
-
-```
-#cmssw-el7 # uncomment this line if not on an slc7 node
-cmsrel CMSSW_11_3_4
-cd CMSSW_11_3_4/src
-cmsenv
+```bash
+cd /path/to/workdir
 ```
 
-Install `combine` ([see detailed instructions](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#installation-instructions)):
+### Create a Python 3.8.18 environment
 
-```
-cd $CMSSW_BASE/src
-git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
-cd HiggsAnalysis/CombinedLimit
-git fetch origin
-git checkout v9.1.0 # current recommeneded tag (Jan 2024)
-scramv1 b clean; scramv1 b # always make a clean build
+Download and build Python 3.8.18:
+
+```bash
+wget https://www.python.org/ftp/python/3.8.18/Python-3.8.18.tgz
+tar -xvf Python-3.8.18.tgz
+cd Python-3.8.18
+
+./configure  --prefix=/path/to/python/python-3.8.18  --enable-optimizations
+
+make -j$(nproc)
+make install
 ```
 
-Fork this repo on github and clone it into your `CMSSW_11_3_4/src` directory:
+In `--prefix` option, put the path of whwere you want to install python at.
 
+
+Create a virtual environment:
+
+```bash
+cd ..
+mkdir envs/
+/path/to/python/python-3.8.18/bin/python3.8 -m venv ./envs/p38
 ```
-cd $CMSSW_BASE/src
-git clone https://github.com/<USERNAME>/decaf.git
+You can change the directory for virtual environment directory (`envs/`)
+
+
+Activate it:
+
+```bash
+source ./envs/p38/bin/activate
+```
+
+Upgrade pip tools:
+
+```bash
+pip install --upgrade pip setuptools wheel
+```
+
+`setuptools` must have version less than `65.7.0`. 
+
+### Install analysis dependencies
+
+```bash
+pip install \
+    coffea==0.7.22 \
+    awkward==1.10.5 \
+    numpy==1.23.5 \
+    uproot==4.3.7 \
+    vector==1.3.1 \
+    hist==2.7.2
+
+pip install https://github.com/mcremone/rhalphalib/archive/master.zip
+
+pip install xxhash
+pip install 'correctionlib[convert]'
+pip install tabulate
+```
+
+### Clone decaf
+
+```bash
+git clone -b run3 https://github.com/ParticleChef/decaf.git
 cd decaf
-git switch UL
 ```
 
-If you want to change run3 branch, following this command
-```
-git switch run3
-```
+### Start the environment
 
-Then, setup the proper dependences:
+For every new session:
 
+```bash
+source /path/to/envs/p38/bin/activate
+cd decaf/analysis
 ```
-source setup.sh
-```
-
-This script installs the necessary packages as user packages (Note: Pip gave errors when running `setup.sh` for the first time, but it seemed to install everything just fine. No errors showed up when running `setup.sh` a second time.). This is a one-time setup. When you log in next just do:
-
-```
-#cmssw-el7 # uncomment this line if not on an slc7 node
-cd CMSSW_11_3_4/src
-cmsenv
-cd decaf
-source env.sh
-```
-
-By running this script you will also initialize your grid certificate (Note: `setup.sh` also runs `env.sh`). This requires you to save your grid certificate password in `$HOME/private/$USER.txt`. Alternatively, you can comment this out and initialize it manually every time.
+Ignore the `env.sh` file now.
 
 ---
 
 ## Listing Input Files
+
+*Will be updated this part soon*
 
 The list of input files for the analyzer can be generated as a JSON file using the `macros/list.py` script. This script will run over the datasets listed in `data/process.py`, find the list of files for each dataset, “pack” them into small groups for condor jobs, and output the list of groups as a JSON file in `metadata/`.
 
@@ -84,7 +111,7 @@ Select a specific dataset to pack. By default, it will run over all datasets in 
 
 - `-y` (`--year`)
 
-Data year. Options are `2016pre`, `2016post`, `2017`, and `2018`.
+Data year. Now run2 is ready but if you want to make Run3 files, please add the campaign array.
 
 - `-m` (`--metadata`)
 
@@ -122,25 +149,34 @@ The `nohup` command is useful and recommended for running most scripts, but you 
 
 ---
 
-## Computing MC b-Tagging Efficiencies
-
-MC b-tagging efficiencies are needed by most of the analyses to compute the b-tag event weight, once such efficiencies are corrected with the POG-provided b-tag SFs. To compute them, we first need to run the `common` module in `util`:
-
+## Start Analysis
+Run object definition file:
 ```
-python utils/common.py
+python3 utils/ids.py
 ```
 
-This will generate a series of auxiliary functions and information, like the AK4 b-tagging working points, and it will save such information in a `.coffea` file in the `data` folder. AK4 b-tagging working points are essential to measure the MC efficiencies and they are used by the `btag` processor in the `processors` folder. To generate the processor file: 
+Run correction evaluation function file. Corretion files are in `data/` directory.:
+```
+python3 utils/corrections.py
+```
+
+Run b-tag working points file:
+```
+python3 utils/common.py
+```
+
+The main Analyzer file is `processors/hadmonotop_run3.py` file. The btag efficiency processor is `btageff_run3.py`. These should be compile and the processor file must be generated before run. The btageff for MCs listed in `decaf/analysis/run3_datasets_XS.csv` file already saved in `hists` directory
+To generate the processor file: 
 
 ```
-python3 processors/btageff.py -y 2018 -m 2018 -n 2018
+python3 processors/hadmonotop_run3.py -y 2022pre -m 2022_private_v1 -n 2022_0605
 ```
 
 The options for this script are:
 
 - `-y` (`--year`)
 
-Data year. Options are `2016pre`, `2016post`, `2017`, and `2018`.
+Data year. 
 
 - `-m` (`--metadata`)
 
@@ -148,25 +184,34 @@ Metadata file to be used in input.
 
 - `-n` (`--name)
 
-Name of the output processor file. In this case, it will generate a file called `btageff2018.processor` stored in the `data` folder.
+Name of the output processor file. In this case, it will generate a file called `hadmonotop2022_0605.processor` stored in the `data` folder.
 
 
-To run the processor:
+### Run the processor
 
-```
-python3 run.py -p btageff2018 -m 2018 -d QCD
-```
-
-With this command you will run the `btag2018` processor over QCD MC datasets as defined by the `2018` metadata file. You will see a printout like:
-
-Processing: QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8____4_
-  Preprocessing 100% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 32/32 [ 0:01:28 < 0:00:00 | ?   file/s ]
-Merging (local) 100% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 31/31 [ 0:00:23 < 0:00:00 | ? merges/s ]
-
-This means an output file with histograms as defined in the btag processor file has been generated. In this case a folder called `btageff2018` inside the `hists` folder has been created. Inside this folder you can see a file called `QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8____4_.futures`, that stores the histograms. To take advantage of the parallelism offered by the HTCondor job scheduler, the `run_condor.py` script can be used:
+First, for test run with one job in local:
 
 ```
-python3 run_condor.py -p btag2018 -m 2018 -d QCD -c kisti -t -x
+python3 run.py -p hadmonotop2022_0605 -m 2022_private_v1 -d QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8____1_
+```
+
+To run with `nohup` in local:
+```
+python3 nohup_job_new.py -p hadmonotop2022_0605 -m 2022_private_v1
+```
+
+To run with `condor`, use the coffea image file.
+In `run_condor.py`, add:
+
+```python
++SingularityImage = "/cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-base-almalinux8:0.7.22-py3.8"
+```
+
+to the condor submit description before submitting jobs.
+
+Run:
+```
+python3 run_condor.py  -p hadmonotop2022_0605 -m 2022_private_v1 -t -x
 ```
 
 The options for this script are the same as for `run.py`, with the addition of:
@@ -189,77 +234,3 @@ You can check the status of your HTCondor jobs by doing:
 condor_q <YOUR_USERNAME>
 ```
 
-After obtaining all the histograms, a first step of data reduction is needed. This step is achieved by running the `reduce.py` script:
-
-```
-python reduce.py -f hists/btag2018
-```
-
-The options of this script are:
-
-TO BE LISTED
-
-All the different datasets produced at the previous step will be reduced. A different file for each variable for each reduced dataset will be produced. For example, the command above will produce the following reduced files:
-
-```
-hists/btageff2018/deepcsv--QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_120to170_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_15to30_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_170to300_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_300to470_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_30to50_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_470to600_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_50to80_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_600to800_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_800to1000_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepcsv--QCD_Pt_80to120_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_120to170_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_15to30_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_170to300_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_300to470_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_30to50_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_470to600_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_50to80_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_600to800_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_800to1000_TuneCP5_13TeV_pythia8.reduced
-hists/btageff2018/deepflav--QCD_Pt_80to120_TuneCP5_13TeV_pythia8.reduced
-```
-
-This step can be run in HTCondor by using the `reduce_condor.py` script. The `reduce_condor.py` script has the same options of `reduce.py`, with addition of the same `--cluster`, `--tar`, and `--copy` options descibed above when discussing `run_condor.py`.
-
-A second step of data reduction is needed to merge all the `.reduced` files corresponding to a single variable. This is achieved by using the `merge.py` script:
-
-```
-python3 merge.py -f hists/btageff2018
-```
-
-The options of this script are:
-
-TO BE LISTED
-
-This command will produce the following files:
-
-```
-hists/btageff2018/deepcsv.merged  hists/btageff2018/deepflav.merged
-```
-
-The same script can be used to merge the the files corresponding to each single variable into a single file, using the `-p` or `—postprocess` option:
-
-```
-python3 merge.py -f hists/btageff2018 -p
-```
-
-Also this step can be run in HTCondor by using the `merge_condor.py` script. The `merge_condor.py` script has the same options of `merge.py`, with addition of the same `--cluster`, `--tar`, and `--copy` options descibed above when discussing `run_condor.py`.
-
----
-
-This README is a work in progress
