@@ -702,7 +702,9 @@ def get_ele_trig_weight(year, eta, pt, cutbased):
 def get_pho_trig_weight(year, pt):
     corrname = {
         "2022pre" : "photon_trigger_sf_2022pre",
-        "2022post": "photon_trigger_sf_2022post"
+        "2022post": "photon_trigger_sf_2022post",
+        "2023pre" : "photon_trigger_sf_2023pre",
+        "2023post": "photon_trigger_sf_2023post",
     }
 
     cset = correctionlib.CorrectionSet.from_file(f"data/PhotonTrigEff/photon_trigger_sf_{year}.json.gz")
