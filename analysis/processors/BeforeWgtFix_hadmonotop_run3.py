@@ -690,6 +690,70 @@ class AnalysisProcessor(processor.ProcessorABC):
 			###
 			pu = get_pu_weight(self._year, events.Pileup.nTrueInt)
 
+			### 
+			# ID Scale Factor: electron and muon
+			###
+			ids ={
+				'sr'	: np.ones(len(events), dtype='float'),
+				'wmcr'  : leading_mu.id_sf, 
+				'wecr'  : leading_e.id_sf,
+				'tmcr'  : leading_mu.id_sf,
+				'tecr'  : leading_e.id_sf,
+				'zmcr'  : leading_mu.id_sf,  #np.ones(len(events), dtype='float'),
+				'zecr'  : leading_e.id_sf,   #np.ones(len(events), dtype='float'),
+				'gcr'   : leading_pho.id_sf, #np.ones(len(events), dtype='float')
+			}
+
+			### 
+			# RECO Scale Factor: electron
+			###
+			reco ={
+				'sr'	: np.ones(len(events), dtype='float'),
+				'wmcr'  : np.ones(len(events), dtype='float'), 
+				'wecr'  : leading_e.reco_sf,
+				'tmcr'  : np.ones(len(events), dtype='float'),
+				'tecr'  : leading_e.reco_sf,
+				'zmcr'  : np.ones(len(events), dtype='float'),
+				'zecr'  : leading_e.reco_sf, #np.ones(len(events), dtype='float'),
+				'gcr'   : np.ones(len(events), dtype='float')
+			}
+
+			### 
+			# ISO Scale Factor: muon
+			###
+			iso ={
+				'sr'	: np.ones(len(events), dtype='float'),
+				'wmcr'  : leading_mu.iso_sf, 
+				'wecr'  : np.ones(len(events), dtype='float'),
+				'tmcr'  : leading_mu.iso_sf,
+				'tecr'  : np.ones(len(events), dtype='float'),
+				'zmcr'  : leading_mu.iso_sf, #np.ones(len(events), dtype='float'),
+				'zecr'  : np.ones(len(events), dtype='float'),
+				'gcr'   : np.ones(len(events), dtype='float')
+			}
+
+
+
+			###
+			# Trigger efficiency weight
+			###
+			met_sf, met_sf_up, met_sf_down = get_met_trig_weight(self._year, met.pt)
+			pho_sf, pho_sf_up, pho_sf_down = get_pho_trig_weight(self._year, ak.firsts(pho).pt)
+			print('met trigger sf: ', met_sf)
+			print('pho trigger sf: ', pho_sf)
+			print('ele trigger sf: ', leading_e.hlt_sf)
+
+			trig = {
+				'sr'	: met_sf,
+				'wmcr'  : met_sf, 
+				'wecr'  : leading_e.hlt_sf,
+				'tmcr'  : met_sf,
+				'tecr'  : leading_e.hlt_sf,
+				'zmcr'  : met_sf,
+				'zecr'  : leading_e.hlt_sf,
+				'gcr'   : pho_sf #np.ones(len(events), dtype='float')
+			}
+
 			###
 			# AK4 b-tagging weights
 			###
@@ -708,6 +772,20 @@ class AnalysisProcessor(processor.ProcessorABC):
 				j_iso.isbtagvL
 			)
 
+			weights.add('genw', events.genWeight)
+			weights.add('pileup', pu)
+			weights.add('ids', ids[region])
+			print('region print', region)
+			weights.add('iso', iso[region])
+			weights.add('reco', reco[region])
+			#weights.add('trig', trig[region])
+			#weights.add('nlo_ewk',nlo_ewk)
+			weights.add('btagSF',btagSF)
+			weights.add('topptreweighting', nlo)
+			#weights.add('btagSFbc_correlated',np.ones(len(events), dtype='float'), btagSFbc_correlatedUp/btagSF, btagSFbc_correlatedDown/btagSF)
+			#weights.add('btagSFbc_uncorrelated',np.ones(len(events), dtype='float'), btagSFbc_uncorrelatedUp/btagSF, btagSFbc_uncorrelatedDown/btagSF)
+			#weights.add('btagSFlight_correlated',np.ones(len(events), dtype='float'), btagSFlight_correlatedUp/btagSF, btagSFlight_correlatedDown/btagSF)
+			#weights.add('btagSFlight_uncorrelated',np.ones(len(events), dtype='float'), btagSFlight_uncorrelatedUp/btagSF, btagSFlight_uncorrelatedDown/btagSF)
 			
 		###
 		# Selections
@@ -882,105 +960,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 					'noextrab',
 			],
 		}
-		if not isData:
-			weights.add('genw', events.genWeight)
-			weights.add('pileup', pu)
-			#weights.add('nlo_ewk',nlo_ewk)
-			weights.add('topptreweighting', nlo)
-			weights.add('btagSF',btagSF)
-			#weights.add('btagSFbc_correlated',np.ones(len(events), dtype='float'), btagSFbc_correlatedUp/btagSF, btagSFbc_correlatedDown/btagSF)
-			#weights.add('btagSFbc_uncorrelated',np.ones(len(events), dtype='float'), btagSFbc_uncorrelatedUp/btagSF, btagSFbc_uncorrelatedDown/btagSF)
-			#weights.add('btagSFlight_correlated',np.ones(len(events), dtype='float'), btagSFlight_correlatedUp/btagSF, btagSFlight_correlatedDown/btagSF)
-			#weights.add('btagSFlight_uncorrelated',np.ones(len(events), dtype='float'), btagSFlight_uncorrelatedUp/btagSF, btagSFlight_uncorrelatedDown/btagSF)
-
-			### 
-			# Region masks 
-			###
-			mask_isoneE = ak.to_numpy((e_ntight==1)&(e_nloose==1)&(mu_nloose==0)&(pho_nloose==0))
-			mask_isoneM = ak.to_numpy((e_nloose==0)&(mu_ntight==1)&(mu_nloose==1)&(pho_nloose==0))
-			mask_istwoE = ak.to_numpy((e_nloose==2)&(mu_nloose==0)&(pho_nloose==0))
-			mask_istwoM = ak.to_numpy((e_nloose==0)&(mu_nloose==2)&(pho_nloose==0))
-			mask_isoneG = ak.to_numpy((e_nloose==0)&(mu_nloose==0)&(pho_nloose==1)&(pho_ntight==1))
-
-			### 
-			# ID Scale Factor: electron and muon
-			###
-			id_sf	  = np.ones(len(events), dtype='float')
-			id_sf_up   = np.ones(len(events), dtype='float')
-			id_sf_down = np.ones(len(events), dtype='float')
-
-			id_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.id_sf, axis=1), 1.0))
-			id_sf_isoneM = ak.to_numpy(ak.fill_none(ak.prod(mu_tight.id_sf, axis=1), 1.0))
-			id_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.id_sf, axis=1), 1.0))
-			id_sf_istwoM = ak.to_numpy(ak.fill_none(ak.prod(mu_loose.id_sf, axis=1), 1.0))
-			id_sf_isoneG = ak.to_numpy(ak.fill_none(ak.prod(pho_tight.id_sf, axis=1), 1.0))
-
-			id_sf[mask_isoneE] = id_sf_isoneE[mask_isoneE]
-			id_sf[mask_isoneM] = id_sf_isoneM[mask_isoneM]
-			id_sf[mask_istwoE] = id_sf_isoneE[mask_istwoE]
-			id_sf[mask_istwoM] = id_sf_isoneM[mask_istwoM]
-			id_sf[mask_isoneG] = id_sf_isoneG[mask_isoneG]
-
-			weights.add('ids', id_sf)
-
-			### 
-			# RECO Scale Factor: electron
-			###
-			reco_sf	  = np.ones(len(events), dtype='float')
-			reco_sf_up   = np.ones(len(events), dtype='float')
-			reco_sf_down = np.ones(len(events), dtype='float')
-
-			reco_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.reco_sf, axis=1), 1.0))
-			reco_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.reco_sf, axis=1), 1.0))
-
-			reco_sf[mask_isoneE] = reco_sf_isoneE[mask_isoneE]
-			reco_sf[mask_istwoE] = reco_sf_isoneE[mask_istwoE]
-
-			weights.add('reco', reco_sf)
-
-
-			### 
-			# ISO Scale Factor: muon
-			###
-			iso_sf	  = np.ones(len(events), dtype='float')
-			iso_sf_up   = np.ones(len(events), dtype='float')
-			iso_sf_down = np.ones(len(events), dtype='float')
-
-			iso_sf_isoneM = ak.to_numpy(ak.fill_none(ak.prod(mu_tight.iso_sf, axis=1), 1.0))
-			iso_sf_istwoM = ak.to_numpy(ak.fill_none(ak.prod(mu_loose.iso_sf, axis=1), 1.0))
-
-			iso_sf[mask_isoneM] = iso_sf_isoneM[mask_isoneM]
-			iso_sf[mask_istwoM] = iso_sf_isoneM[mask_istwoM]
-
-			weights.add('iso', iso_sf)
-
-
-			###
-			# Trigger efficiency weight
-			###
-			met_sf_m,  met_sf_m_up,  met_sf_m_down  = get_met_trig_weight(self._year, u['wmcr'].r)
-			met_sf_mm, met_sf_mm_up, met_sf_mm_down = get_met_trig_weight(self._year, u['zmcr'].r)
-			pho_sf, pho_sf_up, pho_sf_down = get_pho_trig_weight(self._year, ak.firsts(pho_tight).pt)
-
-			trg_sf	  = np.ones(len(events), dtype='float')
-			trg_sf_up   = np.ones(len(events), dtype='float')
-			trg_sf_down = np.ones(len(events), dtype='float')
-
-			trg_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.hlt_sf, axis=1), 1.0))
-			trg_sf_isoneM = ak.to_numpy(ak.fill_none(met_sf_m, 1.0))
-			trg_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.hlt_sf, axis=1), 1.0))
-			trg_sf_istwoM = ak.to_numpy(ak.fill_none(met_sf_mm, 1.0))
-			trg_sf_isoneG = ak.to_numpy(ak.fill_none(pho_sf, 1.0))
-
-			trg_sf[mask_isoneE] = trg_sf_isoneE[mask_isoneE]
-			trg_sf[mask_isoneM] = trg_sf_isoneM[mask_isoneM]
-			trg_sf[mask_istwoE] = trg_sf_isoneE[mask_istwoE]
-			trg_sf[mask_istwoM] = trg_sf_isoneM[mask_istwoM]
-			trg_sf[mask_isoneG] = trg_sf_isoneG[mask_isoneG]
-
-			weights.add('trig', trg_sf)
-
-
 
 		def normalize(val, cut):
 			if cut is None:
@@ -997,7 +976,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 				weight = weights.weight(modifier=systematic)[cut]
 			else:
 				weight = weights.weight()[cut]
-			#print('weights: ', weights.weightStatistics.keys())
 			#output['template'].fill(
 			#	  region=region,
 			#	  systematic=sname,
@@ -1091,6 +1069,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			
 		for region in regions:
 			if region not in selected_regions: continue
+
 
 			###
 			# Adding recoil and minDPhi requirements
