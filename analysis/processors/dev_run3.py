@@ -71,6 +71,12 @@ class AnalysisProcessor(processor.ProcessorABC):
 			'gcr'  :('TT','WtoLNu-2Jets','DYto2L-2Jets','Zto2Nu-2Jets','GJ','ST','WW','ZZ','WZ','QCD','EGamma'),
 		}
 		
+		self._TvsQCDwp = {
+			'2022pre': 0.33,
+			'2022post': 0.33,
+			'2023pre': 0.33,
+			'2023post': 0.33,
+		}
 
 		self._met_triggers = { ## Name is same 22/23 
 			'2022pre': [
@@ -127,151 +133,181 @@ class AnalysisProcessor(processor.ProcessorABC):
 			'mindphirecoil': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(30,0,3.5, name='mindphirecoil', label='Min |dPhi(Recoil,AK4s)|'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'minDphirecoil': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(30,0,3.5, name='minDphirecoil', label='Min |dPhi(Recoil, leading AK15s)|'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'ut': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(75,250,1000, name='ut', label='$U_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'ut_bin': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Variable([250,350,360,370,380,390,400,420,440,460,480,500,550,600,700,1000], name='ut_bin', label='$U_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'ut_bin2': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(50,250,1000, name='ut_bin2', label='$U_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'uphi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(35,-3.5,3.5, name='uphi', label='U_{phi}'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'mupt': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(60,0,1200, name='mupt', label='Leading Muon $p_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'mueta': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(48,-2.4,2.4, name='mueta', label='Leading Muon Eta'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'muphi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(64,-3.2,3.2, name='muphi', label='Leading Muon Phi'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'elept': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(60,0,1200, name='elept', label='Leading Electron $p_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'eleeta': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(48,-2.4,2.4, name='eleeta', label='Leading Electron Eta'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'elephi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(64,-3.2,3.2, name='elephi', label='Leading Electron Phi'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'phopt': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(60,0,1200, name='phopt', label='Leading Photon $p_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'phoeta': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(48,-2.4,2.4, name='phoeta', label='Leading Photon Eta'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'phophi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(64,-3.2,3.2, name='phophi', label='Leading Photon Phi'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'dielept': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(60,0,1200, name='dielept', label='DiElectron $p_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'dieleeta': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(48,-2.4,2.4, name='dieleeta', label='DiElectron Eta'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'dielephi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(64,-3.2,3.2, name='dielephi', label='DiElectron Phi'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'dimupt': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(60,0,1200, name='dimupt', label='DiMuon $p_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'dimueta': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(48,-2.4,2.4, name='dimueta', label='DiMuon Eta'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'dimuphi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(64,-3.2,3.2, name='dimuphi', label='DiMuon Phi'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'jpt': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(38,250,1200, name='jpt', label='AK4 Leading Jet $p_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'jeta': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(35,-3.5,3.5, name='jeta', label='AK4 Leading Jet Eta'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'jphi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(35,-3.5,3.5, name='jphi', label='AK4 Leading Jet Phi'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'fjpt': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(38,250,1200, name='fjpt', label='AK15 Leading Jet $p_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'fjeta': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(35,-3.5,3.5, name='fjeta', label='AK15 Leading Jet Eta'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'fjphi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(35,-3.5,3.5, name='fjphi', label='AK15 Leading Jet Phi'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'mT': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(60,0,1200, name='mT', label='$m_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'met': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(30,0,1200, name='met', label='MET $p_{T}$ [GeV]'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'metphi': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(35,-3.5,3.5, name='metphi', label='MET $\phi$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				#hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
@@ -283,16 +319,19 @@ class AnalysisProcessor(processor.ProcessorABC):
 			'njets': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.IntCategory([0, 1, 2, 3, 4, 5, 6], name='njets', label='AK4 Number of Jets'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'njbtagL': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.IntCategory([0, 1, 2, 3, 4, 5, 6], name='njbtagL', label='AK4 Number of BTag Jets'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'nfjets': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.IntCategory([0, 1, 2, 3, 4, 5, 6], name='nfjets', label='AK15 Number of Jets'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 	}
@@ -351,7 +390,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 		get_met_trig_weight	  = self._corrections['get_met_trig_weight']
 		get_ele_trig_weight	  = self._corrections['get_ele_trig_weight']
 		get_pho_trig_weight	  = self._corrections['get_pho_trig_weight']
-		#get_nlo_ewk_weight	   = self._corrections['get_nlo_ewk_weight']	
+		get_nlo_ewk_weight	   = self._corrections['get_nlo_ewk_weight']	
 		#get_nnlo_nlo_weight	  = self._corrections['get_nnlo_nlo_weight'][self._year]
 		get_btag_weight	  = self._corrections['get_btag_weight']
 		get_ttbar_weight	 = self._corrections['get_ttbar_weight']
@@ -675,15 +714,15 @@ class AnalysisProcessor(processor.ProcessorABC):
 			GenIsoPho = events.GenIsolatedPhoton
 			nGenIsoPho = ak.num(GenIsoPho, axis=1)
 			#
-			#nlo_ewk = np.ones(len(events), dtype='float')
-			#if('WtoLNu' in dataset): 
-			#	nlo_ewk = get_nlo_ewk_weight['w'](ak.max(genWs.pt, axis=1))
-			#elif('DY' in dataset): 
-			#	nlo_ewk = get_nlo_ewk_weight['dy'](ak.max(genDYs.pt, axis=1))
-			#elif('Zto2Nu' in dataset): 
-			#	nlo_ewk = get_nlo_ewk_weight['z'](ak.max(genZs.pt, axis=1))
-			#elif('GJ' in dataset):
-			#	nlo_ewk = get_nlo_ewk_weight['a'](ak.max(genAs.pt, axis=1))
+			nlo_ewk = np.ones(len(events), dtype='float')
+			if('WtoLNu' in dataset): 
+				nlo_ewk = get_nlo_ewk_weight['w'](ak.max(genWs.pt, axis=1))
+			elif('DY' in dataset): 
+				nlo_ewk = get_nlo_ewk_weight['dy'](ak.max(genDYs.pt, axis=1))
+			elif('Zto2Nu' in dataset): 
+				nlo_ewk = get_nlo_ewk_weight['z'](ak.max(genZs.pt, axis=1))
+			elif('GJ' in dataset):
+				nlo_ewk = get_nlo_ewk_weight['a'](ak.max(genAs.pt, axis=1))
 
 			###
 			# Calculate PU weight and systematic variations
@@ -885,13 +924,13 @@ class AnalysisProcessor(processor.ProcessorABC):
 		if not isData:
 			weights.add('genw', events.genWeight)
 			weights.add('pileup', pu)
-			#weights.add('nlo_ewk',nlo_ewk)
+			weights.add('nlo_ewk',nlo_ewk)
 			weights.add('topptreweighting', nlo)
 			weights.add('btagSF',btagSF)
-			#weights.add('btagSFbc_correlated',np.ones(len(events), dtype='float'), btagSFbc_correlatedUp/btagSF, btagSFbc_correlatedDown/btagSF)
-			#weights.add('btagSFbc_uncorrelated',np.ones(len(events), dtype='float'), btagSFbc_uncorrelatedUp/btagSF, btagSFbc_uncorrelatedDown/btagSF)
-			#weights.add('btagSFlight_correlated',np.ones(len(events), dtype='float'), btagSFlight_correlatedUp/btagSF, btagSFlight_correlatedDown/btagSF)
-			#weights.add('btagSFlight_uncorrelated',np.ones(len(events), dtype='float'), btagSFlight_uncorrelatedUp/btagSF, btagSFlight_uncorrelatedDown/btagSF)
+			weights.add('btagSFbc_correlated',np.ones(len(events), dtype='float'), btagSFbc_correlatedUp/btagSF, btagSFbc_correlatedDown/btagSF)
+			weights.add('btagSFbc_uncorrelated',np.ones(len(events), dtype='float'), btagSFbc_uncorrelatedUp/btagSF, btagSFbc_uncorrelatedDown/btagSF)
+			weights.add('btagSFlight_correlated',np.ones(len(events), dtype='float'), btagSFlight_correlatedUp/btagSF, btagSFlight_correlatedDown/btagSF)
+			weights.add('btagSFlight_uncorrelated',np.ones(len(events), dtype='float'), btagSFlight_uncorrelatedUp/btagSF, btagSFlight_uncorrelatedDown/btagSF)
 
 			### 
 			# Region masks 
@@ -1052,6 +1091,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 					normalized_variable = {variable: normalize(variables[variable],cut)}
 					output[variable].fill(
 						region=region,
+						TvsQCD=normalize(leading_fj.TvsQCD, cut),
 						**normalized_variable,
 						weight=weight,
 					)
@@ -1064,6 +1104,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 				output['ut_bin2'].fill(
 					  region=region,
 					  ut_bin2=normalize(u[region].r, cut),
+					  TvsQCD=normalize(leading_fj.TvsQCD, cut),
 					  weight=weight
 				)
 				output['TvsQCD'].fill(

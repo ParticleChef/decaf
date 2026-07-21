@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import uproot
-from coffea import hist, nanoevents, util
+from coffea import  nanoevents, util
 from coffea.util import load, save
 import coffea.processor as processor
 import awkward as ak
@@ -9,12 +9,16 @@ from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 import correctionlib
 from coffea.nanoevents.methods import vector
 from correctionlib import CorrectionSet
+from coffea.lookup_tools import extractor, dense_lookup
+from coffea import lookup_tools, jetmet_tools, util
+from coffea.jetmet_tools import JECStack, CorrectedJetsFactory, CorrectedMETFactory
 
 
-year = '2022'
+year = '2022pre'
 isRealsample = True
 sample = {
-    '2022': "/data/mc/privatemc/2022/WtoLNu-2Jets_0J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3_AK15_ParTv2_Run3Summer22MiniAODv4-130X_v5-v3/0000/nano_1.root",
+    '2023': "/home/jhong/run3Monotop/decaf/analysis/temp_nano/nano_1.root",
+    '2022': "/data/mc/privatemc/2022/WtoLNu-2Jets_0J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3_AK15_ParTv2_Run3Summer22MiniAODv4-130X_v5-v3/0000/nano_11.root",
     '2022dat': "/data/data/privatedata/2022/EGamma/NanoTuples-AK15_ParTv2_Run2022D-22Sep2023-v1/251105_073349/0000/nano_823.root",
     'ntp': "/10T/scratch/jhong/selectedEvents_result_files/merged_result.root",
     "GJet": "/data/mc/UL2018NanoAODv9//G1Jet_LHEGpT-150To250_TuneCP5_13TeV-amcatnlo-pythia8/MC_2018_NanoAODv9_1-32.root",
@@ -30,90 +34,115 @@ if isRealsample:
             schemaclass=NanoAODSchema,
             ).events()
 
-j = events.Jet
-met = events.MET
-def get_met_trig_weight(year, met):
-    corrname = {
-        '2022pre' : "recoil_trigger_sf_22pre",
-        '2022post': "recoil_trigger_sf_22post",
-        '2023pre' : "recoil_trigger_sf_23pre",
-        '2023post': "recoil_trigger_sf_23post"
-    }    
-    cset = CorrectionSet.from_file(f"data/METTrigEff/recoil_trigger_sf_{year}.json.gz")
-    corr = cset[corrname[year]]
+def check_json(year):
+    #year = '2022pre'
+    evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jet_jerc.json.gz')
+    for corr in evaluator.values():
+        if not "_L" in corr.name: continue
+        print(f"Correction {corr.name} has {len(corr.inputs)} inputs")
+        for ix in corr.inputs:
+            print(f"   Input {ix.name} ({ix.type}): {ix.description}")
 
-    met  = ak.fill_none(met, 0.)
-    #met  = ak.where((met>950.), ak.full_like(met,950.), met) 
-
-    weight = corr.evaluate(met, "nominal")
-    weight_up   = corr.evaluate(met, "up")
-    weight_down = corr.evaluate(met, "down")
-
-    return weight, weight_up, weight_down                         
-
-met_nom, met_up, met_down = get_met_trig_weight('2022pre', met.pt)
-print('met nominal wieght', met_nom)
-
-def isGoodAK4(j, year):
-    
-    pt    = j.pt
-    eta   = j.eta
-    jet_id= j.jetId
-    #pu_id=j.puId
-    chHEF  = j.chHEF
-    neHEF  = j.neHEF
-    chEmEF = j.chEmEF
-    neEmEF = j.neEmEF
-    muEF   = j.muEF
-    chMultiplicity = j.chMultiplicity
-    neMultiplicity = j.neMultiplicity
-    multiplicity   = neMultiplicity + chMultiplicity
-
-    def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
-        evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jetid.json.gz')
-        corr = evaluator["AK4PUPPI_TightLeptonVeto"]
-        counts = ak.num(eta)
-        eta, chHEF, neHEF, chEmEF, neEmEF, muEF = ak.flatten(eta), ak.flatten(chHEF), ak.flatten(neHEF), ak.flatten(chEmEF), ak.flatten(neEmEF), ak.flatten(muEF)
-        chMultiplicity, neMultiplicity, multiplicity = ak.flatten(chMultiplicity), ak.flatten(neMultiplicity), ak.flatten(multiplicity)
-
-        print(eta,ak.type(eta))
-        print(chHEF,ak.type(chHEF))
-        print(neHEF,ak.type(neHEF))
-        print(chEmEF,ak.type(chEmEF))
-        print(neEmEF,ak.type(neEmEF))
-        print(muEF,ak.type(muEF))
-        print(chMultiplicity,ak.type(chMultiplicity))
-        print(neMultiplicity,ak.type(neMultiplicity))
-        print(multiplicity,ak.type(multiplicity))
-        args = (
-            eta,
-            chHEF, neHEF, chEmEF, neEmEF, muEF,
-            chMultiplicity, neMultiplicity, multiplicity
-        )
-        #out = corr.evaluate(*args)
-        out = corr.evaluate(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
-        return ak.unflatten(out, counts)
-    
-    jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
-    mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1)
-
-    return mask
-
-j['isgood'] = isGoodAK4(j, '2022pre')
-print(j.isgood)
-
-#def check_json():
-#    year = '2022pre'
-#    evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jetid.json.gz')
-#    for corr in evaluator.values():
-#        #if not corr.name == "deepJet_comb": continue
-#        print(f"Correction {corr.name} has {len(corr.inputs)} inputs")
-#        for ix in corr.inputs:
-#            print(f"   Input {ix.name} ({ix.type}): {ix.description}")
-#
-#
 #check_json()
-#corrections = load('data/corrections.coffea')
+
+corrections = load('data/corrections.coffea')
+ids = load('data/ids.coffea')
+isLooseMuon  = ids['isLooseMuon']
+isTightMuon  = ids['isTightMuon']
+get_met_trig_weight	  = corrections['get_met_trig_weight']
+get_ele_trig_weight	  = corrections['get_ele_trig_weight']
+get_pho_trig_weight	  = corrections['get_pho_trig_weight']
+met = events.MET
+mu = events.Muon
+mu['isloose'] = isLooseMuon(mu,year)
+mu['istight'] = isTightMuon(mu,year)
+mu['T'] = ak.zip(
+	{
+		"r": mu.pt,
+		"phi": mu.phi,
+	},
+	with_name="PolarTwoVector",
+	behavior=vector.behavior,
+)
+mu_loose=mu[mu.isloose]
+mu_tight=mu[mu.istight]
+
+# define leading mu
+leading_mu = ak.firsts(mu_tight)
+u = met+leading_mu.T
+met_sf, met_sf_up, met_sf_down = get_met_trig_weight(year, met.pt)
+u_sf, u_sf_up, u_sf_down = get_met_trig_weight(year, u.r)
+mask = (u.r > 250)
+breaknumber = 0
+number = 5
+print('met pt  ', met.pt[number])
+print('met phi ', met.phi[number])
+print('mu pt ', leading_mu.pt[number])
+print('mu phi', leading_mu.phi[number])
+print('u ', u.r[number])
+print('length', len(u))
+for i in range(len(u)):
+    if u.r[i] == None: continue
+    if u.r[i] < 350: continue
+
+    print('met', met.pt[i])
+    print('ut ', u.pt[i])
+    print('met sf', met_sf[i])
+    print('u sf', u_sf[i])
+
+    breaknumber = breaknumber +1
+
+    #if breaknumber > 200: break
+
+#def isGoodAK4(j, year):
+#    
+#    pt    = j.pt
+#    eta   = j.eta
+#    jet_id= j.jetId
+#    #pu_id=j.puId
+#    chHEF  = j.chHEF
+#    neHEF  = j.neHEF
+#    chEmEF = j.chEmEF
+#    neEmEF = j.neEmEF
+#    muEF   = j.muEF
+#    chMultiplicity = j.chMultiplicity
+#    neMultiplicity = j.neMultiplicity
+#    multiplicity   = neMultiplicity + chMultiplicity
+#
+#    def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
+#        evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jetid.json.gz')
+#        corr = evaluator["AK4PUPPI_TightLeptonVeto"]
+#        counts = ak.num(eta)
+#        eta, chHEF, neHEF, chEmEF, neEmEF, muEF = ak.flatten(eta), ak.flatten(chHEF), ak.flatten(neHEF), ak.flatten(chEmEF), ak.flatten(neEmEF), ak.flatten(muEF)
+#        chMultiplicity, neMultiplicity, multiplicity = ak.flatten(chMultiplicity), ak.flatten(neMultiplicity), ak.flatten(multiplicity)
+#
+#        print('1', eta,ak.type(eta))
+#        print('2', chHEF,ak.type(chHEF))
+#        print('3', neHEF,ak.type(neHEF))
+#        print('4', chEmEF,ak.type(chEmEF))
+#        print('5', neEmEF,ak.type(neEmEF))
+#        print('6', muEF,ak.type(muEF))
+#        print('7', chMultiplicity,ak.type(chMultiplicity))
+#        print('8', neMultiplicity,ak.type(neMultiplicity))
+#        print('9', multiplicity,ak.type(multiplicity))
+#        args = (
+#            eta,
+#            chHEF, neHEF, chEmEF, neEmEF, muEF,
+#            chMultiplicity, neMultiplicity, multiplicity
+#        )
+#        #out = corr.evaluate(*args)
+#        out = corr.evaluate(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
+#        return ak.unflatten(out, counts)
+#    
+#    jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
+#    print('jetId', jetId)
+#    mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1)
+#
+#    return mask
+#j = events.Jet
+#isgood = isGoodAK4(j, '2022pre')
+#print('isgood jet: ', isgood)
+
 #get_ele_trig_weight      = corrections['get_ele_trig_weight']
 #e = events.Electron
 #e_weight = get_ele_trig_weight('2022pre', e.eta, e.pt, 'Loose')

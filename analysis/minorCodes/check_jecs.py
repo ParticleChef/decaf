@@ -13,18 +13,53 @@ from coffea import lookup_tools, jetmet_tools, util
 from coffea.lookup_tools import extractor, dense_lookup
 from coffea.jetmet_tools import JECStack, CorrectedJetsFactory, CorrectedMETFactory
 
+levels =[
+    "Summer22_22Sep2023_RunCD_V3_DATA_L1FastJet_AK8PFPuppi",
+    "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK8PFPuppi",
+    "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK8PFPuppi",
+    "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK8PFPuppi",
+    "Summer22_22Sep2023_V3_MC_L1FastJet_AK8PFPuppi",
+    "Summer22_22Sep2023_V3_MC_L2Relative_AK8PFPuppi",
+    "Summer22_22Sep2023_V3_MC_L3Absolute_AK8PFPuppi",
+    "Summer22_22Sep2023_RunCD_V3_DATA_L1FastJet_AK4PFPuppi",
+    "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK4PFPuppi",
+    "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK4PFPuppi",
+    "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK4PFPuppi",
+    "Summer22_22Sep2023_V3_MC_L1FastJet_AK4PFPuppi",
+    "Summer22_22Sep2023_V3_MC_L2Relative_AK4PFPuppi",
+    "Summer22_22Sep2023_V3_MC_L3Absolute_AK4PFPuppi"
+]
+level =[
+    "L1FastJet",
+    "L2Relative",
+    "L3Absolute",
+    "L2L3Residual",
+    "L1FastJet",
+    "L2Relative",
+    "L3Absolute",
+    "L1FastJet",
+    "L2Relative",
+    "L3Absolute",
+    "L2L3Residual",
+    "L1FastJet",
+    "L2Relative",
+    "L3Absolute"
+
+]
 def check_json(path):
     year = '2022pre'
     evaluator = correctionlib.CorrectionSet.from_file(path)
     for corr in evaluator.values():
         #if not corr.name == "NUM_Mu50_or_CascadeMu100_or_HighPtTkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose": continue
+        #if corr.split('_')[5] not in level:
+        #    continue
         print(f"Correction {corr.name} has {len(corr.inputs)} inputs")
         #print(f"{corr.name}")
         for ix in corr.inputs:
             print(f"   Input {ix.name} ({ix.type}): {ix.description}")
 
 
-#check_json("/home/jhong/nanoaod-study/decaf/analysis/data/JetMETCorr/2022pre/jet_jerc.json.gz")
+check_json("/home/jhong/run3Monotop/decaf/analysis/data/JetMETCorr/2022pre/jet_jerc.json.gz")
 
 isRealsample = True
 sample = {

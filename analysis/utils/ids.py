@@ -339,24 +339,24 @@ def isGoodAK4(j, year):
 	chMultiplicity = j.chMultiplicity
 	neMultiplicity = j.neMultiplicity
 	multiplicity   = neMultiplicity + chMultiplicity
-#
-#	def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
-#		evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jetid.json.gz')
-#		corr = evaluator["AK4PUPPI_TightLeptonVeto"]
-#		counts = ak.num(eta)
-#		eta, chHEF, neHEF, chEmEF, neEmEF, muEF = ak.flatten(eta), ak.flatten(chHEF), ak.flatten(neHEF), ak.flatten(chEmEF), ak.flatten(neEmEF), ak.flatten(muEF)
-#		chMultiplicity, neMultiplicity, multiplicity = ak.flatten(chMultiplicity), ak.flatten(neMultiplicity), ak.flatten(multiplicity)
-#		args = (
-#			eta,
-#			chHEF, neHEF, chEmEF, neEmEF, muEF,
-#			chMultiplicity, neMultiplicity, multiplicity
-#		)
-#		out = corr.evaluate(*args)
-#		return ak.unflatten(out, counts)
-#	
-#	jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
-#	mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1)
-	mask = (pt > 30) & (abs(eta) < 2.4) & ((jet_id & 6) == 6) ##((pt >= 50) & mask) | ((pt < 50) & mask) # & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1) #((jet_id & 6) == 6)
+
+	def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
+		evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jetid.json.gz')
+		corr = evaluator["AK4PUPPI_TightLeptonVeto"]
+		counts = ak.num(eta)
+		eta, chHEF, neHEF, chEmEF, neEmEF, muEF = ak.flatten(eta), ak.flatten(chHEF), ak.flatten(neHEF), ak.flatten(chEmEF), ak.flatten(neEmEF), ak.flatten(muEF)
+		chMultiplicity, neMultiplicity, multiplicity = ak.flatten(chMultiplicity), ak.flatten(neMultiplicity), ak.flatten(multiplicity)
+		args = (
+			eta,
+			chHEF, neHEF, chEmEF, neEmEF, muEF,
+			chMultiplicity, neMultiplicity, multiplicity
+		)
+		out = corr.evaluate(*args)
+		return ak.unflatten(out, counts)
+	
+	jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
+	mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1)
+#	mask = (pt > 30) & (abs(eta) < 2.4) & ((jet_id & 6) == 6) ##((pt >= 50) & mask) | ((pt < 50) & mask) # & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1) #((jet_id & 6) == 6)
 
 	return mask
 

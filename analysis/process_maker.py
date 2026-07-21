@@ -47,8 +47,8 @@ with open(output_py, 'w') as f:
     f.write("#!/usr/bin/env python\n\n")
     f.write("processes = {\n")
     f.write("\n    ## Data\n")
-    f.write("    'JetMET':('JetMET','Data',1),\n")
-    f.write("    'EGamma':('EGamma','Data',1),\n")
+    f.write("    'JetMET':('JetMET','Data',-1),\n")
+    f.write("    'EGamma':('EGamma','Data',-1),\n")
     current_tag = None
     for key, info in processes.items():
         if info['tag'] != current_tag:

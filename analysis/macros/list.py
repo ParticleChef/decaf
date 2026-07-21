@@ -24,7 +24,9 @@ campaigns['2016preVFP'] = '*UL*16preVFP*JMENano'
 campaigns['2016postVFP'] = '*UL*16postVFP*JMENano'
 campaigns['2017'] = '*UL*17*JMENano'
 campaigns['2018'] = '*UL*18*JMENano'
-campaigns['2022pre'] = '*Run3*22Nano*v2'
+#campaigns['2022pre'] = '*Run3*22Nano*v2'
+campaigns['2022pre'] = '*Run2022*22Sep2023*'
+campaigns['2023pre'] = 'Run2023C-22Sep2023*'
 
 eos = "root://dcache-cms-xrootd.desy.de:1094/"
 custom={}
@@ -138,7 +140,7 @@ for dataset in xsections.keys():
 		redirect = globalredirect
 		print("Searching for",dataset,"in centrally produced NanoAOD")
 		if 'Muon' in dataset:
-			query="dasgoclient --query=\"dataset dataset=/"+dataset+"/Run2022C*/NANOAOD*\""
+			query="dasgoclient --query=\"dataset dataset=/"+dataset+"/"+campaigns[options.year]+"*/NANOAOD*\""
 		else:
 			query="dasgoclient --query=\"dataset dataset=/"+dataset+"/"+campaigns[options.year]+"*/NANOAOD*\""
 		dataset=os.popen(query).read().split("\n")[0]

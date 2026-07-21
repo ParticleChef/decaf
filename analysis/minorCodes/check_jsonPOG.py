@@ -24,7 +24,8 @@ def check_json(path):
             print(f"   Input {ix.name} ({ix.type}): {ix.description}")
 
 
-check_json("./data/JetMETCorr/2022pre/met_xyCorrections_2022_2022.json.gz")
+check_json("data/JetMETCorr/2022pre/fatJet_jerc.json.gz")
+#check_json("./data/JetMETCorr/2022pre/met_xyCorrections_2022_2022.json.gz")
 
 def get_ele_reco_sf_Above75(year, eta, pt, phi):
 

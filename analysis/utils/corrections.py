@@ -1146,15 +1146,15 @@ class BTagCorrector:
         light_up_uncorrelated = P(eff_data_light_up_uncorrelated)/P(eff)
         light_down_uncorrelated = P(eff_data_light_down_uncorrelated)/P(eff)
         
-        return np.nan_to_num(nom, nan=1.), \
-        np.nan_to_num(bc_up_correlated, nan=1.), \
-        np.nan_to_num(bc_down_correlated, nan=1.), \
-        np.nan_to_num(bc_up_uncorrelated, nan=1.), \
-        np.nan_to_num(bc_down_uncorrelated, nan=1.), \
-        np.nan_to_num(light_up_correlated, nan=1.), \
-        np.nan_to_num(light_down_correlated, nan=1.), \
-        np.nan_to_num(light_up_uncorrelated, nan=1.), \
-        np.nan_to_num(light_down_uncorrelated, nan=1.)
+        return np.nan_to_num(nom, nan=1., posinf=1., neginf=1.), \
+        np.nan_to_num(bc_up_correlated, nan=1., posinf=1., neginf=1.), \
+        np.nan_to_num(bc_down_correlated, nan=1., posinf=1., neginf=1.), \
+        np.nan_to_num(bc_up_uncorrelated, nan=1., posinf=1., neginf=1.), \
+        np.nan_to_num(bc_down_uncorrelated, nan=1., posinf=1., neginf=1.), \
+        np.nan_to_num(light_up_correlated, nan=1., posinf=1., neginf=1.), \
+        np.nan_to_num(light_down_correlated, nan=1., posinf=1., neginf=1.), \
+        np.nan_to_num(light_up_uncorrelated, nan=1., posinf=1., neginf=1.), \
+        np.nan_to_num(light_down_uncorrelated, nan=1., posinf=1., neginf=1.)
 
 ###
 # Muon scale and resolution (i.e. Rochester)
