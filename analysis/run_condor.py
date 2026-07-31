@@ -24,17 +24,20 @@ parser.add_option('-x', '--copy', action='store_true', dest='copy')
 os.system("mkdir -p hists/"+options.processor)
 
 if options.tar:
-	os.system('tar --exclude-caches-all --exclude-vcs -czvf ../../../../cmssw_11_3_4.tgz '
-			'--exclude=\'src/decaf/analysis/logs\' '
-			'--exclude=\'src/decaf/analysis/plots\' '
-			'--exclude=\'src/decaf/analysis/datacards\' '
-			'--exclude=\'src/decaf/analysis/results\' '
-			'--exclude=\'src/decaf/analysis/data/models\' '
-			'--exclude=\'src/decaf/analysis/hists/*/*.futures\' '
-			'--exclude=\'src/decaf/analysis/hists/*/*.merged\' '
-			'--exclude=\'src/decaf/analysis/hists/*/*.reduced\' '
-			'../../../../CMSSW_11_3_4')
-	#os.system('tar --exclude-caches-all --exclude-vcs -czvf ../../../../pylocal_3_8.tgz -C ~/.local/lib/python3.8/ site-packages')
+	os.system('tar --exclude-caches-all --exclude-vcs -czvf ../../decaf.tgz '
+			'--exclude=\'logs/condor/run/out/*\' '
+			'--exclude=\'logs/condor/run/err/*\' '
+			'--exclude=\'logs/condor/run/log/*\' '
+			'--exclude=\'plots\' '
+			'--exclude=\'datacards\' '
+			'--exclude=\'results\' '
+			'--exclude=\'data/models\' '
+			'--exclude=\'hists/*/*.futures\' '
+			'--exclude=\'hists/*/*.merged\' '
+			'--exclude=\'hists/*/*.reduced\' '
+			'../../decaf')
+	#os.system('tar --exclude-caches-all --exclude-vcs -czvf ../../pylocal_3_8.tgz -C ../../../ envs')
+	#os.system('tar --exclude-caches-all --exclude-vcs -czvf ../../pylocal_3_8.tgz -C ../../../envs/p3818/lib/python3.8/ site-packages')
 
 if options.cluster == 'kisti':
 	if options.copy:
@@ -62,8 +65,8 @@ Queue 1"""
 
 if options.cluster == 'lpc':
 	if options.copy:
-		os.system('xrdcp -f ../../../../cmssw_11_3_4.tgz root://cmseos.fnal.gov//store/user/'+os.environ['USER']+'/cmssw_11_3_4.tgz')
-		os.system('xrdcp -f ../../../../pylocal_3_8.tgz root://cmseos.fnal.gov//store/user/'+os.environ['USER']+'/pylocal_3_8.tgz')
+		os.system('xrdcp -f ../../decaf.tgz root://cmseos.fnal.gov//store/user/'+os.environ['USER']+'/decaf.tgz')
+		os.system('xrdcp -f ../../pylocal_3_8.tgz root://cmseos.fnal.gov//store/user/'+os.environ['USER']+'/pylocal_3_8.tgz')
 	jdl = """universe = vanilla
 Executable = run.sh
 Should_Transfer_Files = YES
@@ -77,6 +80,7 @@ Arguments = $ENV(METADATA) $ENV(SAMPLE) $ENV(PROCESSOR) $ENV(CLUSTER) $ENV(USER)
 JobBatchName = $ENV(BTCN)
 request_cpus = 8
 request_memory = 16000
++SingularityImage       ="/cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-base-almalinux8:0.7.22-py3.8"
 Queue 1"""
 
 if options.cluster == 'knut3':
