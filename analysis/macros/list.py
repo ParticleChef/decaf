@@ -24,9 +24,8 @@ campaigns['2016preVFP'] = '*UL*16preVFP*JMENano'
 campaigns['2016postVFP'] = '*UL*16postVFP*JMENano'
 campaigns['2017'] = '*UL*17*JMENano'
 campaigns['2018'] = '*UL*18*JMENano'
-#campaigns['2022pre'] = '*Run3*22Nano*v2'
-campaigns['2022pre'] = '*Run2022*22Sep2023*'
-campaigns['2023pre'] = 'Run2023C-22Sep2023*'
+campaigns['2022pre'] = '*Run3*22Nano*v2'
+campaigns['2023pre'] = '*Run3*22Nano*v2'
 
 eos = "root://dcache-cms-xrootd.desy.de:1094/"
 custom={}
@@ -48,6 +47,10 @@ custom['2017'] = ["/store/user/swieland/customNano",
 
 custom['2018'] = ["/store/user/mwassmer/customNano",
 				"/store/user/swieland/customNano"]
+custom['2023pre'] = ["/store/group/lpcmetx/Monotop/NanoAOD/2023",
+				"/store/group/lpcmetx/Monotop/NanoAOD/2023"]
+custom['2023post'] = ["/store/user/jhong/monotopRun3/2023BPix/NanoAOD"]
+
 
 def split(arr, size):
 	arrs = []
@@ -102,7 +105,7 @@ for dataset in xsections.keys():
 		if not any(_dataset in dataset for _dataset in options.dataset.split(',')): continue
 	xs = xsections[dataset]
 	if options.custom:
-		redirect = eos
+		redirect = globalredirect#eos
 		urllist = []
 		for folder in custom[options.year]:
 			path=folder+'/'+dataset
@@ -140,7 +143,7 @@ for dataset in xsections.keys():
 		redirect = globalredirect
 		print("Searching for",dataset,"in centrally produced NanoAOD")
 		if 'Muon' in dataset:
-			query="dasgoclient --query=\"dataset dataset=/"+dataset+"/"+campaigns[options.year]+"*/NANOAOD*\""
+			query="dasgoclient --query=\"dataset dataset=/"+dataset+"/Run2022C*/NANOAOD*\""
 		else:
 			query="dasgoclient --query=\"dataset dataset=/"+dataset+"/"+campaigns[options.year]+"*/NANOAOD*\""
 		dataset=os.popen(query).read().split("\n")[0]
