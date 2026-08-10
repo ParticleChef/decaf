@@ -152,19 +152,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			),
 			'ut': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(75,250,1000, name='ut', label='$U_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'ut_bin': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Variable([250,350,360,370,380,390,400,420,440,460,480,500,550,600,700,1000], name='ut_bin', label='$U_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'ut_bin2': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(50,250,1000, name='ut_bin2', label='$U_{T}$'),
+				hist.axis.Regular(175,250,2000, name='ut', label='$U_{T}$'),
 				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
@@ -266,7 +254,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			),
 			'jpt': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(38,250,1200, name='jpt', label='AK4 Leading Jet $p_{T}$'),
+				hist.axis.Regular(38,250,2000, name='jpt', label='AK4 Leading Jet $p_{T}$'),
 				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
@@ -284,7 +272,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			),
 			'fjpt': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(38,250,1200, name='fjpt', label='AK15 Leading Jet $p_{T}$'),
+				hist.axis.Regular(38,250,2000, name='fjpt', label='AK15 Leading Jet $p_{T}$'),
 				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
@@ -308,7 +296,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			),
 			'met': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(30,0,1200, name='met', label='MET $p_{T}$ [GeV]'),
+				hist.axis.Regular(30,0,2000, name='met', label='MET $p_{T}$ [GeV]'),
 				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
@@ -1058,8 +1046,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 					'met':					met.pt,
 					'metphi':				met.phi,
 					'ut' :					u[region].r,
-					'ut_bin' :				u[region].r,
-					#'ut_bin2' :				u[region].r,
 					'uphi' :				u[region].phi,
 					'mindphirecoil':		ak.min(abs(u['sr'].delta_phi(j_clean.T)), axis=1,mask_identity=False),
 					'minDphirecoil':		abs(u[region].delta_phi(leading_fj.T)),
@@ -1109,12 +1095,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 						genWpt=normalize(ak.firsts(genW.pt), cut),
 						weight=weight
 					)
-				output['ut_bin2'].fill(
-					  region=region,
-					  ut_bin2=normalize(u[region].r, cut),
-					  TvsQCD=normalize(leading_fj.TvsQCD, cut),
-					  weight=weight
-				)
 				output['TvsQCD'].fill(
 					  region=region,
 					  TvsQCD=normalize(leading_fj.TvsQCD, cut),

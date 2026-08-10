@@ -137,6 +137,8 @@ processes = {
     'sig_Mphi-1250_Mchi-150': ('sig_Mphi-1250_Mchi-150', 'MC', 0.1663),
     'sig_Mphi-1495_Mchi-750': ('sig_Mphi-1495_Mchi-750', 'MC', 0.01422),
     'sig_Mphi-1500_Mchi-150': ('sig_Mphi-1500_Mchi-150', 'MC', 0.07259),
+    'sig_Mphi-1500_Mchi-500': ('sig_Mphi-1500_Mchi-500', 'MC', 0.06462),
+    'sig_Mphi-1500_Mchi-700': ('sig_Mphi-1500_Mchi-700', 'MC', 0.04394),
     'sig_Mphi-150_Mchi-150': ('sig_Mphi-150_Mchi-150', 'MC', 0.2064),
     'sig_Mphi-1700_Mchi-800': ('sig_Mphi-1700_Mchi-800', 'MC', 0.02241),
     'sig_Mphi-1750_Mchi-150': ('sig_Mphi-1750_Mchi-150', 'MC', 0.03415),
