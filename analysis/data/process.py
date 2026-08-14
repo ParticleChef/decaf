@@ -13,6 +13,7 @@ processes = {
     'Muon0':('Muon0','Data',-1),
     'Muon1':('Muon1','Data',-1),
 
+
     ## DYto2L-2Jets
     'DYto2L-2Jets_MLL-50_PTLL-100to200_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8': ('DYto2L-2Jets_MLL-50_PTLL-100to200_1J', 'MC', 45.42),
     'DYto2L-2Jets_MLL-50_PTLL-100to200_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8': ('DYto2L-2Jets_MLL-50_PTLL-100to200_2J', 'MC', 51.68),
@@ -139,6 +140,7 @@ processes = {
     'sig_Mphi-1500_Mchi-150': ('sig_Mphi-1500_Mchi-150', 'MC', 0.07259),
     'sig_Mphi-1500_Mchi-500': ('sig_Mphi-1500_Mchi-500', 'MC', 0.06462),
     'sig_Mphi-1500_Mchi-700': ('sig_Mphi-1500_Mchi-700', 'MC', 0.04394),
+    'sig_Mphi-1500_Mchi-1000': ('sig_Mphi-1500_Mchi-1000', 'MC', 0.0001324),
     'sig_Mphi-150_Mchi-150': ('sig_Mphi-150_Mchi-150', 'MC', 0.2064),
     'sig_Mphi-1700_Mchi-800': ('sig_Mphi-1700_Mchi-800', 'MC', 0.02241),
     'sig_Mphi-1750_Mchi-150': ('sig_Mphi-1750_Mchi-150', 'MC', 0.03415),
@@ -174,4 +176,20 @@ processes = {
     'sig_Mphi-745_Mchi-325': ('sig_Mphi-745_Mchi-325', 'MC', 1.009),
     'sig_Mphi-750_Mchi-150': ('sig_Mphi-750_Mchi-150', 'MC', 1.26),
     'sig_Mphi-995_Mchi-500': ('sig_Mphi-995_Mchi-500', 'MC', 0.08102),
+    'sig_Mphi-1005_Mchi-500': ('sig_Mphi-1005_Mchi-500', 'MC', 0.125),
+    'sig_Mphi-1100_Mchi-500': ('sig_Mphi-1100_Mchi-500', 'MC', 0.1983),
+    'sig_Mphi-1150_Mchi-625': ('sig_Mphi-1150_Mchi-625', 'MC', 0.005096),
+    'sig_Mphi-1255_Mchi-625': ('sig_Mphi-1255_Mchi-625', 'MC', 0.04581),
+    'sig_Mphi-1350_Mchi-625': ('sig_Mphi-1350_Mchi-625', 'MC', 0.07497),
+    'sig_Mphi-1400_Mchi-750': ('sig_Mphi-1400_Mchi-750', 'MC', 0.002448),
+    'sig_Mphi-1505_Mchi-750': ('sig_Mphi-1505_Mchi-750', 'MC', 0.01883),
+    'sig_Mphi-1600_Mchi-750': ('sig_Mphi-1600_Mchi-750', 'MC', 0.03122),
+    'sig_Mphi-1650_Mchi-875': ('sig_Mphi-1650_Mchi-875', 'MC', 0.001237),
+    'sig_Mphi-1745_Mchi-875': ('sig_Mphi-1745_Mchi-875', 'MC', 0.006601),
+    'sig_Mphi-1755_Mchi-875': ('sig_Mphi-1755_Mchi-875', 'MC', 0.008383),
+    'sig_Mphi-1850_Mchi-875': ('sig_Mphi-1850_Mchi-875', 'MC', 0.01395),
+    'sig_Mphi-1900_Mchi-1000': ('sig_Mphi-1900_Mchi-1000', 'MC', 0.00065),
+    'sig_Mphi-2005_Mchi-1000': ('sig_Mphi-2005_Mchi-1000', 'MC', 0.003965),
+    'sig_Mphi-2100_Mchi-1000': ('sig_Mphi-2100_Mchi-1000', 'MC', 0.006559),
+    'sig_Mphi-900_Mchi-500': ('sig_Mphi-900_Mchi-500', 'MC', 0.01148),
 }
