@@ -561,6 +561,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 		pho_ntight = ak.num(pho_tight, axis=1)
 		leading_pho = ak.firsts(pho_tight)
 
+		#jRes = events.TopResolved
+
 		fj = events.AK15PuppiJet
 		rho_density = events.Rho.fixedGridRhoFastjetAll
 		fjec_corr = get_fjec_correction(self._year, fj.pt, fj.eta, fj.phi, rho_density, fj.area, run, isData)
