@@ -85,12 +85,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 			'2023pre': 0.33,
 			'2023post': 0.33,
 		}
-		self._ResolvedTvsQCDwp = { # ResolvedTvsQCD > 0.973943293094635
-			'2022pre': 0.973943293094635,
-			'2022post': 0.973943293094635,
-			'2023pre': 0.973943293094635,
-			'2023post': 0.973943293094635,
-		}
 
 		self._met_triggers = { ## Name is same 22/23 
 			'2022pre': [
@@ -160,7 +154,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(175,250,2000, name='ut', label='$U_{T}$'),
 				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				hist.axis.Variable([0, self._ResolvedTvsQCDwp[self._year], 1], name='ResolvedTvsQCD', label='ResolvedTvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'uphi': hist.Hist(
@@ -471,11 +464,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 		pho_ntight = ak.num(pho_tight, axis=1)
 		leading_pho = ak.firsts(pho_tight)
 
-		resolvedT = events.TopResolved
-		ResolvedTvsQCD = resolvedT.TTScore / (resolvedT.TTScore + resolvedT.QCDScore)
-		resolvedT['ResolvedTvsQCD'] = resolvedT.TTScore / (resolvedT.TTScore + resolvedT.QCDScore)
-		nResolvedT = ak.num(resolvedT, axis=1)
-		leading_resolvedT = ak.firsts(resolvedT)
 
 		fj = events.AK15PuppiJet
 		rho_density = events.Rho.fixedGridRhoFastjetAll
@@ -818,8 +806,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 					'noextrab',
 			],
 		}
-		if not isData:
-			print('no weight')
 
 
 
@@ -913,7 +899,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 					  region=region,
 					  ut=normalize(u[region].r, cut),
 					  TvsQCD=normalize(leading_fj.TvsQCD, cut),
-					  ResolvedTvsQCD=normalize(leading_resolvedT.ResolvedTvsQCD, cut),
 					  weight=weight
 				)
 				output['TvsQCD'].fill(
