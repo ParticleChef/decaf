@@ -169,96 +169,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
-			'mupt': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(60,0,1200, name='mupt', label='Leading Muon $p_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'mueta': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(48,-2.4,2.4, name='mueta', label='Leading Muon Eta'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'muphi': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(64,-3.2,3.2, name='muphi', label='Leading Muon Phi'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'elept': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(60,0,1200, name='elept', label='Leading Electron $p_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'eleeta': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(48,-2.4,2.4, name='eleeta', label='Leading Electron Eta'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'elephi': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(64,-3.2,3.2, name='elephi', label='Leading Electron Phi'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'phopt': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(60,0,1200, name='phopt', label='Leading Photon $p_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'phoeta': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(48,-2.4,2.4, name='phoeta', label='Leading Photon Eta'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'phophi': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(64,-3.2,3.2, name='phophi', label='Leading Photon Phi'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'dielept': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(60,0,1200, name='dielept', label='DiElectron $p_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'dieleeta': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(48,-2.4,2.4, name='dieleeta', label='DiElectron Eta'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'dielephi': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(64,-3.2,3.2, name='dielephi', label='DiElectron Phi'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'dimupt': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(60,0,1200, name='dimupt', label='DiMuon $p_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'dimueta': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(48,-2.4,2.4, name='dimueta', label='DiMuon Eta'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'dimuphi': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(64,-3.2,3.2, name='dimuphi', label='DiMuon Phi'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
 			'jpt': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(38,250,2000, name='jpt', label='AK4 Leading Jet $p_{T}$'),
@@ -295,12 +205,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
-			'mT': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(60,0,1200, name='mT', label='$m_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
 			'met': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(30,0,2000, name='met', label='MET $p_{T}$ [GeV]'),
@@ -314,27 +218,26 @@ class AnalysisProcessor(processor.ProcessorABC):
 				#hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
-			'genWpt': hist.Hist(
+			'fjpt_cat': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(50,0,1000, name='genWpt', label='gen W $p_{T}$'),
+				hist.axis.Variable([250, 325, 400, 600, 2000], name='fjpt', label='AK15 Leading Jet $p_{T}$', flow=True),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
+				hist.axis.Integer(0,10, name='n_qinfj', label='Number of q from top in AK15 Jet'),
+				hist.axis.Integer(0,10, name='n_binfj', label='Number of b flavor in AK15 Jet'),
 				storage=hist.storage.Weight(),
 			),
-			'njets': hist.Hist(
+			'fjpt_bin': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.IntCategory([0, 1, 2, 3, 4, 5, 6], name='njets', label='AK4 Number of Jets'),
+				#hist.axis.Regular(38,250,1200, name='fjpt', label='AK15 Leading Jet $p_{T}$'),
+				hist.axis.Variable([250, 325, 400, 600, 2000], name='fjpt_bin', label='AK15 Leading Jet $p_{T}$', flow=True),
 				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
-			'njbtagL': hist.Hist(
+			'TvsQCD_cat': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.IntCategory([0, 1, 2, 3, 4, 5, 6], name='njbtagL', label='AK4 Number of BTag Jets'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'nfjets': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.IntCategory([0, 1, 2, 3, 4, 5, 6], name='nfjets', label='AK15 Number of Jets'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
+				hist.axis.Regular(15,0,1, name='TvsQCD', label='TvsQCD'),
+				hist.axis.Integer(0,10, name='n_qinfj', label='Number of q from top in AK15 Jet'),
+				hist.axis.Integer(0,10, name='n_binfj', label='Number of b flavor in AK15 Jet'),
 				storage=hist.storage.Weight(),
 			),
 	}
@@ -700,16 +603,34 @@ class AnalysisProcessor(processor.ProcessorABC):
 		#Calculating weights
 		###
 		if not isData:
+			j['isbflav'] = j.hadronFlavour == 5
+			j_bflav = j[j.isbflav]
+			#fj['bisinfj'] = ak.all(fj.vec.metric_table(j_bflav)<1.5, axis=2)
+			binfj = leading_fj.vec.delta_r(j_bflav)
+			n_binfj = ak.sum(binfj < 1.5, axis=1)
+			#fj_bflav = fj[fj.bisinfj]
+			#nfj_bflav = ak.num(fj_bflav, axis=1)
 			
 			gen = events.GenPart
+
+			yourmotheris = gen.distinctParent.distinctParent.pdgId
+			gen['isq'] = (abs(gen.pdgId) >= 1) & (abs(gen.pdgId) <= 5) & gen.hasFlags(['fromHardProcess', 'isLastCopy'])
+			p1 = ak.fill_none(gen.distinctParent.pdgId, 0)
+			p2 = ak.fill_none(ak.fill_none(gen.distinctParent.distinctParent.pdgId, 0), 0)
+			gen['isqfromt'] = gen.isq & (abs(p1) == 24) & (abs(p2) == 6)
+			gen['isbfromt'] = gen.isq & (abs(p1) == 6)
+			q_from_t = gen[gen.isqfromt]
+			b_from_t = gen[gen.isbfromt]
+			qinfj = leading_fj.vec.delta_r(q_from_t)
+			n_qinfj = ak.sum(qinfj < 1.5, axis=1)
+			#fj['qisinfj'] = ak.all(fj.vec.metric_table(q_from_t)<1.5, axis=2)
+			#q_from_t_fj = fj[fj.qisinfj]
+			#nq_from_t_fj = ak.num(q_from_t_fj, axis=1)
 
 			gen['isb'] = (abs(gen.pdgId)==5)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
 			gen['isc'] = (abs(gen.pdgId)==4)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
 			gen['isTop'] = (abs(gen.pdgId)==6)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
 			genTops = gen[gen.isTop]
-			nlo = np.ones(len(events), dtype='float')
-			if('TTto' in dataset): 
-				nlo = np.sqrt(get_ttbar_weight(genTops[:,0].pt) * get_ttbar_weight(genTops[:,1].pt))
 			genW = gen[gen.hasFlags(['fromHardProcess', 'isFirstCopy', 'isPrompt']) & ((abs(gen.pdgId) == 24))]
 			gen['isW'] = (abs(gen.pdgId)==24)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
 			gen['isZ'] = (abs(gen.pdgId)==23)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
@@ -723,40 +644,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			GenIsoPho = events.GenIsolatedPhoton
 			nGenIsoPho = ak.num(GenIsoPho, axis=1)
 			#
-			nlo_ewk = np.ones(len(events), dtype='float')
-			if('WtoLNu' in dataset): 
-				nlo_ewk = get_nlo_ewk_weight['w'](ak.max(genWs.pt, axis=1))
-			elif('DY' in dataset): 
-				nlo_ewk = get_nlo_ewk_weight['dy'](ak.max(genDYs.pt, axis=1))
-			elif('Zto2Nu' in dataset): 
-				nlo_ewk = get_nlo_ewk_weight['z'](ak.max(genZs.pt, axis=1))
-			elif('GJ' in dataset):
-				nlo_ewk = get_nlo_ewk_weight['a'](ak.max(genAs.pt, axis=1))
 
-			###
-			# Calculate PU weight and systematic variations
-			###
-			pu = get_pu_weight(self._year, events.Pileup.nTrueInt)
-
-			###
-			# AK4 b-tagging weights
-			###
-			btagSF, \
-			btagSFbc_correlatedUp, \
-			btagSFbc_correlatedDown, \
-			btagSFbc_uncorrelatedUp, \
-			btagSFbc_uncorrelatedDown, \
-			btagSFlight_correlatedUp, \
-			btagSFlight_correlatedDown, \
-			btagSFlight_uncorrelatedUp, \
-			btagSFlight_uncorrelatedDown  = get_btag_weight('PNetUParT',self._year,'loose',caller).btag_weight(
-				j_iso.pt,
-				j_iso.eta,
-				j_iso.hadronFlavour,
-				j_iso.isbtagvL
-			)
-
-			
 		###
 		# Selections
 		###
@@ -931,112 +819,23 @@ class AnalysisProcessor(processor.ProcessorABC):
 			],
 		}
 		if not isData:
-			weights.add('genw', events.genWeight)
-			weights.add('pileup', pu)
-			weights.add('nlo_ewk',nlo_ewk)
-			weights.add('topptreweighting', nlo)
-			weights.add('btagSF',btagSF)
-			weights.add('btagSFbc_correlated',np.ones(len(events), dtype='float'), btagSFbc_correlatedUp/btagSF, btagSFbc_correlatedDown/btagSF)
-			weights.add('btagSFbc_uncorrelated',np.ones(len(events), dtype='float'), btagSFbc_uncorrelatedUp/btagSF, btagSFbc_uncorrelatedDown/btagSF)
-			weights.add('btagSFlight_correlated',np.ones(len(events), dtype='float'), btagSFlight_correlatedUp/btagSF, btagSFlight_correlatedDown/btagSF)
-			weights.add('btagSFlight_uncorrelated',np.ones(len(events), dtype='float'), btagSFlight_uncorrelatedUp/btagSF, btagSFlight_uncorrelatedDown/btagSF)
-
-			### 
-			# Region masks 
-			###
-			mask_isoneE = ak.to_numpy((e_ntight==1)&(e_nloose==1)&(mu_nloose==0)&(pho_nloose==0))
-			mask_isoneM = ak.to_numpy((e_nloose==0)&(mu_ntight==1)&(mu_nloose==1)&(pho_nloose==0))
-			mask_istwoE = ak.to_numpy((e_nloose==2)&(mu_nloose==0)&(pho_nloose==0))
-			mask_istwoM = ak.to_numpy((e_nloose==0)&(mu_nloose==2)&(pho_nloose==0))
-			mask_isoneG = ak.to_numpy((e_nloose==0)&(mu_nloose==0)&(pho_nloose==1)&(pho_ntight==1))
-
-			### 
-			# ID Scale Factor: electron and muon
-			###
-			id_sf	  = np.ones(len(events), dtype='float')
-			id_sf_up   = np.ones(len(events), dtype='float')
-			id_sf_down = np.ones(len(events), dtype='float')
-
-			id_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.id_sf, axis=1), 1.0))
-			id_sf_isoneM = ak.to_numpy(ak.fill_none(ak.prod(mu_tight.id_sf, axis=1), 1.0))
-			id_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.id_sf, axis=1), 1.0))
-			id_sf_istwoM = ak.to_numpy(ak.fill_none(ak.prod(mu_loose.id_sf, axis=1), 1.0))
-			id_sf_isoneG = ak.to_numpy(ak.fill_none(ak.prod(pho_tight.id_sf, axis=1), 1.0))
-
-			id_sf[mask_isoneE] = id_sf_isoneE[mask_isoneE]
-			id_sf[mask_isoneM] = id_sf_isoneM[mask_isoneM]
-			id_sf[mask_istwoE] = id_sf_isoneE[mask_istwoE]
-			id_sf[mask_istwoM] = id_sf_isoneM[mask_istwoM]
-			id_sf[mask_isoneG] = id_sf_isoneG[mask_isoneG]
-
-			weights.add('ids', id_sf)
-
-			### 
-			# RECO Scale Factor: electron
-			###
-			reco_sf	  = np.ones(len(events), dtype='float')
-			reco_sf_up   = np.ones(len(events), dtype='float')
-			reco_sf_down = np.ones(len(events), dtype='float')
-
-			reco_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.reco_sf, axis=1), 1.0))
-			reco_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.reco_sf, axis=1), 1.0))
-
-			reco_sf[mask_isoneE] = reco_sf_isoneE[mask_isoneE]
-			reco_sf[mask_istwoE] = reco_sf_isoneE[mask_istwoE]
-
-			weights.add('reco', reco_sf)
-
-
-			### 
-			# ISO Scale Factor: muon
-			###
-			iso_sf	  = np.ones(len(events), dtype='float')
-			iso_sf_up   = np.ones(len(events), dtype='float')
-			iso_sf_down = np.ones(len(events), dtype='float')
-
-			iso_sf_isoneM = ak.to_numpy(ak.fill_none(ak.prod(mu_tight.iso_sf, axis=1), 1.0))
-			iso_sf_istwoM = ak.to_numpy(ak.fill_none(ak.prod(mu_loose.iso_sf, axis=1), 1.0))
-
-			iso_sf[mask_isoneM] = iso_sf_isoneM[mask_isoneM]
-			iso_sf[mask_istwoM] = iso_sf_isoneM[mask_istwoM]
-
-			weights.add('iso', iso_sf)
-
-
-			###
-			# Trigger efficiency weight
-			###
-			met_sf_m,  met_sf_m_up,  met_sf_m_down  = get_met_trig_weight(self._year, u['wmcr'].r)
-			met_sf_mm, met_sf_mm_up, met_sf_mm_down = get_met_trig_weight(self._year, u['zmcr'].r)
-			pho_sf, pho_sf_up, pho_sf_down = get_pho_trig_weight(self._year, ak.firsts(pho_tight).pt)
-
-			trg_sf	  = np.ones(len(events), dtype='float')
-			trg_sf_up   = np.ones(len(events), dtype='float')
-			trg_sf_down = np.ones(len(events), dtype='float')
-
-			trg_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.hlt_sf, axis=1), 1.0))
-			trg_sf_isoneM = ak.to_numpy(ak.fill_none(met_sf_m, 1.0))
-			trg_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.hlt_sf, axis=1), 1.0))
-			trg_sf_istwoM = ak.to_numpy(ak.fill_none(met_sf_mm, 1.0))
-			trg_sf_isoneG = ak.to_numpy(ak.fill_none(pho_sf, 1.0))
-
-			trg_sf[mask_isoneE] = trg_sf_isoneE[mask_isoneE]
-			trg_sf[mask_isoneM] = trg_sf_isoneM[mask_isoneM]
-			trg_sf[mask_istwoE] = trg_sf_isoneE[mask_istwoE]
-			trg_sf[mask_istwoM] = trg_sf_isoneM[mask_istwoM]
-			trg_sf[mask_isoneG] = trg_sf_isoneG[mask_isoneG]
-
-			weights.add('trig', trg_sf)
+			print('no weight')
 
 
 
-		def normalize(val, cut):
+		def normalize(val, cut,fillvalue=np.nan):
 			if cut is None:
-				ar = ak.to_numpy(ak.fill_none(val, np.nan))
+				ar = ak.to_numpy(ak.fill_none(val, fillvalue))
 				return ar
 			else:
-				ar = ak.to_numpy(ak.fill_none(val[cut], np.nan))
+				ar = ak.to_numpy(ak.fill_none(val[cut], fillvalue))
 				return ar
+			#if cut is None:
+			#	ar = ak.to_numpy(ak.fill_none(val, np.nan))
+			#	return ar
+			#else:
+			#	ar = ak.to_numpy(ak.fill_none(val[cut], np.nan))
+			#	return ar
 				
 		def fill(region, systematic):
 			cut = selection.all(*regions[region])
@@ -1045,6 +844,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 				weight = weights.weight(modifier=systematic)[cut]
 			else:
 				weight = weights.weight()[cut]
+				#output['fjpt_cat'].fill(
+				#	  region=region,
+				#	  fjpt=normalize(leading_fj.pt, cut),
+				#	  TvsQCD=normalize(leading_fj.TvsQCD, cut),
+				#	  n_qinfj=normalize(n_qinfj, cut, fillvalue=-1),
+				#	  n_binfj=normalize(n_binfj, cut, fillvalue=-1),
+				#	  weight=weight
+				#)
 			#print('weights: ', weights.weightStatistics.keys())
 			#output['template'].fill(
 			#	  region=region,
@@ -1062,35 +869,13 @@ class AnalysisProcessor(processor.ProcessorABC):
 					'uphi' :				u[region].phi,
 					'mindphirecoil':		ak.min(abs(u['sr'].delta_phi(j_clean.T)), axis=1,mask_identity=False),
 					'minDphirecoil':		abs(u[region].delta_phi(leading_fj.T)),
-					'mupt':					leading_mu.pt,
-					'muphi':				leading_mu.phi,
-					'mueta':				leading_mu.eta,
-					'elept':				leading_e.pt,
-					'elephi':				leading_e.phi,
-					'eleeta':				leading_e.eta,
-					'phopt':				leading_pho.pt,
-					'phophi':				leading_pho.phi,
-					'phoeta':				leading_pho.eta,
 					'fjpt':					leading_fj.pt,
 					'fjphi':				leading_fj.phi,
 					'fjeta':				leading_fj.eta,
 					'jpt':					leading_j.pt,
 					'jphi':					leading_j.phi,
 					'jeta':					leading_j.eta,
-					'njbtagL':				j_nbtagvL,
-					'njets':				j_nclean,
 				}
-				if region in mT:
-					variables['mT']		   = mT[region]
-				if 'z' in region:
-					if 'e' in region:
-						variables['dielept']	 = diele.pt
-						variables['dielephi']	 = diele.phi
-						variables['dieleeta']	 = diele.eta
-					if 'z' in region:
-						variables['dimupt']		= dimu.pt
-						variables['dimuphi']	= dimu.phi
-						variables['dimueta']	= dimu.eta
 
 				for variable in output:
 					if variable not in variables:
@@ -1103,11 +888,27 @@ class AnalysisProcessor(processor.ProcessorABC):
 						weight=weight,
 					)
 				if not isData:
-					output['genWpt'].fill(
-						region=region,
-						genWpt=normalize(ak.firsts(genW.pt), cut),
-						weight=weight
+					output['fjpt_cat'].fill(
+						  region=region,
+						  fjpt=normalize(leading_fj.pt, cut),
+						  TvsQCD=normalize(leading_fj.TvsQCD, cut),
+						  n_qinfj=normalize(n_qinfj, cut, fillvalue=-1),
+						  n_binfj=normalize(n_binfj, cut, fillvalue=-1),
+						  weight=weight
 					)
+					output['TvsQCD_cat'].fill(
+						  region=region,
+						  TvsQCD=normalize(leading_fj.TvsQCD, cut),
+						  n_qinfj=normalize(n_qinfj, cut, fillvalue=-1),
+						  n_binfj=normalize(n_binfj, cut, fillvalue=-1),
+						  weight=weight
+					)
+				output['fjpt'].fill(
+					  region=region,
+					  fjpt=normalize(leading_fj.pt, cut),
+					  TvsQCD=normalize(leading_fj.TvsQCD, cut),
+					  weight=weight
+				)
 				output['ut'].fill(
 					  region=region,
 					  ut=normalize(u[region].r, cut),
@@ -1173,6 +974,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		scale = 1
 		if self._xsec[dataset]!= -1: 
+			#scale = 1.0#self._lumi*self._xsec[dataset]
 			scale = self._lumi*self._xsec[dataset]
 
 		for key in output:
