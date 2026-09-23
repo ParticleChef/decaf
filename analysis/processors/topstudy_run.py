@@ -856,6 +856,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 					'mindphirecoil':		ak.min(abs(u['sr'].delta_phi(j_clean.T)), axis=1,mask_identity=False),
 					'minDphirecoil':		abs(u[region].delta_phi(leading_fj.T)),
 					'fjpt':					leading_fj.pt,
+					'fjpt_bin':					leading_fj.pt,
 					'fjphi':				leading_fj.phi,
 					'fjeta':				leading_fj.eta,
 					'jpt':					leading_j.pt,
