@@ -890,12 +890,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 						  n_binfj=normalize(n_binfj, cut, fillvalue=-1),
 						  weight=weight
 					)
-				output['fjpt'].fill(
-					  region=region,
-					  fjpt=normalize(leading_fj.pt, cut),
-					  TvsQCD=normalize(leading_fj.TvsQCD, cut),
-					  weight=weight
-				)
 				output['ut'].fill(
 					  region=region,
 					  ut=normalize(u[region].r, cut),
