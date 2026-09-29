@@ -266,14 +266,9 @@ class AnalysisProcessor(processor.ProcessorABC):
 		weights = Weights(len(events), storeIndividual=True)
 		output = self.make_output()
 
-		if not isData:
-			genw = ak.to_numpy(events.genWeight).astype(np.float64)
-			weights.add("genw", genw)
-
-			if shift_name is None:
-				output["sumw"] = np.sum(genw, dtype=np.float64)
-		#if shift_name is None and not isData:
-		#	output['sumw'] = ak.sum(events.genWeight)
+		
+		if shift_name is None and not isData:
+			output['sumw'] = ak.sum(events.genWeight)
 
 		###
 		#Getting corrections, ids from .coffea files
@@ -596,11 +591,13 @@ class AnalysisProcessor(processor.ProcessorABC):
 		#Calculating weights
 		###
 		if not isData:
-			#j['isbflav'] = j.hadronFlavour == 5
-			#j_bflav = j[j.isbflav]
-			#binfj = leading_fj.vec.delta_r(j_bflav)
-			#n_binfj = ak.sum(binfj < 1.5, axis=1)
-			n_binfj = ak.fill_none(leading_fj.nBHadrons, 0)
+			j['isbflav'] = j.hadronFlavour == 5
+			j_bflav = j[j.isbflav]
+			#fj['bisinfj'] = ak.all(fj.vec.metric_table(j_bflav)<1.5, axis=2)
+			binfj = leading_fj.vec.delta_r(j_bflav)
+			n_binfj = ak.sum(binfj < 1.5, axis=1)
+			#fj_bflav = fj[fj.bisinfj]
+			#nfj_bflav = ak.num(fj_bflav, axis=1)
 			
 			gen = events.GenPart
 
@@ -609,17 +606,11 @@ class AnalysisProcessor(processor.ProcessorABC):
 			p1 = ak.fill_none(gen.distinctParent.pdgId, 0)
 			p2 = ak.fill_none(ak.fill_none(gen.distinctParent.distinctParent.pdgId, 0), 0)
 			gen['isqfromt'] = gen.isq & (abs(p1) == 24) & (abs(p2) == 6)
-			gen['isbfromt'] = gen.isq & (abs(gen.pdgId) == 5) & (abs(p1) == 6)
+			gen['isbfromt'] = gen.isq & (abs(p1) == 6)
 			q_from_t = gen[gen.isqfromt]
 			b_from_t = gen[gen.isbfromt]
-
-			b_top = b_from_t.distinctParentIdxG
-			q_top = q_from_t.distinctParent.distinctParentIdxG
-			b_from_t = b_from_t[ak.sum(b_top[:, :, None] == q_top[:, None, :], axis=2) >= 2]
-			q_from_t = ak.concatenate([q_from_t, b_from_t], axis=1)
-
 			qinfj = leading_fj.vec.delta_r(q_from_t)
-			n_qinfj = ak.sum(qinfj <= 1.5, axis=1)
+			n_qinfj = ak.sum(qinfj < 1.5, axis=1)
 			#fj['qisinfj'] = ak.all(fj.vec.metric_table(q_from_t)<1.5, axis=2)
 			#q_from_t_fj = fj[fj.qisinfj]
 			#nq_from_t_fj = ak.num(q_from_t_fj, axis=1)
