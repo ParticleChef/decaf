@@ -234,3 +234,124 @@ You can check the status of your HTCondor jobs by doing:
 condor_q <YOUR_USERNAME>
 ```
 
+---
+
+## Resubmitting Missing Jobs
+
+The list of the jobs without output can be made with `missjob.py`:
+
+```
+python3 missjob.py -p hadmonotop2022_0605 -m 2022_private_v1
+```
+
+Output text file name is like `missJobs_hadmonotop2022_0605.txt`, one job per line. With the `-d` (`--dataset`) option the name of the list becomes `missJobs_<PROCESSOR>_<DATASET>.txt`. The same list is also written by `nohup_job_new.py` when all its jobs are done.
+
+The two scripts below take that list and run only those jobs, in local with `nohup` or on `condor`. 
+
+### Resubmit in local with `nohup`
+
+```
+python3 resubmit_nohup.py -p hadmonotop2022_0605 -m 2022_private_v1 -j 20
+```
+
+The script reads `missJobs_<PROCESSOR>.txt`, skips the jobs whose output is already in `hists/<PROCESSOR>/`, and starts `run.py` for each one of the rest in the background, keeping at most `-j` of them alive at the same time. The std output and error of each job is saved in `log/<JOB>.log`. At the end it prints how many jobs have an output, and the jobs that are still missing are written to `missJobs_<PROCESSOR>.txt.still_missing`.
+
+The options for this script are the same as for `run.py`, with the addition of:
+
+- `-f` (`--file`)
+
+Job list to read. By default it is `missJobs_<PROCESSOR>[_<DATASET>].txt`.
+
+- `-j` (`--jobs`)
+
+How many `run.py` to keep running at the same time. Default is `50`.
+
+- `-s` (`--sleep`)
+
+Seconds between two status prints. Default is `10`.
+
+- `-l` (`--logdir`)
+
+Directory for the job logs. Default is `log`.
+
+- `-n` (`--dry-run`)
+
+Prints the commands but starts nothing.
+
+- `--passes`
+
+Number of times to try again on what is still missing. Default is `1`, so each job runs once. With `--passes 3` the jobs that failed are started again, at most two more times.
+
+The started jobs are detached, like with `nohup`, so they keep running if the connection is lost or the script is stopped with `Ctrl-C`. Running the script again continues with the jobs that still have no output.
+
+### Resubmit with `condor`
+
+```
+python3 resubmit_condor.py -p hadmonotop2022_0605 -m 2022_private_v1 -c lpc
+```
+
+The script finds the missing jobs itself by comparing the metadata with `hists/<PROCESSOR>/`, so `missjob.py` does not have to be run first. It writes the list `missJobs_<PROCESSOR>.txt` and the submit description `resubmit_<PROCESSOR>.submit`, and submits all the missing jobs as one condor cluster with `queue SAMPLE from <LIST>`. There is one submit description in the script for each cluster, so the settings of a site are all in one place.
+
+The options for this script are the same as for `run_condor.py`, with these differences:
+
+- `-c` (`--cluster`)
+
+Specifies which cluster you are using. Supports `lpc`, `kisti` and `knut3`. Default is `lpc`, or `$DECAF_CLUSTER` if it is set.
+
+- `-t` (`--tar`)
+
+Tars the local python environment and the local `decaf` folder. CMSSW is not used anymore, so it is not tarred.
+
+- `-x` (`--copy`)
+
+Copies these two tarballs, `decaf.tgz` and `pylocal_3_8.tgz`, to your EOS area of the cluster. As for `run_condor.py`, when the environment is already there you can resubmit without `-t -x`.
+
+- `-f` (`--file`)
+
+Job list to read, instead of comparing the metadata with `hists/<PROCESSOR>/`. The jobs that have an output in the meantime are dropped from it.
+
+- `-n` (`--dry-run`)
+
+Writes the list and the submit description, prints the `tar` and `xrdcp` commands, but submits nothing. Good to check the submit description before sending the jobs.
+
+- `-e` (`--exclude`)
+
+Skips the datasets that contain these substrings, comma separated. `-d` also takes several substrings, comma separated.
+
+- `--clean-logs`
+
+Deletes the old condor logs of the jobs that are resubmitted.
+
+For example, to check first and then resubmit one dataset with more memory:
+
+```
+python3 resubmit_condor.py -p hadmonotop2022_0605 -m 2022_private_v1 -c lpc -n
+python3 resubmit_condor.py -p hadmonotop2022_0605 -m 2022_private_v1 -c knut3 -d DYto2L --memory 8000
+```
+
+The script has nothing that belongs to one account or server: the user name and the working directory come from the environment. The x509 proxy is found from `$X509_USER_PROXY` or `/tmp/x509up_u<UID>`. You can give a file with `--proxy <FILE>` or skip the proxy with `--proxy none`.
+
+The request of the jobs can be changed with `--cpus`, `--memory`, `--disk`, `--image` and `--accounting-group`. Other options:
+
+- `--input-files`: extra files sent with the job, comma separated.
+- `--exec-args`: extra arguments for `run.sh`, comma separated.
+- `--retries`: sets `max_retries`.
+- `--chunk N`: submits at most `N` jobs per `condor_submit`.
+- `--submit-opts`: extra options passed to `condor_submit`, for example `-spool`.
+
+Any other line of the submit description can be added with `--extra`, for example `--extra 'requirements = (OpSysMajorVer == 9)'`. These settings can also be kept in a JSON file and used with `--site-config <FILE>`, so the command stays short on a new server. The keys have the same names as the long options with `_` in place of `-`. The command line wins over the file:
+
+```json
+{"cluster": "kisti", "memory": "8000", "extra": ["requirements = (OpSysMajorVer == 9)"]}
+```
+
+As for the first submission, you can check the status of your HTCondor jobs by doing:
+
+```
+condor_q <YOUR_USERNAME>
+```
+
+In LPC server, run this:
+```
+sh condor_status.sh
+```
