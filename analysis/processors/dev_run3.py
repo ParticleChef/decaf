@@ -319,6 +319,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 				hist.axis.Regular(50,0,1000, name='genWpt', label='gen W $p_{T}$'),
 				storage=hist.storage.Weight(),
 			),
+			'fjpt_cat': hist.Hist(
+				hist.axis.StrCategory([], name='region', growth=True),
+				hist.axis.Variable([250, 325, 400, 600, 2000], name='fjpt', label='AK15 Leading Jet $p_{T}$', flow=True),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
+				hist.axis.Integer(0,10, name='n_qinfj', label='Number of q from top in AK15 Jet'),
+				hist.axis.Integer(0,10, name='n_binfj', label='Number of b flavor in AK15 Jet'),
+				storage=hist.storage.Weight(),
+			),
 			'njets': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.IntCategory([0, 1, 2, 3, 4, 5, 6], name='njets', label='AK4 Number of Jets'),
@@ -396,6 +404,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 		get_nlo_ewk_weight	   = self._corrections['get_nlo_ewk_weight']	
 		#get_nnlo_nlo_weight	  = self._corrections['get_nnlo_nlo_weight'][self._year]
 		get_btag_weight	  = self._corrections['get_btag_weight']
+		get_ttag_weight	  = self._corrections['get_ttag_weight']
 		get_ttbar_weight	 = self._corrections['get_ttbar_weight']
 		#get_mu_rochester_sf	  = self._corrections['get_mu_rochester_sf'][self._year]
 
@@ -703,7 +712,41 @@ class AnalysisProcessor(processor.ProcessorABC):
 			
 			gen = events.GenPart
 
-			gen['isb'] = (abs(gen.pdgId)==5)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
+			###
+			# AK15 truth class for top-tag weight (top / b / qcd), from topstudy_run.py
+			###
+			#j['isbflav'] = j.hadronFlavour == 5
+			#j_bflav = j[j.isbflav]
+			#binfj = leading_fj.vec.delta_r(j_bflav)
+			#n_binfj = ak.sum(binfj < 1.5, axis=1)
+			n_binfj = ak.fill_none(leading_fj.nBHadrons, 0)
+
+			#yourmotheris = gen.distinctParent.distinctParent.pdgId
+			gen['isq'] = (abs(gen.pdgId) >= 1) & (abs(gen.pdgId) <= 5) & gen.hasFlags(['fromHardProcess', 'isLastCopy'])
+			p1 = ak.fill_none(gen.distinctParent.pdgId, 0)
+			#p2 = ak.fill_none(ak.fill_none(gen.distinctParent.distinctParent.pdgId, 0), 0)
+			p2 = ak.fill_none(gen.distinctParent.distinctParent.pdgId, 0)
+			gen['isqfromt'] = gen.isq & (abs(p1) == 24) & (abs(p2) == 6)
+			gen['isbfromt'] = gen.isq & (abs(gen.pdgId) == 5) & (abs(p1) == 6)
+			q_from_t = gen[gen.isqfromt]
+			b_from_t = gen[gen.isbfromt]
+
+			# keep only b's whose top also decayed hadronically (2 W-quarks share its index)
+			b_top = b_from_t.distinctParentIdxG
+			q_top = q_from_t.distinctParent.distinctParentIdxG
+			b_from_t = b_from_t[ak.sum(b_top[:, :, None] == q_top[:, None, :], axis=2) >= 2]
+			q_from_t = ak.concatenate([q_from_t, b_from_t], axis=1)
+
+			qinfj = leading_fj.vec.delta_r(q_from_t)
+			n_qinfj = ak.sum(qinfj <= 1.5, axis=1)
+			#fj['qisinfj'] = ak.all(fj.vec.metric_table(q_from_t)<1.5, axis=2)
+			#q_from_t_fj = fj[fj.qisinfj]
+			#nq_from_t_fj = ak.num(q_from_t_fj, axis=1)
+
+			# None if no AK15 jet
+			fj_class = ak.where(n_qinfj >= 2, "top", ak.where(n_binfj > 0, "b", "qcd"))
+
+			gen['isb'] =(abs(gen.pdgId)==5)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
 			gen['isc'] = (abs(gen.pdgId)==4)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
 			gen['isTop'] = (abs(gen.pdgId)==6)&gen.hasFlags(['fromHardProcess', 'isLastCopy'])
 			genTops = gen[gen.isTop]
@@ -756,7 +799,16 @@ class AnalysisProcessor(processor.ProcessorABC):
 				j_iso.isbtagvL
 			)
 
-			
+			###
+			# AK15 top-tagging weights
+			###
+			ttagSF, ttagSFUp, ttagSFDown = get_ttag_weight(self._year).ttag_weight(
+				leading_fj.pt,
+				fj_class,
+				leading_fj.TvsQCD > self._TvsQCDwp[self._year]
+			)
+
+
 		###
 		# Selections
 		###
@@ -940,6 +992,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			weights.add('btagSFbc_uncorrelated',np.ones(len(events), dtype='float'), btagSFbc_uncorrelatedUp/btagSF, btagSFbc_uncorrelatedDown/btagSF)
 			weights.add('btagSFlight_correlated',np.ones(len(events), dtype='float'), btagSFlight_correlatedUp/btagSF, btagSFlight_correlatedDown/btagSF)
 			weights.add('btagSFlight_uncorrelated',np.ones(len(events), dtype='float'), btagSFlight_uncorrelatedUp/btagSF, btagSFlight_uncorrelatedDown/btagSF)
+			weights.add('ttagSF', ttagSF, ttagSFUp, ttagSFDown)
 
 			### 
 			# Region masks 
@@ -1030,13 +1083,20 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 
 
-		def normalize(val, cut):
+		def normalize(val, cut,fillvalue=np.nan):
 			if cut is None:
-				ar = ak.to_numpy(ak.fill_none(val, np.nan))
+				ar = ak.to_numpy(ak.fill_none(val, fillvalue))
 				return ar
 			else:
-				ar = ak.to_numpy(ak.fill_none(val[cut], np.nan))
+				ar = ak.to_numpy(ak.fill_none(val[cut], fillvalue))
 				return ar
+		#def normalize(val, cut):
+		#	if cut is None:
+		#		ar = ak.to_numpy(ak.fill_none(val, np.nan))
+		#		return ar
+		#	else:
+		#		ar = ak.to_numpy(ak.fill_none(val[cut], np.nan))
+		#		return ar
 				
 		def fill(region, systematic):
 			cut = selection.all(*regions[region])
@@ -1107,6 +1167,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 						region=region,
 						genWpt=normalize(ak.firsts(genW.pt), cut),
 						weight=weight
+					)
+					output['fjpt_cat'].fill(
+						  region=region,
+						  fjpt=normalize(leading_fj.pt, cut),
+						  TvsQCD=normalize(leading_fj.TvsQCD, cut),
+						  n_qinfj=normalize(n_qinfj, cut,fillvalue=-1),
+						  n_binfj=normalize(n_binfj, cut,fillvalue=-1),
+						  weight=weight
 					)
 				output['ut'].fill(
 					  region=region,

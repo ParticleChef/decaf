@@ -329,7 +329,7 @@ def isGoodAK4(j, year):
 	
 	pt	= j.pt
 	eta   = j.eta
-	jet_id= j.jetId
+	#jet_id= j.jetId
 	#pu_id=j.puId
 	chHEF  = j.chHEF
 	neHEF  = j.neHEF
