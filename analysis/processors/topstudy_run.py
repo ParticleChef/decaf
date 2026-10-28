@@ -638,6 +638,9 @@ class AnalysisProcessor(processor.ProcessorABC):
 			genDYs = gen[gen.isZ&(gen.mass>30)]
 			genAs = gen[gen.isA & (gen.pt > 100)]
 			#
+			nlo = np.ones(len(events), dtype='float')
+			if('TTto' in dataset): 
+				nlo = np.sqrt(get_ttbar_weight(genTops[:,0].pt) * get_ttbar_weight(genTops[:,1].pt))
 			nlo_ewk = np.ones(len(events), dtype='float')
 			if('WtoLNu' in dataset): 
 				nlo_ewk = get_nlo_ewk_weight['w'](ak.max(genWs.pt, axis=1))
