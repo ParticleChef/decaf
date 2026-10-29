@@ -852,7 +852,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 			],
 		}
 		if not isData:
-			weights.add('genw', events.genWeight)
 			weights.add('pileup', pu)
 			weights.add('nlo_ewk',nlo_ewk)
 			weights.add('topptreweighting', nlo)
@@ -865,6 +864,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			### 
 			# Region masks 
 			###
+			mask_iszeroL = ak.to_numpy((e_nloose==0)&(mu_nloose==0)&(pho_nloose==0))
 			mask_isoneE = ak.to_numpy((e_ntight==1)&(e_nloose==1)&(mu_nloose==0)&(pho_nloose==0))
 			mask_isoneM = ak.to_numpy((e_nloose==0)&(mu_ntight==1)&(mu_nloose==1)&(pho_nloose==0))
 			mask_istwoE = ak.to_numpy((e_nloose==2)&(mu_nloose==0)&(pho_nloose==0))
@@ -886,8 +886,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 			id_sf[mask_isoneE] = id_sf_isoneE[mask_isoneE]
 			id_sf[mask_isoneM] = id_sf_isoneM[mask_isoneM]
-			id_sf[mask_istwoE] = id_sf_isoneE[mask_istwoE]
-			id_sf[mask_istwoM] = id_sf_isoneM[mask_istwoM]
+			id_sf[mask_istwoE] = id_sf_istwoE[mask_istwoE]
+			id_sf[mask_istwoM] = id_sf_istwoM[mask_istwoM]
 			id_sf[mask_isoneG] = id_sf_isoneG[mask_isoneG]
 
 			weights.add('ids', id_sf)
@@ -903,7 +903,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			reco_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.reco_sf, axis=1), 1.0))
 
 			reco_sf[mask_isoneE] = reco_sf_isoneE[mask_isoneE]
-			reco_sf[mask_istwoE] = reco_sf_isoneE[mask_istwoE]
+			reco_sf[mask_istwoE] = reco_sf_istwoE[mask_istwoE]
 
 			weights.add('reco', reco_sf)
 
@@ -919,13 +919,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 			iso_sf_istwoM = ak.to_numpy(ak.fill_none(ak.prod(mu_loose.iso_sf, axis=1), 1.0))
 
 			iso_sf[mask_isoneM] = iso_sf_isoneM[mask_isoneM]
-			iso_sf[mask_istwoM] = iso_sf_isoneM[mask_istwoM]
+			iso_sf[mask_istwoM] = iso_sf_istwoM[mask_istwoM]
 
 			weights.add('iso', iso_sf)
 
 			###
 			# Trigger efficiency weight
 			###
+			met_sf_0,  met_sf_0_up,  met_sf_0_down  = get_met_trig_weight(self._year, u['sr'].r)
 			met_sf_m,  met_sf_m_up,  met_sf_m_down  = get_met_trig_weight(self._year, u['wmcr'].r)
 			met_sf_mm, met_sf_mm_up, met_sf_mm_down = get_met_trig_weight(self._year, u['zmcr'].r)
 			pho_sf, pho_sf_up, pho_sf_down = get_pho_trig_weight(self._year, ak.firsts(pho_tight).pt)
@@ -934,16 +935,18 @@ class AnalysisProcessor(processor.ProcessorABC):
 			trg_sf_up   = np.ones(len(events), dtype='float')
 			trg_sf_down = np.ones(len(events), dtype='float')
 
+			trg_sf_iszeroL = ak.to_numpy(ak.fill_none(met_sf_0, 1.0))
 			trg_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.hlt_sf, axis=1), 1.0))
 			trg_sf_isoneM = ak.to_numpy(ak.fill_none(met_sf_m, 1.0))
 			trg_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.hlt_sf, axis=1), 1.0))
 			trg_sf_istwoM = ak.to_numpy(ak.fill_none(met_sf_mm, 1.0))
 			trg_sf_isoneG = ak.to_numpy(ak.fill_none(pho_sf, 1.0))
 
+			trg_sf[mask_iszeroL] = trg_sf_iszeroL[mask_iszeroL]
 			trg_sf[mask_isoneE] = trg_sf_isoneE[mask_isoneE]
 			trg_sf[mask_isoneM] = trg_sf_isoneM[mask_isoneM]
-			trg_sf[mask_istwoE] = trg_sf_isoneE[mask_istwoE]
-			trg_sf[mask_istwoM] = trg_sf_isoneM[mask_istwoM]
+			trg_sf[mask_istwoE] = trg_sf_istwoE[mask_istwoE]
+			trg_sf[mask_istwoM] = trg_sf_istwoM[mask_istwoM]
 			trg_sf[mask_isoneG] = trg_sf_isoneG[mask_isoneG]
 
 			weights.add('trig', trg_sf)
