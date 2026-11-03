@@ -695,6 +695,58 @@ def get_ele_trig_weight(year, eta, pt, cutbased):
     return ak.unflatten(sf, counts=counts), ak.unflatten(sf_up, counts=counts), ak.unflatten(sf_down, counts=counts)
 
 ####
+# Electron Trigger efficiency (data, MC), per electron
+# For events with 2 electrons, the single-electron trigger fires if EITHER electron
+# fires it, so the event SF is
+#   SF = [1 - prod(1 - eff_data)] / [1 - prod(1 - eff_mc)]
+# not the product of the per-electron SFs.
+# Same tables as get_ele_trig_weight (Electron-HLT-DataEff / -McEff). Below the
+# 25 GeV table edge the efficiency is set to 0 (Ele30 cannot fire there) instead
+# of being clamped to the 25-30 GeV turn-on bin.
+#
+# Usage in processors/topstudy_run.py (NOT applied yet):
+#   - with the other corrections (~l.296):
+#       get_ele_trig_eff = self._corrections['get_ele_trig_eff']
+#   - after e['hlt_sf'] is set (~l.414), same Loose/Tight choice as hlt_sf:
+#       effD_loose, _, _, effM_loose, _, _ = get_ele_trig_eff(self._year, abs(e.eta), e.pt, "Loose")
+#       effD_tight, _, _, effM_tight, _, _ = get_ele_trig_eff(self._year, abs(e.eta), e.pt, "Tight")
+#       e['hlt_eff_data'] = ak.where(e.istight, effD_tight, ak.where(e.isloose, effD_loose, ak.zeros_like(e.pt)))
+#       e['hlt_eff_mc']   = ak.where(e.istight, effM_tight, ak.where(e.isloose, effM_loose, ak.zeros_like(e.pt)))
+#   - replace the istwoE trigger SF (~l.941):
+#       #trg_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.hlt_sf, axis=1), 1.0))
+#       p_data = 1 - ak.prod(1 - e_loose.hlt_eff_data, axis=1)
+#       p_mc   = 1 - ak.prod(1 - e_loose.hlt_eff_mc,   axis=1)
+#       trg_sf_istwoE = ak.to_numpy(ak.fill_none(ak.where(p_mc > 0, p_data / p_mc, 1.0), 1.0))
+#   The isoneE SF (prod over exactly one tight electron) is already correct.
+#   Same istwoE line in hadmonotop_run3.py:1007, hadmonotop_axial_run3.py:1007, dev_run3.py:1072.
+####
+
+def get_ele_trig_eff(year, eta, pt, cutbased):
+    evaluator = correctionlib.CorrectionSet.from_file("data/EGammaSF/"+year+"/electronHlt.json.gz")
+    yr = {
+    '2022pre' : '2022Re-recoBCD',
+    '2022post': '2022Re-recoE+PromptFG',
+    '2023pre' : '2023PromptC',
+    '2023post': '2023PromptD'
+    }
+
+    wp = "HLT_SF_Ele30_"+str(cutbased)+"ID"
+
+    below = ak.flatten(pt < 25.0)
+    flatpt = ak.flatten(ak.where((pt<25.0), ak.full_like(pt,25.), pt))
+    flateta, counts = ak.flatten(eta), ak.num(eta)
+
+    out = []
+    for name in ["Electron-HLT-DataEff", "Electron-HLT-McEff"]:
+        for valtype in ["nom", "up", "down"]:
+            eff = evaluator[name].evaluate(yr[year], valtype, wp, flateta, flatpt)
+            eff = np.where(below, 0.0, eff)
+            out.append(ak.unflatten(eff, counts=counts))
+
+    # eff_data, eff_data_up, eff_data_down, eff_mc, eff_mc_up, eff_mc_down
+    return tuple(out)
+
+####
 # Photon Trigger weight
 # Measured using MET, GJ (trg: Photon200, ref: PFHT1050)
 ####
@@ -1201,6 +1253,7 @@ corrections = {
 
     'get_met_trig_weight':      get_met_trig_weight,
     'get_ele_trig_weight':      get_ele_trig_weight,
+    'get_ele_trig_eff':         get_ele_trig_eff,
     'get_pho_trig_weight':      get_pho_trig_weight,
     
     'get_ttbar_weight':         get_ttbar_weight,

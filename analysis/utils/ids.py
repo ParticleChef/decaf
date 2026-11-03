@@ -325,12 +325,9 @@ def isGoodAK15(fj):
 ######
 
 
-def isGoodAK4(j, year):
-	
-	pt	= j.pt
-	eta   = j.eta
-	#jet_id= j.jetId
-	#pu_id=j.puId
+def getJetID(j, year):
+	## AK4 PUPPI TightLeptonVeto ID (1: pass, 0: fail), from the JME jetid json
+	## instead of the nanoAOD jetId bits
 	chHEF  = j.chHEF
 	neHEF  = j.neHEF
 	chEmEF = j.chEmEF
@@ -340,21 +337,25 @@ def isGoodAK4(j, year):
 	neMultiplicity = j.neMultiplicity
 	multiplicity   = neMultiplicity + chMultiplicity
 
-	def getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity):
-		evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jetid.json.gz')
-		corr = evaluator["AK4PUPPI_TightLeptonVeto"]
-		counts = ak.num(eta)
-		eta, chHEF, neHEF, chEmEF, neEmEF, muEF = ak.flatten(eta), ak.flatten(chHEF), ak.flatten(neHEF), ak.flatten(chEmEF), ak.flatten(neEmEF), ak.flatten(muEF)
-		chMultiplicity, neMultiplicity, multiplicity = ak.flatten(chMultiplicity), ak.flatten(neMultiplicity), ak.flatten(multiplicity)
-		args = (
-			eta,
-			chHEF, neHEF, chEmEF, neEmEF, muEF,
-			chMultiplicity, neMultiplicity, multiplicity
-		)
-		out = corr.evaluate(*args)
-		return ak.unflatten(out, counts)
-	
-	jetId = getJetID(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMultiplicity, neMultiplicity, multiplicity)
+	evaluator = correctionlib.CorrectionSet.from_file('data/JetMETCorr/'+year+'/jetid.json.gz')
+	corr = evaluator["AK4PUPPI_TightLeptonVeto"]
+	counts = ak.num(j.eta)
+	args = (
+		j.eta,
+		chHEF, neHEF, chEmEF, neEmEF, muEF,
+		chMultiplicity, neMultiplicity, multiplicity
+	)
+	out = corr.evaluate(*[ak.flatten(a) for a in args])
+	return ak.unflatten(out, counts)
+
+def isGoodAK4(j, year):
+
+	pt	= j.pt
+	eta   = j.eta
+	#jet_id= j.jetId
+	#pu_id=j.puId
+
+	jetId = getJetID(j, year)
 	mask = (pt > 30) & (abs(eta) < 2.4) & (jetId == 1)
 #	mask = (pt > 30) & (abs(eta) < 2.4) & ((jet_id & 6) == 6) ##((pt >= 50) & mask) | ((pt < 50) & mask) # & ((pu_id & 1) == 1))# & (nhf < 0.8) & (chf > 0.1) #((jet_id & 6) == 6)
 
@@ -375,10 +376,14 @@ def isJetVeto(jet, year):
 	corr = evaluator[era[year]]
 	counts = ak.num(eta)
 	eta, phi = ak.flatten(eta), ak.flatten(phi)
-	out = corr.evaluate('jetvetomap',eta,phi)
-	mask = (out != 0)
+	out = ak.unflatten(corr.evaluate('jetvetomap',eta,phi), counts)
 
-	return ak.unflatten(mask, counts)
+	## JME recommendation: only jets with pT > 15 GeV, TightLeptonVeto ID and
+	## (chEmEF + neEmEF) < 0.9 can veto the event
+	jetId = getJetID(jet, year)
+	sel = (jet.pt > 15) & (jetId == 1) & ((jet.chEmEF + jet.neEmEF) < 0.9)
+
+	return (out != 0) & sel
 
 
 
