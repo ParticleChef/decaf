@@ -1208,6 +1208,63 @@ class BTagCorrector:
         np.nan_to_num(light_up_uncorrelated, nan=1., posinf=1., neginf=1.), \
         np.nan_to_num(light_down_uncorrelated, nan=1., posinf=1., neginf=1.)
 
+class TopTagCorrector:
+
+    def __init__(self, year):
+        self._year = year
+        yearmap = {
+            '2022pre' : '2022preEE',
+            '2022post': '2022postEE',
+            '2023pre' : '2023preBPix',
+            '2023post': '2023postBPix',
+        }
+
+        # SF and MC efficiency per truth jet class ("top"/"b"/"qcd"), see toptag/README.md
+        cset = correctionlib.CorrectionSet.from_file('data/TopTagSF/toptag_sf_'+yearmap[year]+'.json.gz')
+        self.sf = cset["toptag_sf"]
+        self.eff = cset["toptag_efficiency"]
+
+    def ttag_weight(self, pt, jetclass, istag):
+        '''
+        Inputs are per-event values of the leading AK15 jet (None if no jet):
+         =>  pt ,
+         =>  jetclass ,  MC truth class "top"/"b"/"qcd" (toptag/classifiers.py)
+         =>  istag ,     TvsQCD > working point
+        Returns (nom, up, down) per-event weights; 1 for events without a jet.
+        '''
+
+        hasjet = ~ak.is_none(pt)
+        pt = ak.to_numpy(ak.fill_none(pt, 250.))
+        pt = np.clip(pt, 250., 1999.99)
+        jetclass = ak.to_numpy(ak.fill_none(jetclass, "qcd")).astype(str)
+        istag = ak.to_numpy(ak.fill_none(istag, False))
+
+        # correctionlib only vectorizes real/int inputs -> evaluate per class
+        def by_class(corr, *args):
+            return np.where(
+                (jetclass=="top"),
+                corr.evaluate(pt, "top", *args),
+                np.where(
+                    (jetclass=="b"),
+                    corr.evaluate(pt, "b", *args),
+                    corr.evaluate(pt, "qcd", *args)
+                )
+            )
+
+        eff = by_class(self.eff)
+
+        #https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagSFMethods
+        def P(eff):
+            return np.where(istag, eff, 1-eff)
+
+        def weight(syst):
+            sf = by_class(self.sf, syst)
+            eff_data = np.minimum(sf*eff, 1.)
+            w = P(eff_data)/P(eff)
+            w = np.nan_to_num(w, nan=1., posinf=1., neginf=1.)
+            return np.where(hasjet, w, 1.)
+
+        return weight('nominal'), weight('up'), weight('down')
 ###
 # Muon scale and resolution (i.e. Rochester)
 # https://twiki.cern.ch/twiki/bin/view/CMS/RochcorMuon
@@ -1259,6 +1316,7 @@ corrections = {
     'get_ttbar_weight':         get_ttbar_weight,
 
     'get_btag_weight':          BTagCorrector,
+    'get_ttag_weight':          TopTagCorrector,
 
     'get_nlo_ewk_weight':       get_nlo_ewk_weight,
 #    'get_nnlo_nlo_wjet':         get_nnlo_nlo_wjet,

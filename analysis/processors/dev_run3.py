@@ -600,9 +600,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		fj = events.AK15PuppiJet
 		rho_density = events.Rho.fixedGridRhoFastjetAll
-		fjec_corr = get_fjec_correction(self._year, fj.pt, fj.eta, fj.phi, rho_density, fj.area, run, isData)
-		fj['pt'] = fj.pt * fjec_corr
-		fj['mass'] = fj.mass * fjec_corr
+		#fjec_corr = get_fjec_correction(self._year, fj.pt, fj.eta, fj.phi, rho_density, fj.area, run, isData)
+		#fj['pt'] = fj.pt * fjec_corr
+		#fj['mass'] = fj.mass * fjec_corr
+		fj_pt_raw   = fj.pt   * (1 - fj.rawFactor)
+		fj_mass_raw = fj.mass * (1 - fj.rawFactor)
+		fjec_corr = get_fjec_correction(self._year, fj_pt_raw, fj.eta, fj.phi, rho_density, fj.area, run, isData)
+		fj['pt']   = fj_pt_raw   * fjec_corr
+		fj['mass'] = fj_mass_raw * fjec_corr
 		#fj['msd_corr'] = get_msd_corr(fj)
 		fj['vec'] = ak.zip(
 			{
@@ -641,9 +646,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 		leading_fj = ak.firsts(fj_clean)
 
 		j = events.Jet
-		jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, rho_density, j.area, run, isData)
-		j['pt'] = j.pt * jec_corr
-		j['mass'] = j.mass * jec_corr
+		#jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, rho_density, j.area, run, isData)
+		#j['pt'] = j.pt * jec_corr
+		#j['mass'] = j.mass * jec_corr
+		j_pt_raw   = j.pt   * (1 - j.rawFactor)
+		j_mass_raw = j.mass * (1 - j.rawFactor)
+		jec_corr = get_jec_correction(self._year, j_pt_raw, j.eta, j.phi, rho_density, j.area, run, isData)
+		j['pt']   = j_pt_raw   * jec_corr
+		j['mass'] = j_mass_raw * jec_corr
 		j['isveto'] = isJetVeto(j, self._year)
 		j_veto = j[j.isveto]
 		n_j_veto = ak.num(j_veto, axis=1)
