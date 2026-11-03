@@ -28,6 +28,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 		#https://twiki.cern.ch/twiki/bin/viewauth/CMS/LumiRecommendationsRun3
 		'2022pre': 7.980,
 		'2022post': 26.67,
+		'2023pre' : 17.794,
+		'2023post': 9.451,
 	}
 
 	lumiMasks = {
@@ -60,8 +62,9 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		self._samples = {
 			'basic' :('GJ','JetMET'),
-			'oneA' :('GJ','JetMET'),
-			'eff' :('GJ', 'JetMET'),
+			'oneA'  :('GJ','JetMET'),
+			'jetht' :('GJ','JetMET'),
+			'eff'   :('GJ','JetMET'),
 		}
 		
 
@@ -201,7 +204,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			& ak.all(j.metric_table(e_loose) > 0.4, axis=2)
 		)
 		triggers = np.zeros(len(events), dtype='bool')
-		for path in self._photon_ref_triggers[self._year]:
+		for path in self._photon_ref_triggers['2022pre']:
 			if path not in events.HLT.fields:
 				continue
 			triggers = triggers | events.HLT[path]
@@ -222,19 +225,20 @@ class AnalysisProcessor(processor.ProcessorABC):
 		selection.add('lumimask', lumimask)
 
 		met_filters =  np.ones(len(events), dtype='bool')
-		for flag in AnalysisProcessor.met_filters[self._year]:
+		#for flag in AnalysisProcessor.met_filters[self._year]:
+		for flag in AnalysisProcessor.met_filters['2022pre']:
 			met_filters = met_filters & events.Flag[flag]
 		selection.add('met_filters',met_filters)
 
 		triggers = np.zeros(len(events), dtype='bool')
-		for path in self._met_triggers[self._year]:
+		for path in self._met_triggers['2022pre']:
 			if not hasattr(events.HLT, path): continue
 			triggers = triggers | events.HLT[path]
 		#selection.add('met_triggers', triggers)
 
 		## Reference trigger
 		triggers = np.zeros(len(events), dtype='bool')
-		for path in self._photon_ref_triggers[self._year]:
+		for path in self._photon_ref_triggers['2022pre']:
 			if path not in events.HLT.fields:
 				continue
 			triggers = triggers | events.HLT[path]
@@ -242,7 +246,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		## Photon Trigger
 		triggers = np.zeros(len(events), dtype='bool')
-		for path in self._photon_triggers[self._year]:
+		for path in self._photon_triggers['2022pre']:
 			if path not in events.HLT.fields:
 				continue
 			triggers = triggers | events.HLT[path]
@@ -258,23 +262,22 @@ class AnalysisProcessor(processor.ProcessorABC):
 			'basic': [
 					'lumimask',
 					'met_filters',
-					#'jet_ht1500',
-					#'photon_selection'
 			],
 			'oneA': [
 					'lumimask',
 					'met_filters',
 					'photon_selection',
-					#'jet_ht1500',
-					#'reference_triggers'
+			],
+			'jetht': [
+					'lumimask',
+					'met_filters',
+					'jet_ht1500',
 			],
 			'eff': [
 					'lumimask',
 					'met_filters',
 					'photon_selection',
 					'jet_ht1500',
-					#'reference_triggers',
-					#'single_photon_triggers'
 			],
 		}
 
@@ -297,7 +300,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 			)
 			output['phopt'].fill(
 				  region=region,
-				  phopt=normalize(leading_pho.pt, cut),
+				  phopt=normalize(ak.firsts(pho).pt, cut),
+				  #phopt=normalize(leading_pho.pt, cut),
 				  PFHT1050 =normalize(events.HLT.PFHT1050,cut),
 				  Photon200=normalize(events.HLT.Photon200,cut),
 #				  weight=weight
