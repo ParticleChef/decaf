@@ -14,6 +14,7 @@ from coffea.util import load, save
 from optparse import OptionParser
 from coffea.nanoevents.methods import vector
 import gzip
+import correctionlib
 
 def update(events, collections):
 	"""Return a shallow copy of events array with some collections swapped out"""
@@ -21,6 +22,122 @@ def update(events, collections):
 	for name, value in collections.items():
 		out = ak.with_field(out, value, name)
 	return out
+
+###
+# Helpers for weight up/down variations (top-tag SF uncertainty study,
+# toptag/docs/toptag_sf_uncertainty_plan.txt B2). Evaluated here instead of in
+# utils/corrections.py so the shared corrections.coffea stays unchanged.
+###
+_PU_KEYS = {
+	'2022pre' : 'Collisions2022_355100_357900_eraBCD_GoldenJson',
+	'2022post': 'Collisions2022_359022_362760_eraEFG_GoldenJson',
+	'2023pre' : 'Collisions2023_366403_369802_eraBC_GoldenJson',
+	'2023post': 'Collisions2023_369803_370790_eraD_GoldenJson',
+}
+_CSET_CACHE = {}
+def _cset(path):
+	if path not in _CSET_CACHE:
+		_CSET_CACHE[path] = correctionlib.CorrectionSet.from_file(path)
+	return _CSET_CACHE[path]
+
+def finite_or(x, fallback):
+	"""numpy float64 copy of x with non-finite entries replaced by fallback."""
+	x = np.asarray(x, dtype=np.float64)
+	return np.where(np.isfinite(x), x, fallback)
+
+def get_pu_weight_var(year, trueint, var):
+	"""Pileup weight, var in {'nominal','up','down'} (absolute)."""
+	trueint = np.asarray(ak.to_numpy(trueint), dtype=np.float64)
+	return _cset('data/PUweight/'+year+'/puWeights.json.gz')[_PU_KEYS[year]].evaluate(trueint, var)
+
+def get_mu_sf_var(year, key, eta, pt, var):
+	"""Muon POG SF (muon_Z.json.gz) for jagged eta/pt, var in
+	{'nominal','systup','systdown'}; same clamping as utils/corrections.py."""
+	eta = ak.where(eta > 2.399, ak.full_like(eta, 2.399), eta)
+	pt  = ak.where(pt < 15., ak.full_like(pt, 15.), pt)
+	counts = ak.num(eta)
+	flateta = np.asarray(ak.to_numpy(ak.flatten(eta)), dtype=np.float64)
+	flatpt  = np.asarray(ak.to_numpy(ak.flatten(pt)), dtype=np.float64)
+	w = _cset('data/MuonSF/'+year+'/muon_Z.json.gz')[key].evaluate(flateta, flatpt, var)
+	return ak.unflatten(w, counts)
+
+def nano_weight_table(events, name, width):
+	"""(n_entries, table) for a jagged nanoAOD weight vector (PSWeight,
+	LHEScaleWeight, LHEPdfWeight); table is [nevents, width] with NaN padding.
+	None if the branch is absent (e.g. data or a sample without it)."""
+	if name not in events.fields:
+		return None
+	arr = events[name]
+	n = np.asarray(ak.to_numpy(ak.num(arr, axis=1)))
+	tab = ak.to_numpy(ak.fill_none(ak.pad_none(arr, width, axis=1, clip=True), np.nan))
+	return n, np.asarray(tab, dtype=np.float64)
+
+def get_ps_weights(events):
+	"""ISR and FSR (up, down) relative weights from PSWeight (4 entries:
+	[0] ISR=2 FSR=1, [1] ISR=1 FSR=2, [2] ISR=0.5 FSR=1, [3] ISR=1 FSR=0.5).
+	Events without 4 entries get 1."""
+	nev = len(events)
+	one = np.ones(nev)
+	res = nano_weight_table(events, 'PSWeight', 4)
+	if res is None:
+		return (one, one), (one, one)
+	n, t = res
+	ok = (n == 4)
+	col = lambda i: np.where(ok, finite_or(t[:, i], 1.), 1.)
+	return (col(0), col(2)), (col(1), col(3))
+
+def get_scale_weights(events):
+	"""7-point muR/muF envelope (up=max, down=min, relative) from
+	LHEScaleWeight; drops the anti-correlated (0.5,2)/(2,0.5) points.
+	9 entries: [4] nominal, use 0,1,3,5,7,8. 8 entries (nominal omitted):
+	use 0,1,3,4,6,7. Otherwise 1."""
+	nev = len(events)
+	up, down = np.ones(nev), np.ones(nev)
+	res = nano_weight_table(events, 'LHEScaleWeight', 9)
+	if res is None:
+		return up, down
+	n, t = res
+	for nent, idx in ((9, [0, 1, 3, 5, 7, 8]), (8, [0, 1, 3, 4, 6, 7])):
+		sel = (n == nent)
+		if not np.any(sel):
+			continue
+		v = t[sel][:, idx]
+		v = np.where(np.isfinite(v), v, 1.)
+		up[sel] = np.max(v, axis=1)
+		down[sel] = np.min(v, axis=1)
+	return up, down
+
+def get_pdf_weights(events):
+	"""PDF and alpha_S (up, down) relative weights from LHEPdfWeight, Hessian
+	sets (CMS Run 3 default NNPDF3.1 325300: [0] central, [1..100]
+	eigenvectors, [101],[102] alpha_S). delta = sqrt(sum_i (w_i-w_0)^2)/w_0,
+	up/down = 1 +- delta. alpha_S: envelope of the two alpha_S members.
+	101/103 -> 100 members, 31/33 -> 30 members; other lengths get 1."""
+	nev = len(events)
+	pdf_up, pdf_dn = np.ones(nev), np.ones(nev)
+	as_up, as_dn = np.ones(nev), np.ones(nev)
+	res = nano_weight_table(events, 'LHEPdfWeight', 103)
+	if res is None:
+		return (pdf_up, pdf_dn), (as_up, as_dn)
+	n, t = res
+	for nent, nmem, has_as in ((101, 100, False), (103, 100, True), (31, 30, False), (33, 30, True)):
+		sel = (n == nent)
+		if not np.any(sel):
+			continue
+		w0 = t[sel, 0]
+		good = np.isfinite(w0) & (w0 > 0)
+		w0s = np.where(good, w0, 1.)
+		mem = t[sel, 1:nmem+1]
+		d = np.where(np.isfinite(mem), mem - w0s[:, None], 0.)
+		delta = np.where(good, np.sqrt(np.sum(d**2, axis=1)) / w0s, 0.)
+		pdf_up[sel] = 1. + delta
+		pdf_dn[sel] = np.maximum(1. - delta, 0.)
+		if has_as:
+			a = t[sel, nmem+1:nmem+3] / w0s[:, None]
+			a = np.where(np.isfinite(a) & good[:, None], a, 1.)
+			as_up[sel] = np.max(a, axis=1)
+			as_dn[sel] = np.min(a, axis=1)
+	return (pdf_up, pdf_dn), (as_up, as_dn)
 
 class AnalysisProcessor(processor.ProcessorABC):
 
@@ -117,106 +234,10 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		self.make_output = lambda: {
 			'sumw': 0.,
-			'cutflow': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.StrCategory([], name='cutname', growth=True),
-				hist.axis.Variable([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17], name='cutflow', label='cut'),
-				storage=hist.storage.Weight(),
-			),
-			'template': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.StrCategory([], name='systematic', growth=True),
-				#hist.axis.Variable([40,50,60,70,80,90,100,110,120,130,150,160,180,200,220,240,300], name='fjmass', label=r'AK15 Jet $m_{sd}$'),
-				storage=hist.storage.Weight(),
-			),
-			'TvsQCD': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(15,0,1, name='TvsQCD', label='TvsQCD'),
-				storage=hist.storage.Weight(),
-			),
-			'probT': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(15,0,1, name='probT', label='probT'),
-				storage=hist.storage.Weight(),
-			),
-			'probQCD': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(15,0,1, name='probQCD', label='probQCD'),
-				storage=hist.storage.Weight(),
-			),
-			'mindphirecoil': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(30,0,3.5, name='mindphirecoil', label='Min |dPhi(Recoil,AK4s)|'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'minDphirecoil': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(30,0,3.5, name='minDphirecoil', label='Min |dPhi(Recoil, leading AK15s)|'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'ut': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(175,250,2000, name='ut', label='$U_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'uphi': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(35,-3.5,3.5, name='uphi', label='U_{phi}'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'jpt': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(38,250,2000, name='jpt', label='AK4 Leading Jet $p_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'jeta': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(35,-3.5,3.5, name='jeta', label='AK4 Leading Jet Eta'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'jphi': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(35,-3.5,3.5, name='jphi', label='AK4 Leading Jet Phi'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'fjpt': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(38,250,2000, name='fjpt', label='AK15 Leading Jet $p_{T}$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'fjeta': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(35,-3.5,3.5, name='fjeta', label='AK15 Leading Jet Eta'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'fjphi': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(35,-3.5,3.5, name='fjphi', label='AK15 Leading Jet Phi'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'met': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(30,0,2000, name='met', label='MET $p_{T}$ [GeV]'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
-			'metphi': hist.Hist(
-				hist.axis.StrCategory([], name='region', growth=True),
-				hist.axis.Regular(35,-3.5,3.5, name='metphi', label='MET $\phi$'),
-				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				#hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				storage=hist.storage.Weight(),
-			),
+			# Only what the SF chain reads (toptag/studies_unc): fjpt_bin, fjpt_cat,
+			# TvsQCD_cat (ROC) and sumw. Control plots and the cutflow come from
+			# topstudy_run.py. n_qinfj/n_binfj: Integer(0,5); values >= 5 go to
+			# overflow, which slice(4, None, sum) ("gt3") and sum still include.
 			# fjpt_cat / fjpt_bin carry a 'systematic' axis ("nominal" + every
 			# weights.variations entry; data: "nominal" only) for the top-tag
 			# SF uncertainty study (toptag/docs/toptag_sf_uncertainty_plan.txt).
@@ -225,8 +246,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 				hist.axis.StrCategory([], name='systematic', growth=True),
 				hist.axis.Variable([250, 325, 400, 600, 2000], name='fjpt', label='AK15 Leading Jet $p_{T}$', flow=True),
 				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
-				hist.axis.Integer(0,10, name='n_qinfj', label='Number of q from top in AK15 Jet'),
-				hist.axis.Integer(0,10, name='n_binfj', label='Number of b flavor in AK15 Jet'),
+				hist.axis.Integer(0,5, name='n_qinfj', label='Number of q from top in AK15 Jet'),
+				hist.axis.Integer(0,5, name='n_binfj', label='Number of b flavor in AK15 Jet'),
 				storage=hist.storage.Weight(),
 			),
 			'fjpt_bin': hist.Hist(
@@ -240,8 +261,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 			'TvsQCD_cat': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.Regular(15,0,1, name='TvsQCD', label='TvsQCD'),
-				hist.axis.Integer(0,10, name='n_qinfj', label='Number of q from top in AK15 Jet'),
-				hist.axis.Integer(0,10, name='n_binfj', label='Number of b flavor in AK15 Jet'),
+				hist.axis.Integer(0,5, name='n_qinfj', label='Number of q from top in AK15 Jet'),
+				hist.axis.Integer(0,5, name='n_binfj', label='Number of b flavor in AK15 Jet'),
 				storage=hist.storage.Weight(),
 			),
 	}
@@ -365,6 +386,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 			get_mu_tight_iso_sf(self._year, abs(mu.eta), mu.pt), 
 			mu.iso_sf #ak.ones_like(mu.pt) #mu.iso_sf
 		)
+		# up/down of the muon ID and ISO SFs (absolute, POG 'systup'/'systdown')
+		if not isData:
+			for sfname, lkey, tkey in (('id_sf', 'NUM_LooseID_DEN_TrackerMuons', 'NUM_TightID_DEN_TrackerMuons'),
+			                           ('iso_sf', 'NUM_LoosePFIso_DEN_LooseID', 'NUM_TightPFIso_DEN_TightID')):
+				for sfvar, pogvar in (('up', 'systup'), ('down', 'systdown')):
+					v = ak.where(mu.isloose, get_mu_sf_var(self._year, lkey, abs(mu.eta), mu.pt, pogvar), ak.ones_like(mu.pt))
+					v = ak.where(mu.istight, get_mu_sf_var(self._year, tkey, abs(mu.eta), mu.pt, pogvar), v)
+					mu[sfname+'_'+sfvar] = v
 		mu['T'] = ak.zip(
 			{
 				"r": mu.pt,
@@ -426,6 +455,16 @@ class AnalysisProcessor(processor.ProcessorABC):
 			eleHlt_tight, 
 			e.hlt_sf
 		)
+		# up/down of the electron RECO, ID and HLT SFs (absolute), same
+		# loose -> tight override as the nominal
+		for v in ('up', 'down'):
+			below20, s20to75, above75 = {'up': (sf_below20_up, sf_20to75_up, sf_Above75_up),
+			                             'down': (sf_below20_down, sf_20to75_down, sf_Above75_down)}[v]
+			e['reco_sf_'+v] = ak.where(e.pt < 20, below20, ak.where(e.pt < 75, s20to75, above75))
+			id_l, id_t = {'up': (sf_loose_up, sf_tight_up), 'down': (sf_loose_down, sf_tight_down)}[v]
+			e['id_sf_'+v] = ak.where(e.istight, id_t, ak.where(e.isloose, id_l, ak.ones_like(e.pt)))
+			hlt_l, hlt_t = {'up': (eleHlt_loose_up, eleHlt_tight_up), 'down': (eleHlt_loose_down, eleHlt_tight_down)}[v]
+			e['hlt_sf_'+v] = ak.where(e.istight, hlt_t, ak.where(e.isloose, hlt_l, ak.ones_like(e.pt)))
 		e['T'] = ak.zip(
 			{
 				"r": e.pt,
@@ -466,6 +505,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 			pho_sf_tight, 
 			pho.id_sf #ak.ones_like(pho.pt)
 		)
+		pho['id_sf_up'] = ak.where(pho.istight, pho_sf_tight_up, ak.where(pho.isloose, pho_sf_loose_up, ak.ones_like(pho.pt)))
+		pho['id_sf_down'] = ak.where(pho.istight, pho_sf_tight_down, ak.where(pho.isloose, pho_sf_loose_down, ak.ones_like(pho.pt)))
 		pho['T'] = ak.zip(
 			{
 				"r": pho.pt,
@@ -671,6 +712,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 			# Calculate PU weight and systematic variations
 			###
 			pu = get_pu_weight(self._year, events.Pileup.nTrueInt)
+			pu_up = get_pu_weight_var(self._year, events.Pileup.nTrueInt, 'up')
+			pu_down = get_pu_weight_var(self._year, events.Pileup.nTrueInt, 'down')
 
 			###
 			# AK4 b-tagging weights
@@ -865,14 +908,42 @@ class AnalysisProcessor(processor.ProcessorABC):
 			],
 		}
 		if not isData:
-			weights.add('pileup', pu)
+			# Weights.add(name, w, wUp, wDown): wUp/wDown are absolute (coffea
+			# divides by w where w != 0); variations appear as <name>Up/Down.
+			pu_nom = finite_or(pu, 1.)
+			weights.add('pileup', pu_nom, finite_or(pu_up, pu_nom), finite_or(pu_down, pu_nom))
 			weights.add('nlo_ewk',nlo_ewk)
-			weights.add('topptreweighting', nlo)
+			# top-pT reweighting: up = applied twice, down = not applied
+			# (nlo = 1 for non-ttbar samples, so no effect there)
+			nlo_nom = finite_or(ak.to_numpy(nlo) if not isinstance(nlo, np.ndarray) else nlo, 1.)
+			weights.add('topptreweighting', nlo_nom, nlo_nom**2, np.ones(len(events)))
+			# parton shower, muR/muF scale envelope, PDF and alpha_S (relative
+			# weights; 1 where the sample has no such branch)
+			(isr_up, isr_down), (fsr_up, fsr_down) = get_ps_weights(events)
+			one = np.ones(len(events))
+			weights.add('ISR', one, isr_up, isr_down)
+			weights.add('FSR', one, fsr_up, fsr_down)
+			scale_up, scale_down = get_scale_weights(events)
+			weights.add('QCDscale', one, scale_up, scale_down)
+			(pdf_up, pdf_down), (as_up, as_down) = get_pdf_weights(events)
+			weights.add('PDF', one, pdf_up, pdf_down)
+			weights.add('alphaS', one, as_up, as_down)
 			weights.add('btagSF',btagSF)
-			weights.add('btagSFbc_correlated',np.ones(len(events), dtype='float'), btagSFbc_correlatedUp/btagSF, btagSFbc_correlatedDown/btagSF)
-			weights.add('btagSFbc_uncorrelated',np.ones(len(events), dtype='float'), btagSFbc_uncorrelatedUp/btagSF, btagSFbc_uncorrelatedDown/btagSF)
-			weights.add('btagSFlight_correlated',np.ones(len(events), dtype='float'), btagSFlight_correlatedUp/btagSF, btagSFlight_correlatedDown/btagSF)
-			weights.add('btagSFlight_uncorrelated',np.ones(len(events), dtype='float'), btagSFlight_uncorrelatedUp/btagSF, btagSFlight_uncorrelatedDown/btagSF)
+			# b-tag variations as ratios to the nominal btagSF. btag_weight()
+			# returns btagSF = 0 when an untagged jet has SF*eff >= 1 (data
+			# efficiency clipped to 1); a plain Up/btagSF is then 0/0 = NaN and
+			# poisons whole histogram bins of every variation. Those events have
+			# zero nominal weight, so their variation ratio is set to 1.
+			btag_nom = np.asarray(ak.to_numpy(btagSF), dtype=np.float64)
+			btag_ok = np.isfinite(btag_nom) & (btag_nom > 0)
+			btag_den = np.where(btag_ok, btag_nom, 1.)
+			def btag_ratio(var):
+				r = np.asarray(ak.to_numpy(var), dtype=np.float64) / btag_den
+				return np.where(btag_ok & np.isfinite(r), r, 1.)
+			weights.add('btagSFbc_correlated',np.ones(len(events), dtype='float'), btag_ratio(btagSFbc_correlatedUp), btag_ratio(btagSFbc_correlatedDown))
+			weights.add('btagSFbc_uncorrelated',np.ones(len(events), dtype='float'), btag_ratio(btagSFbc_uncorrelatedUp), btag_ratio(btagSFbc_uncorrelatedDown))
+			weights.add('btagSFlight_correlated',np.ones(len(events), dtype='float'), btag_ratio(btagSFlight_correlatedUp), btag_ratio(btagSFlight_correlatedDown))
+			weights.add('btagSFlight_uncorrelated',np.ones(len(events), dtype='float'), btag_ratio(btagSFlight_uncorrelatedUp), btag_ratio(btagSFlight_uncorrelatedDown))
 
 			### 
 			# Region masks 
@@ -885,84 +956,56 @@ class AnalysisProcessor(processor.ProcessorABC):
 			mask_isoneG = ak.to_numpy((e_nloose==0)&(mu_nloose==0)&(pho_nloose==1)&(pho_ntight==1))
 
 			### 
-			# ID Scale Factor: electron and muon
+			# Object SFs, one weight per object type so that electron, muon and
+			# photon SFs vary independently. Each event gets the product over
+			# its region's objects (masks are disjoint); the nominal product of
+			# these weights equals the former 'ids'*'reco'*'iso'*'trig'.
 			###
-			id_sf	  = np.ones(len(events), dtype='float')
-			id_sf_up   = np.ones(len(events), dtype='float')
-			id_sf_down = np.ones(len(events), dtype='float')
+			nev = len(events)
+			def obj_prod(objs, field):
+				return finite_or(ak.to_numpy(ak.fill_none(ak.prod(objs[field], axis=1), 1.0)), 1.)
+			def add_obj_sf(name, pieces):
+				"""pieces: list of (mask, objects, field). Builds nominal/up/down
+				from field, field+'_up', field+'_down' on the masked events."""
+				w = {s: np.ones(nev) for s in ('', '_up', '_down')}
+				for mask, objs, field in pieces:
+					for s in w:
+						w[s][mask] = obj_prod(objs, field+s)[mask]
+				weights.add(name, w[''], w['_up'], w['_down'])
 
-			id_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.id_sf, axis=1), 1.0))
-			id_sf_isoneM = ak.to_numpy(ak.fill_none(ak.prod(mu_tight.id_sf, axis=1), 1.0))
-			id_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.id_sf, axis=1), 1.0))
-			id_sf_istwoM = ak.to_numpy(ak.fill_none(ak.prod(mu_loose.id_sf, axis=1), 1.0))
-			id_sf_isoneG = ak.to_numpy(ak.fill_none(ak.prod(pho_tight.id_sf, axis=1), 1.0))
-
-			id_sf[mask_isoneE] = id_sf_isoneE[mask_isoneE]
-			id_sf[mask_isoneM] = id_sf_isoneM[mask_isoneM]
-			id_sf[mask_istwoE] = id_sf_istwoE[mask_istwoE]
-			id_sf[mask_istwoM] = id_sf_istwoM[mask_istwoM]
-			id_sf[mask_isoneG] = id_sf_isoneG[mask_isoneG]
-
-			weights.add('ids', id_sf)
-
-			### 
-			# RECO Scale Factor: electron
-			###
-			reco_sf	  = np.ones(len(events), dtype='float')
-			reco_sf_up   = np.ones(len(events), dtype='float')
-			reco_sf_down = np.ones(len(events), dtype='float')
-
-			reco_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.reco_sf, axis=1), 1.0))
-			reco_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.reco_sf, axis=1), 1.0))
-
-			reco_sf[mask_isoneE] = reco_sf_isoneE[mask_isoneE]
-			reco_sf[mask_istwoE] = reco_sf_istwoE[mask_istwoE]
-
-			weights.add('reco', reco_sf)
-
-
-			### 
-			# ISO Scale Factor: muon
-			###
-			iso_sf	  = np.ones(len(events), dtype='float')
-			iso_sf_up   = np.ones(len(events), dtype='float')
-			iso_sf_down = np.ones(len(events), dtype='float')
-
-			iso_sf_isoneM = ak.to_numpy(ak.fill_none(ak.prod(mu_tight.iso_sf, axis=1), 1.0))
-			iso_sf_istwoM = ak.to_numpy(ak.fill_none(ak.prod(mu_loose.iso_sf, axis=1), 1.0))
-
-			iso_sf[mask_isoneM] = iso_sf_isoneM[mask_isoneM]
-			iso_sf[mask_istwoM] = iso_sf_istwoM[mask_istwoM]
-
-			weights.add('iso', iso_sf)
+			# ID: electron (1e: tight, 2e: loose), muon (1mu: tight, 2mu: loose), photon (tight)
+			add_obj_sf('ids_e',   [(mask_isoneE, e_tight, 'id_sf'), (mask_istwoE, e_loose, 'id_sf')])
+			add_obj_sf('ids_mu',  [(mask_isoneM, mu_tight, 'id_sf'), (mask_istwoM, mu_loose, 'id_sf')])
+			add_obj_sf('ids_pho', [(mask_isoneG, pho_tight, 'id_sf')])
+			# RECO: electron
+			add_obj_sf('reco_e',  [(mask_isoneE, e_tight, 'reco_sf'), (mask_istwoE, e_loose, 'reco_sf')])
+			# ISO: muon
+			add_obj_sf('iso_mu',  [(mask_isoneM, mu_tight, 'iso_sf'), (mask_istwoM, mu_loose, 'iso_sf')])
+			# HLT: electron
+			add_obj_sf('trig_e',  [(mask_isoneE, e_tight, 'hlt_sf'), (mask_istwoE, e_loose, 'hlt_sf')])
 
 			###
-			# Trigger efficiency weight
+			# Trigger efficiency weight: MET trigger (0l, 1mu, 2mu) and photon trigger (1g)
 			###
 			met_sf_0,  met_sf_0_up,  met_sf_0_down  = get_met_trig_weight(self._year, u['sr'].r)
 			met_sf_m,  met_sf_m_up,  met_sf_m_down  = get_met_trig_weight(self._year, u['wmcr'].r)
 			met_sf_mm, met_sf_mm_up, met_sf_mm_down = get_met_trig_weight(self._year, u['zmcr'].r)
 			pho_sf, pho_sf_up, pho_sf_down = get_pho_trig_weight(self._year, ak.firsts(pho_tight).pt)
+			def ev_arr(x):
+				return finite_or(ak.to_numpy(ak.fill_none(x, 1.0)), 1.)
 
-			trg_sf	  = np.ones(len(events), dtype='float')
-			trg_sf_up   = np.ones(len(events), dtype='float')
-			trg_sf_down = np.ones(len(events), dtype='float')
+			trg_met = {s: np.ones(nev) for s in ('', '_up', '_down')}
+			for mask, trio in ((mask_iszeroL, (met_sf_0,  met_sf_0_up,  met_sf_0_down)),
+			                   (mask_isoneM,  (met_sf_m,  met_sf_m_up,  met_sf_m_down)),
+			                   (mask_istwoM,  (met_sf_mm, met_sf_mm_up, met_sf_mm_down))):
+				for s, x in zip(('', '_up', '_down'), trio):
+					trg_met[s][mask] = ev_arr(x)[mask]
+			weights.add('trig_met', trg_met[''], trg_met['_up'], trg_met['_down'])
 
-			trg_sf_iszeroL = ak.to_numpy(ak.fill_none(met_sf_0, 1.0))
-			trg_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.hlt_sf, axis=1), 1.0))
-			trg_sf_isoneM = ak.to_numpy(ak.fill_none(met_sf_m, 1.0))
-			trg_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.hlt_sf, axis=1), 1.0))
-			trg_sf_istwoM = ak.to_numpy(ak.fill_none(met_sf_mm, 1.0))
-			trg_sf_isoneG = ak.to_numpy(ak.fill_none(pho_sf, 1.0))
-
-			trg_sf[mask_iszeroL] = trg_sf_iszeroL[mask_iszeroL]
-			trg_sf[mask_isoneE] = trg_sf_isoneE[mask_isoneE]
-			trg_sf[mask_isoneM] = trg_sf_isoneM[mask_isoneM]
-			trg_sf[mask_istwoE] = trg_sf_istwoE[mask_istwoE]
-			trg_sf[mask_istwoM] = trg_sf_istwoM[mask_istwoM]
-			trg_sf[mask_isoneG] = trg_sf_isoneG[mask_isoneG]
-
-			weights.add('trig', trg_sf)
+			trg_pho = {s: np.ones(nev) for s in ('', '_up', '_down')}
+			for s, x in zip(('', '_up', '_down'), (pho_sf, pho_sf_up, pho_sf_down)):
+				trg_pho[s][mask_isoneG] = ev_arr(x)[mask_isoneG]
+			weights.add('trig_pho', trg_pho[''], trg_pho['_up'], trg_pho['_down'])
 
 
 
@@ -981,108 +1024,49 @@ class AnalysisProcessor(processor.ProcessorABC):
 			#	ar = ak.to_numpy(ak.fill_none(val[cut], np.nan))
 			#	return ar
 				
-		def fill(region, systematic):
+		def fill_region(region, systematics):
+			# cut and the per-event arrays are the same for every systematic, so
+			# they are computed once per region; only the weight changes.
 			cut = selection.all(*regions[region])
-			sname = 'nominal' if systematic is None else systematic
-			if systematic in weights.variations:
-				weight = weights.weight(modifier=systematic)[cut]
-			else:
-				weight = weights.weight()[cut]
-				#output['fjpt_cat'].fill(
-				#	  region=region,
-				#	  fjpt=normalize(leading_fj.pt, cut),
-				#	  TvsQCD=normalize(leading_fj.TvsQCD, cut),
-				#	  n_qinfj=normalize(n_qinfj, cut, fillvalue=-1),
-				#	  n_binfj=normalize(n_binfj, cut, fillvalue=-1),
-				#	  weight=weight
-				#)
-			#print('weights: ', weights.weightStatistics.keys())
-			#output['template'].fill(
-			#	  region=region,
-			#	  systematic=sname,
-			#	  #recoil=normalize(u[region].r, cut),
-			#	  #fjmass=normalize(leading_fj.pt, cut),
-			#	  #TvsQCD=normalize(leading_fj.TvsQCD, cut),
-			#	  weight=weight
-			#)
-
-			# Filled for EVERY systematic (data only reaches here with
-			# systematic=None, so data has "nominal" only).
-			output['fjpt_bin'].fill(
-				  region=region,
-				  systematic=sname,
-				  fjpt_bin=normalize(leading_fj.pt, cut),
-				  TvsQCD=normalize(leading_fj.TvsQCD, cut),
-				  weight=weight
-			)
+			fjpt   = normalize(leading_fj.pt, cut)
+			tvsqcd = normalize(leading_fj.TvsQCD, cut)
 			if not isData:
-				output['fjpt_cat'].fill(
+				nq = normalize(n_qinfj, cut, fillvalue=-1)
+				nb = normalize(n_binfj, cut, fillvalue=-1)
+			for systematic in systematics:
+				# data: "nominal" only
+				if isData and systematic is not None:
+					continue
+				sname = 'nominal' if systematic is None else systematic
+				if systematic in weights.variations:
+					weight = weights.weight(modifier=systematic)[cut]
+				else:
+					weight = weights.weight()[cut]
+				output['fjpt_bin'].fill(
 					  region=region,
 					  systematic=sname,
-					  fjpt=normalize(leading_fj.pt, cut),
-					  TvsQCD=normalize(leading_fj.TvsQCD, cut),
-					  n_qinfj=normalize(n_qinfj, cut, fillvalue=-1),
-					  n_binfj=normalize(n_binfj, cut, fillvalue=-1),
+					  fjpt_bin=fjpt,
+					  TvsQCD=tvsqcd,
 					  weight=weight
 				)
-
-			if systematic is None:
-				variables = {
-					'met':					met.pt,
-					'metphi':				met.phi,
-					#'ut' :					u[region].r,
-					'uphi' :				u[region].phi,
-					'mindphirecoil':		ak.min(abs(u['sr'].delta_phi(j_clean.T)), axis=1,mask_identity=False),
-					'minDphirecoil':		abs(u[region].delta_phi(leading_fj.T)),
-					'fjpt':					leading_fj.pt,
-					# 'fjpt_bin' is filled above, with the systematic axis
-					'fjphi':				leading_fj.phi,
-					'fjeta':				leading_fj.eta,
-					'jpt':					leading_j.pt,
-					'jphi':					leading_j.phi,
-					'jeta':					leading_j.eta,
-				}
-
-				for variable in output:
-					if variable not in variables:
-						continue
-					normalized_variable = {variable: normalize(variables[variable],cut)}
-					output[variable].fill(
-						region=region,
-						TvsQCD=normalize(leading_fj.TvsQCD, cut),
-						**normalized_variable,
-						weight=weight,
-					)
 				if not isData:
-					# fjpt_cat is filled above, with the systematic axis
-					output['TvsQCD_cat'].fill(
+					output['fjpt_cat'].fill(
 						  region=region,
-						  TvsQCD=normalize(leading_fj.TvsQCD, cut),
-						  n_qinfj=normalize(n_qinfj, cut, fillvalue=-1),
-						  n_binfj=normalize(n_binfj, cut, fillvalue=-1),
+						  systematic=sname,
+						  fjpt=fjpt,
+						  TvsQCD=tvsqcd,
+						  n_qinfj=nq,
+						  n_binfj=nb,
 						  weight=weight
 					)
-				output['ut'].fill(
-					  region=region,
-					  ut=normalize(u[region].r, cut),
-					  TvsQCD=normalize(leading_fj.TvsQCD, cut),
-					  weight=weight
-				)
-				output['TvsQCD'].fill(
-					  region=region,
-					  TvsQCD=normalize(leading_fj.TvsQCD, cut),
-					  weight=weight
-				)
-				output['probT'].fill(
-					  region=region,
-					  probT=normalize(leading_fj.probT, cut),
-					  weight=weight
-				)
-				output['probQCD'].fill(
-					  region=region,
-					  probQCD=normalize(leading_fj.probQCD, cut),
-					  weight=weight
-				)
+					if systematic is None:
+						output['TvsQCD_cat'].fill(
+							  region=region,
+							  TvsQCD=tvsqcd,
+							  n_qinfj=nq,
+							  n_binfj=nb,
+							  weight=weight
+						)
 
 
 		shift_name = None
@@ -1106,23 +1090,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			regions[region].insert(7, 'mindphi_'+region)
 			regions[region].insert(8, 'minDphi_'+region)
 
-			for systematic in systematics:
-				if isData and systematic is not None:
-					continue
-				fill(region, systematic)
-
-			#########
-			## Store cutflow
-			#########
-			vcut=np.zeros(len(events), dtype=np.int)
-			output['cutflow'].fill(region=region,cutname='Initial', cutflow=vcut, weight=weights.weight())
-			cuts = regions[region]
-			allcuts = set()
-			for i, icut in enumerate(cuts):
-				allcuts.add(icut)
-				jcut = selection.all(*allcuts)
-				vcut = (i+1)*jcut
-				output['cutflow'].fill(region=region,cutname=icut, cutflow=vcut, weight=weights.weight()*jcut)
+			fill_region(region, systematics)
 
 		scale = 1
 		if self._xsec[dataset]!= -1: 
@@ -1145,6 +1113,7 @@ if __name__ == '__main__':
 	parser.add_option('-y', '--year', help='year', dest='year')
 	parser.add_option('-m', '--metadata', help='metadata', dest='metadata')
 	parser.add_option('-n', '--name', help='name', dest='name')
+	parser.add_option('-c', '--corrections', help='corrections file (default data/corrections.coffea)', dest='corrections', default='data/corrections.coffea')
 	(options, args) = parser.parse_args()
 
 
@@ -1152,7 +1121,7 @@ if __name__ == '__main__':
 		samplefiles = json.load(fin)
 		xsec = {k: v['xs'] for k,v in samplefiles.items()}
 
-	corrections = load('data/corrections.coffea')
+	corrections = load(options.corrections)
 	ids		 = load('data/ids.coffea')
 	common	  = load('data/common.coffea')
 
