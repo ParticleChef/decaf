@@ -1109,6 +1109,13 @@ class AnalysisProcessor(processor.ProcessorABC):
 		return accumulator
 
 if __name__ == '__main__':
+	# `python3 processors/topstudy_unc.py` puts processors/ (not analysis/) on
+	# sys.path; corrections_cached.coffea needs `utils.cset_cache` importable.
+	import os, sys
+	_ANALYSIS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+	if _ANALYSIS_DIR not in sys.path:
+		sys.path.insert(0, _ANALYSIS_DIR)
+
 	parser = OptionParser()
 	parser.add_option('-y', '--year', help='year', dest='year')
 	parser.add_option('-m', '--metadata', help='metadata', dest='metadata')
