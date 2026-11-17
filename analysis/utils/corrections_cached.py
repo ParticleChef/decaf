@@ -82,7 +82,7 @@ def get_met_xy_correction(year, met_type, isData, met_pt, met_phi, npvGood):
 # JEC
 # https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME
 ####
-def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
+def get_jec_correction(year, pt, eta, phi, rho, area, run, isData, var='nominal'):
     jecTag = {
         "2022pre":  "Summer22_22Sep2023",
         "2022post": "Summer22EE_22Sep2023",
@@ -208,9 +208,19 @@ def get_jec_correction(year, pt, eta, phi, rho, area, run, isData):
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3
 
+    # JES uncertainty (MC only): var in {'nominal','up','down'}. 'up'/'down'
+    # multiply the nominal factor by 1 +- the relative total uncertainty
+    # (<tag>_MC_Total_<algo>), evaluated at the JEC-corrected pt. Data always
+    # gets the nominal factor.
+    if var not in ('nominal', 'up', 'down'):
+        raise ValueError("var must be 'nominal', 'up' or 'down', got %r" % (var,))
+    if var != 'nominal' and not isData:
+        unc = evaluator[jec_names['L3Absolute'].replace('L3Absolute', 'Total')].evaluate(eta, pt * corr)
+        corr = corr * (1. + unc if var == 'up' else 1. - unc)
+
     return ak.unflatten(corr, counts)
 
-def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
+def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData, var='nominal'):
     jecTag = {
         "2022pre":  "Summer22_22Sep2023",
         "2022post": "Summer22EE_22Sep2023",
@@ -336,6 +346,16 @@ def get_fjec_correction(year, pt, eta, phi, rho, area, run, isData):
             # L3Absolute Correction
             corr_L3 = evaluator[jec_names['L3Absolute']].evaluate(eta, pt)
             corr = corr_L1 * corr_L2 * corr_L3
+
+    # JES uncertainty (MC only): var in {'nominal','up','down'}. 'up'/'down'
+    # multiply the nominal factor by 1 +- the relative total uncertainty
+    # (<tag>_MC_Total_<algo>), evaluated at the JEC-corrected pt. Data always
+    # gets the nominal factor.
+    if var not in ('nominal', 'up', 'down'):
+        raise ValueError("var must be 'nominal', 'up' or 'down', got %r" % (var,))
+    if var != 'nominal' and not isData:
+        unc = evaluator[jec_names['L3Absolute'].replace('L3Absolute', 'Total')].evaluate(eta, pt * corr)
+        corr = corr * (1. + unc if var == 'up' else 1. - unc)
 
     return ak.unflatten(corr, counts)
 

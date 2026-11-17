@@ -139,6 +139,55 @@ def get_pdf_weights(events):
 			as_dn[sel] = np.min(a, axis=1)
 	return (pdf_up, pdf_dn), (as_up, as_dn)
 
+###
+# JER smearing (MC). Evaluated here like the helpers above; the resolution and
+# scale factor come from the same jet_jerc / fatJet_jerc JSON files as the JEC
+# (AK15 uses the AK8PFPuppi keys, as the JEC does).
+###
+_JER_TAG = {
+	'2022pre' : 'Summer22_22Sep2023_JRV1',
+	'2022post': 'Summer22EE_22Sep2023_JRV1',
+	'2023pre' : 'Summer23Prompt23_RunCv1234_JRV1',	# full 2023 C era (also RunCv123, RunCv4 in the file)
+	'2023post': 'Summer23BPixPrompt23_RunD_JRV1',
+}
+# Upper Rho edge of the PtResolution binning. Outside the binning (Rho or
+# |eta| > 5.191) the JSON returns a resolution of 1.0 (100%), so the inputs
+# are clamped into range before the lookup.
+_JER_RHO_MAX = {'2022pre': 60.35, '2022post': 60.71, '2023pre': 52.2, '2023post': 52.05}
+_JER_ETA_MAX = 5.191
+
+def jer_factor_flat(year, pt, eta, rho, genpt, gendr, var, fat, seed):
+	"""JER smearing factor for flat numpy arrays (one entry per jet), hybrid
+	method; var in {'nom','up','down'} selects the JER scale factor s.
+	  gen-matched (genpt > 0, dR < R/2, |pt-genpt| < 3*sigma*pt):
+	      1 + (s-1)*(pt-genpt)/pt
+	  otherwise: 1 + N(0,sigma)*sqrt(max(s^2-1, 0))
+	sigma = relative pt resolution; pt = JEC-corrected pt. The factor is
+	clipped at 0. The random numbers depend only on seed and the number of
+	jets, so 'nom', 'up' and 'down' use the same ones."""
+	fname, algo, cone = ('fatJet_jerc', 'AK8PFPuppi', 1.5) if fat else ('jet_jerc', 'AK4PFPuppi', 0.4)
+	cset = _cset('data/JetMETCorr/'+year+'/'+fname+'.json.gz')
+	pt, eta, rho, genpt, gendr = (np.asarray(x, dtype=np.float64) for x in (pt, eta, rho, genpt, gendr))
+	eta_c = np.clip(eta, -_JER_ETA_MAX + 1e-3, _JER_ETA_MAX - 1e-3)
+	rho_c = np.clip(rho, 0., _JER_RHO_MAX[year] - 1e-2)
+	sigma = cset[_JER_TAG[year]+'_MC_PtResolution_'+algo].evaluate(eta_c, pt, rho_c)
+	sf = cset[_JER_TAG[year]+'_MC_ScaleFactor_'+algo].evaluate(eta_c, pt, var)
+	safe_pt = np.where(pt > 0, pt, 1.)
+	matched = (genpt > 0) & (gendr < cone/2.) & (np.abs(pt - genpt) < 3.*sigma*pt)
+	gaus = np.random.default_rng(seed).standard_normal(len(pt))
+	scaling = 1. + (sf - 1.)*(pt - genpt)/safe_pt
+	stochastic = 1. + gaus*sigma*np.sqrt(np.maximum(sf*sf - 1., 0.))
+	factor = np.where(matched, scaling, stochastic)
+	return np.where(np.isfinite(factor), np.maximum(factor, 0.), 1.)
+
+def get_jer_factor(year, pt, eta, rho, genpt, gendr, var, fat, seed):
+	"""jer_factor_flat for jagged per-jet arrays (rho is per event)."""
+	counts = ak.num(pt)
+	rho, _ = ak.broadcast_arrays(rho, pt)
+	flat = lambda x: np.asarray(ak.to_numpy(ak.flatten(x)), dtype=np.float64)
+	factor = jer_factor_flat(year, flat(pt), flat(eta), flat(rho), flat(genpt), flat(gendr), var, fat, seed)
+	return ak.unflatten(factor, counts)
+
 class AnalysisProcessor(processor.ProcessorABC):
 
 	lumis = { 
@@ -175,7 +224,15 @@ class AnalysisProcessor(processor.ProcessorABC):
 		self._lumi = 1000.*float(AnalysisProcessor.lumis[year])
 		self._xsec = xsec
 		self._systematics = False
-		self._skipJER = True
+		# False: MC jets (AK15, AK4) get the nominal JER smearing and the
+		# JERUp/JERDown passes run. True: no smearing at all, JES passes only.
+		self._skipJER = False
+		# Jet energy shifts run as extra passes over MC (see process()).
+		# shift name -> (JES var for get_jec_correction / get_fjec_correction,
+		#                JER var for get_jer_factor)
+		self._jet_shifts = {'JESUp': ('up', 'nom'), 'JESDown': ('down', 'nom')}
+		if not self._skipJER:
+			self._jet_shifts.update({'JERUp': ('nominal', 'up'), 'JERDown': ('nominal', 'down')})
 
 		self._samples = {
 			'sr'   :('TT','WtoLNu-2Jets','DYto2L-2Jets','Zto2Nu-2Jets','GJ','ST','WW','ZZ','WZ','QCD','JetMET',
@@ -239,7 +296,7 @@ class AnalysisProcessor(processor.ProcessorABC):
 			# topstudy_run.py. n_qinfj/n_binfj: Integer(0,5); values >= 5 go to
 			# overflow, which slice(4, None, sum) ("gt3") and sum still include.
 			# fjpt_cat / fjpt_bin carry a 'systematic' axis ("nominal" + every
-			# weights.variations entry; data: "nominal" only) for the top-tag
+			# weights.variations entry + JESUp/Down, JERUp/Down; data: "nominal" only) for the top-tag
 			# SF uncertainty study (toptag/docs/toptag_sf_uncertainty_plan.txt).
 			'fjpt_cat': hist.Hist(
 				hist.axis.StrCategory([], name='region', growth=True),
@@ -273,8 +330,12 @@ class AnalysisProcessor(processor.ProcessorABC):
 			# Nominal JEC are already applied in data
 			return self.process_shift(events, None)
 		
-		if not isData:
-			return self.process_shift(events, None)
+		# MC: nominal pass (fills "nominal" + every weight variation) plus one
+		# pass per JES/JER shift (fills only systematic=<shift>, nominal weight).
+		# The shifts change jet kinematics, so the selection is rerun each time.
+		return processor.accumulate(
+			self.process_shift(events, shift) for shift in (None,) + tuple(self._jet_shifts)
+		)
 	
 
 
@@ -292,6 +353,20 @@ class AnalysisProcessor(processor.ProcessorABC):
 		selected_regions = [r for r in selected_regions if r in self._syst_regions]
 
 		isData = not hasattr(events, "genWeight")
+		# nominal JEC / nominal JER unless this pass is a JES or JER shift (MC only)
+		jes_var, jer_var = self._jet_shifts.get(shift_name, ('nominal', 'nom'))
+		doJER = (not isData) and (not self._skipJER)
+		# Seed for the stochastic JER smearing: fixed per chunk, so every pass
+		# (nominal, JES, JER) draws the same random numbers for the same jets.
+		jer_seed = [int(events.run[0]), int(events.luminosityBlock[0]), int(events.event[0])] if len(events) > 0 else [0]
+		def jer_factor(jets, pt, var, fat):
+			"""JER factor for `jets` at JEC-corrected `pt`; 1 for data or _skipJER."""
+			if not doJER:
+				return ak.ones_like(pt)
+			gen = jets.matched_gen
+			genpt = ak.fill_none(gen.pt, 0.)
+			gendr = ak.fill_none(jets.delta_r(gen), 99.)
+			return get_jer_factor(self._year, pt, jets.eta, rho_density, genpt, gendr, var, fat, jer_seed + [15 if fat else 4])
 		
 		################
 		## Initialize selection, weights and output histogram
@@ -526,9 +601,19 @@ class AnalysisProcessor(processor.ProcessorABC):
 
 		fj = events.AK15PuppiJet
 		rho_density = events.Rho.fixedGridRhoFastjetAll
-		fjec_corr = get_fjec_correction(self._year, fj.pt, fj.eta, fj.phi, rho_density, fj.area, run, isData)
-		fj['pt'] = fj.pt * fjec_corr
-		fj['mass'] = fj.mass * fjec_corr
+		# The JSON JEC is a function of raw pt; the nanoAOD pt/mass are already
+		# corrected, so undo that first (same as dev_run3.py).
+		fj_pt_raw   = fj.pt   * (1 - fj.rawFactor)
+		fj_mass_raw = fj.mass * (1 - fj.rawFactor)
+		fjec_nom = get_fjec_correction(self._year, fj_pt_raw, fj.eta, fj.phi, rho_density, fj.area, run, isData)
+		fjec_corr = fjec_nom
+		if jes_var != 'nominal':
+			fjec_corr = get_fjec_correction(self._year, fj_pt_raw, fj.eta, fj.phi, rho_density, fj.area, run, isData, var=jes_var)
+		# JER smearing factor, always derived from the nominal-JEC pt (so a JES
+		# pass uses the same smearing as the nominal pass)
+		fjer = jer_factor(fj, fj_pt_raw * fjec_nom, jer_var, True)
+		fj['pt']   = fj_pt_raw   * fjec_corr * fjer
+		fj['mass'] = fj_mass_raw * fjec_corr * fjer
 		#fj['msd_corr'] = get_msd_corr(fj)
 		fj['vec'] = ak.zip(
 			{
@@ -567,9 +652,26 @@ class AnalysisProcessor(processor.ProcessorABC):
 		leading_fj = ak.firsts(fj_clean)
 
 		j = events.Jet
-		jec_corr = get_jec_correction(self._year, j.pt, j.eta, j.phi, rho_density, j.area, run, isData)
-		j['pt'] = j.pt * jec_corr
-		j['mass'] = j.mass * jec_corr
+		j_pt_raw   = j.pt   * (1 - j.rawFactor)
+		j_mass_raw = j.mass * (1 - j.rawFactor)
+		jec_nom = get_jec_correction(self._year, j_pt_raw, j.eta, j.phi, rho_density, j.area, run, isData)
+		jec_corr = jec_nom
+		if jes_var != 'nominal':
+			jec_corr = get_jec_correction(self._year, j_pt_raw, j.eta, j.phi, rho_density, j.area, run, isData, var=jes_var)
+		jer = jer_factor(j, j_pt_raw * jec_nom, jer_var, False)
+		if shift_name in self._jet_shifts:
+			# Propagate the AK4 JES/JER shift to MET (simplified type-1: every AK4
+			# jet with nominal pt > 15 GeV): MET -= sum(shifted - nominal), where
+			# nominal = nominal JEC x nominal JER. The nominal MET itself is not
+			# re-derived for the smearing. met is only used after this point
+			# (recoil, mT, met150).
+			j_pt_nom = j_pt_raw * jec_nom * (jer if jer_var == 'nom' else jer_factor(j, j_pt_raw * jec_nom, 'nom', False))
+			dpt = ak.where(j_pt_nom > 15., j_pt_raw * jec_corr * jer - j_pt_nom, 0.)
+			met_x = met.pt * np.cos(met.phi) - ak.sum(dpt * np.cos(j.phi), axis=1)
+			met_y = met.pt * np.sin(met.phi) - ak.sum(dpt * np.sin(j.phi), axis=1)
+			met['pt'], met['phi'] = np.hypot(met_x, met_y), np.arctan2(met_y, met_x)
+		j['pt']   = j_pt_raw   * jec_corr * jer
+		j['mass'] = j_mass_raw * jec_corr * jer
 		j['isveto'] = isJetVeto(j, self._year)
 		j_veto = j[j.isveto]
 		n_j_veto = ak.num(j_veto, axis=1)
@@ -1069,7 +1171,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 						)
 
 
-		shift_name = None
 		if shift_name is None:
 			systematics = [None] + list(weights.variations)
 		else:
