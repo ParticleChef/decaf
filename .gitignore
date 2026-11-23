@@ -16,3 +16,4 @@ docker_stderror
 *.coffea
 datacards
 results
+*.DS_Store

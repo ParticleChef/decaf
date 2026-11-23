@@ -14,6 +14,7 @@ from coffea.util import load, save
 from optparse import OptionParser
 from coffea.nanoevents.methods import vector
 import gzip
+import correctionlib
 
 def update(events, collections):
 	"""Return a shallow copy of events array with some collections swapped out"""
@@ -21,6 +22,171 @@ def update(events, collections):
 	for name, value in collections.items():
 		out = ak.with_field(out, value, name)
 	return out
+
+###
+# Helpers for weight up/down variations and JER smearing. Copied from
+# processors/topstudy_unc.py (keep the two in sync). Evaluated here instead of
+# in utils/corrections.py so the shared corrections.coffea stays unchanged.
+###
+_PU_KEYS = {
+	'2022pre' : 'Collisions2022_355100_357900_eraBCD_GoldenJson',
+	'2022post': 'Collisions2022_359022_362760_eraEFG_GoldenJson',
+	'2023pre' : 'Collisions2023_366403_369802_eraBC_GoldenJson',
+	'2023post': 'Collisions2023_369803_370790_eraD_GoldenJson',
+}
+_CSET_CACHE = {}
+def _cset(path):
+	if path not in _CSET_CACHE:
+		_CSET_CACHE[path] = correctionlib.CorrectionSet.from_file(path)
+	return _CSET_CACHE[path]
+
+def finite_or(x, fallback):
+	"""numpy float64 copy of x with non-finite entries replaced by fallback."""
+	x = np.asarray(x, dtype=np.float64)
+	return np.where(np.isfinite(x), x, fallback)
+
+def get_pu_weight_var(year, trueint, var):
+	"""Pileup weight, var in {'nominal','up','down'} (absolute)."""
+	trueint = np.asarray(ak.to_numpy(trueint), dtype=np.float64)
+	return _cset('data/PUweight/'+year+'/puWeights.json.gz')[_PU_KEYS[year]].evaluate(trueint, var)
+
+def get_mu_sf_var(year, key, eta, pt, var):
+	"""Muon POG SF (muon_Z.json.gz) for jagged eta/pt, var in
+	{'nominal','systup','systdown'}; same clamping as utils/corrections.py."""
+	eta = ak.where(eta > 2.399, ak.full_like(eta, 2.399), eta)
+	pt  = ak.where(pt < 15., ak.full_like(pt, 15.), pt)
+	counts = ak.num(eta)
+	flateta = np.asarray(ak.to_numpy(ak.flatten(eta)), dtype=np.float64)
+	flatpt  = np.asarray(ak.to_numpy(ak.flatten(pt)), dtype=np.float64)
+	w = _cset('data/MuonSF/'+year+'/muon_Z.json.gz')[key].evaluate(flateta, flatpt, var)
+	return ak.unflatten(w, counts)
+
+def nano_weight_table(events, name, width):
+	"""(n_entries, table) for a jagged nanoAOD weight vector (PSWeight,
+	LHEScaleWeight, LHEPdfWeight); table is [nevents, width] with NaN padding.
+	None if the branch is absent (e.g. data or a sample without it)."""
+	if name not in events.fields:
+		return None
+	arr = events[name]
+	n = np.asarray(ak.to_numpy(ak.num(arr, axis=1)))
+	tab = ak.to_numpy(ak.fill_none(ak.pad_none(arr, width, axis=1, clip=True), np.nan))
+	return n, np.asarray(tab, dtype=np.float64)
+
+def get_ps_weights(events):
+	"""ISR and FSR (up, down) relative weights from PSWeight (4 entries:
+	[0] ISR=2 FSR=1, [1] ISR=1 FSR=2, [2] ISR=0.5 FSR=1, [3] ISR=1 FSR=0.5).
+	Events without 4 entries get 1."""
+	nev = len(events)
+	one = np.ones(nev)
+	res = nano_weight_table(events, 'PSWeight', 4)
+	if res is None:
+		return (one, one), (one, one)
+	n, t = res
+	ok = (n == 4)
+	col = lambda i: np.where(ok, finite_or(t[:, i], 1.), 1.)
+	return (col(0), col(2)), (col(1), col(3))
+
+def get_scale_weights(events):
+	"""7-point muR/muF envelope (up=max, down=min, relative) from
+	LHEScaleWeight; drops the anti-correlated (0.5,2)/(2,0.5) points.
+	9 entries: [4] nominal, use 0,1,3,5,7,8. 8 entries (nominal omitted):
+	use 0,1,3,4,6,7. Otherwise 1."""
+	nev = len(events)
+	up, down = np.ones(nev), np.ones(nev)
+	res = nano_weight_table(events, 'LHEScaleWeight', 9)
+	if res is None:
+		return up, down
+	n, t = res
+	for nent, idx in ((9, [0, 1, 3, 5, 7, 8]), (8, [0, 1, 3, 4, 6, 7])):
+		sel = (n == nent)
+		if not np.any(sel):
+			continue
+		v = t[sel][:, idx]
+		v = np.where(np.isfinite(v), v, 1.)
+		up[sel] = np.max(v, axis=1)
+		down[sel] = np.min(v, axis=1)
+	return up, down
+
+def get_pdf_weights(events):
+	"""PDF and alpha_S (up, down) relative weights from LHEPdfWeight, Hessian
+	sets (CMS Run 3 default NNPDF3.1 325300: [0] central, [1..100]
+	eigenvectors, [101],[102] alpha_S). delta = sqrt(sum_i (w_i-w_0)^2)/w_0,
+	up/down = 1 +- delta. alpha_S: envelope of the two alpha_S members.
+	101/103 -> 100 members, 31/33 -> 30 members; other lengths get 1."""
+	nev = len(events)
+	pdf_up, pdf_dn = np.ones(nev), np.ones(nev)
+	as_up, as_dn = np.ones(nev), np.ones(nev)
+	res = nano_weight_table(events, 'LHEPdfWeight', 103)
+	if res is None:
+		return (pdf_up, pdf_dn), (as_up, as_dn)
+	n, t = res
+	for nent, nmem, has_as in ((101, 100, False), (103, 100, True), (31, 30, False), (33, 30, True)):
+		sel = (n == nent)
+		if not np.any(sel):
+			continue
+		w0 = t[sel, 0]
+		good = np.isfinite(w0) & (w0 > 0)
+		w0s = np.where(good, w0, 1.)
+		mem = t[sel, 1:nmem+1]
+		d = np.where(np.isfinite(mem), mem - w0s[:, None], 0.)
+		delta = np.where(good, np.sqrt(np.sum(d**2, axis=1)) / w0s, 0.)
+		pdf_up[sel] = 1. + delta
+		pdf_dn[sel] = np.maximum(1. - delta, 0.)
+		if has_as:
+			a = t[sel, nmem+1:nmem+3] / w0s[:, None]
+			a = np.where(np.isfinite(a) & good[:, None], a, 1.)
+			as_up[sel] = np.max(a, axis=1)
+			as_dn[sel] = np.min(a, axis=1)
+	return (pdf_up, pdf_dn), (as_up, as_dn)
+
+###
+# JER smearing (MC). Evaluated here like the helpers above; the resolution and
+# scale factor come from the same jet_jerc / fatJet_jerc JSON files as the JEC
+# (AK15 uses the AK8PFPuppi keys, as the JEC does).
+###
+_JER_TAG = {
+	'2022pre' : 'Summer22_22Sep2023_JRV1',
+	'2022post': 'Summer22EE_22Sep2023_JRV1',
+	'2023pre' : 'Summer23Prompt23_RunCv1234_JRV1',	# full 2023 C era (also RunCv123, RunCv4 in the file)
+	'2023post': 'Summer23BPixPrompt23_RunD_JRV1',
+}
+# Upper Rho edge of the PtResolution binning. Outside the binning (Rho or
+# |eta| > 5.191) the JSON returns a resolution of 1.0 (100%), so the inputs
+# are clamped into range before the lookup.
+_JER_RHO_MAX = {'2022pre': 60.35, '2022post': 60.71, '2023pre': 52.2, '2023post': 52.05}
+_JER_ETA_MAX = 5.191
+
+def jer_factor_flat(year, pt, eta, rho, genpt, gendr, var, fat, seed):
+	"""JER smearing factor for flat numpy arrays (one entry per jet), hybrid
+	method; var in {'nom','up','down'} selects the JER scale factor s.
+	  gen-matched (genpt > 0, dR < R/2, |pt-genpt| < 3*sigma*pt):
+	      1 + (s-1)*(pt-genpt)/pt
+	  otherwise: 1 + N(0,sigma)*sqrt(max(s^2-1, 0))
+	sigma = relative pt resolution; pt = JEC-corrected pt. The factor is
+	clipped at 0. The random numbers depend only on seed and the number of
+	jets, so 'nom', 'up' and 'down' use the same ones."""
+	fname, algo, cone = ('fatJet_jerc', 'AK8PFPuppi', 1.5) if fat else ('jet_jerc', 'AK4PFPuppi', 0.4)
+	cset = _cset('data/JetMETCorr/'+year+'/'+fname+'.json.gz')
+	pt, eta, rho, genpt, gendr = (np.asarray(x, dtype=np.float64) for x in (pt, eta, rho, genpt, gendr))
+	eta_c = np.clip(eta, -_JER_ETA_MAX + 1e-3, _JER_ETA_MAX - 1e-3)
+	rho_c = np.clip(rho, 0., _JER_RHO_MAX[year] - 1e-2)
+	sigma = cset[_JER_TAG[year]+'_MC_PtResolution_'+algo].evaluate(eta_c, pt, rho_c)
+	sf = cset[_JER_TAG[year]+'_MC_ScaleFactor_'+algo].evaluate(eta_c, pt, var)
+	safe_pt = np.where(pt > 0, pt, 1.)
+	matched = (genpt > 0) & (gendr < cone/2.) & (np.abs(pt - genpt) < 3.*sigma*pt)
+	gaus = np.random.default_rng(seed).standard_normal(len(pt))
+	scaling = 1. + (sf - 1.)*(pt - genpt)/safe_pt
+	stochastic = 1. + gaus*sigma*np.sqrt(np.maximum(sf*sf - 1., 0.))
+	factor = np.where(matched, scaling, stochastic)
+	return np.where(np.isfinite(factor), np.maximum(factor, 0.), 1.)
+
+def get_jer_factor(year, pt, eta, rho, genpt, gendr, var, fat, seed):
+	"""jer_factor_flat for jagged per-jet arrays (rho is per event)."""
+	counts = ak.num(pt)
+	rho, _ = ak.broadcast_arrays(rho, pt)
+	flat = lambda x: np.asarray(ak.to_numpy(ak.flatten(x)), dtype=np.float64)
+	factor = jer_factor_flat(year, flat(pt), flat(eta), flat(rho), flat(genpt), flat(gendr), var, fat, seed)
+	return ak.unflatten(factor, counts)
 
 class AnalysisProcessor(processor.ProcessorABC):
 
@@ -58,7 +224,15 @@ class AnalysisProcessor(processor.ProcessorABC):
 		self._lumi = 1000.*float(AnalysisProcessor.lumis[year])
 		self._xsec = xsec
 		self._systematics = False
-		self._skipJER = True
+		# False: MC jets (AK15, AK4) get the nominal JER smearing and the
+		# JERUp/JERDown passes run. True: no smearing at all, JES passes only.
+		self._skipJER = False
+		# Jet energy shifts run as extra passes over MC (see process()).
+		# shift name -> (JES var for get_jec_correction / get_fjec_correction,
+		#                JER var for get_jer_factor)
+		self._jet_shifts = {'JESUp': ('up', 'nom'), 'JESDown': ('down', 'nom')}
+		if not self._skipJER:
+			self._jet_shifts.update({'JERUp': ('nominal', 'up'), 'JERDown': ('nominal', 'down')})
 
 		self._samples = {
 			'sr'   :('TT','WtoLNu-2Jets','DYto2L-2Jets','Zto2Nu-2Jets','GJ','ST','WW','ZZ','WZ','QCD','JetMET',
@@ -127,6 +301,11 @@ class AnalysisProcessor(processor.ProcessorABC):
 				hist.axis.StrCategory([], name='region', growth=True),
 				hist.axis.StrCategory([], name='systematic', growth=True),
 				#hist.axis.Variable([40,50,60,70,80,90,100,110,120,130,150,160,180,200,220,240,300], name='fjmass', label=r'AK15 Jet $m_{sd}$'),
+				# The only histogram with a 'systematic' axis: "nominal", every
+				# weights.variations entry and JESUp/Down, JERUp/Down (data:
+				# "nominal" only). Same recoil binning as 'ut'.
+				hist.axis.Regular(175,250,2000, name='recoil', label='$U_{T}$'),
+				hist.axis.Variable([0, self._TvsQCDwp[self._year], 1], name='TvsQCD', label='TvsQCD', flow=False),
 				storage=hist.storage.Weight(),
 			),
 			'TvsQCD': hist.Hist(
@@ -353,8 +532,13 @@ class AnalysisProcessor(processor.ProcessorABC):
 			# Nominal JEC are already applied in data
 			return self.process_shift(events, None)
 		
-		if not isData:
-			return self.process_shift(events, None)
+		# MC: nominal pass (all histograms; 'template' for "nominal" + every
+		# weight variation) plus one pass per JES/JER shift ('template' only,
+		# systematic=<shift>, nominal weight). The shifts change jet kinematics,
+		# so the selection is rerun each time.
+		return processor.accumulate(
+			self.process_shift(events, shift) for shift in (None,) + tuple(self._jet_shifts)
+		)
 	
 
 
@@ -370,6 +554,20 @@ class AnalysisProcessor(processor.ProcessorABC):
 				selected_regions.append(region)
 		
 		isData = not hasattr(events, "genWeight")
+		# nominal JEC / nominal JER unless this pass is a JES or JER shift (MC only)
+		jes_var, jer_var = self._jet_shifts.get(shift_name, ('nominal', 'nom'))
+		doJER = (not isData) and (not self._skipJER)
+		# Seed for the stochastic JER smearing: fixed per chunk, so every pass
+		# (nominal, JES, JER) draws the same random numbers for the same jets.
+		jer_seed = [int(events.run[0]), int(events.luminosityBlock[0]), int(events.event[0])] if len(events) > 0 else [0]
+		def jer_factor(jets, pt, var, fat):
+			"""JER factor for `jets` at JEC-corrected `pt`; 1 for data or _skipJER."""
+			if not doJER:
+				return ak.ones_like(pt)
+			gen = jets.matched_gen
+			genpt = ak.fill_none(gen.pt, 0.)
+			gendr = ak.fill_none(jets.delta_r(gen), 99.)
+			return get_jer_factor(self._year, pt, jets.eta, rho_density, genpt, gendr, var, fat, jer_seed + [15 if fat else 4])
 		
 		################
 		## Initialize selection, weights and output histogram
@@ -461,6 +659,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 			get_mu_tight_iso_sf(self._year, abs(mu.eta), mu.pt), 
 			mu.iso_sf #ak.ones_like(mu.pt) #mu.iso_sf
 		)
+		# up/down of the muon ID and ISO SFs (absolute, POG 'systup'/'systdown')
+		if not isData:
+			for sfname, lkey, tkey in (('id_sf', 'NUM_LooseID_DEN_TrackerMuons', 'NUM_TightID_DEN_TrackerMuons'),
+			                           ('iso_sf', 'NUM_LoosePFIso_DEN_LooseID', 'NUM_TightPFIso_DEN_TightID')):
+				for sfvar, pogvar in (('up', 'systup'), ('down', 'systdown')):
+					v = ak.where(mu.isloose, get_mu_sf_var(self._year, lkey, abs(mu.eta), mu.pt, pogvar), ak.ones_like(mu.pt))
+					v = ak.where(mu.istight, get_mu_sf_var(self._year, tkey, abs(mu.eta), mu.pt, pogvar), v)
+					mu[sfname+'_'+sfvar] = v
 		mu['T'] = ak.zip(
 			{
 				"r": mu.pt,
@@ -522,6 +728,16 @@ class AnalysisProcessor(processor.ProcessorABC):
 			eleHlt_tight, 
 			e.hlt_sf
 		)
+		# up/down of the electron RECO, ID and HLT SFs (absolute), same
+		# loose -> tight override as the nominal
+		for v in ('up', 'down'):
+			below20, s20to75, above75 = {'up': (sf_below20_up, sf_20to75_up, sf_Above75_up),
+			                             'down': (sf_below20_down, sf_20to75_down, sf_Above75_down)}[v]
+			e['reco_sf_'+v] = ak.where(e.pt < 20, below20, ak.where(e.pt < 75, s20to75, above75))
+			id_l, id_t = {'up': (sf_loose_up, sf_tight_up), 'down': (sf_loose_down, sf_tight_down)}[v]
+			e['id_sf_'+v] = ak.where(e.istight, id_t, ak.where(e.isloose, id_l, ak.ones_like(e.pt)))
+			hlt_l, hlt_t = {'up': (eleHlt_loose_up, eleHlt_tight_up), 'down': (eleHlt_loose_down, eleHlt_tight_down)}[v]
+			e['hlt_sf_'+v] = ak.where(e.istight, hlt_t, ak.where(e.isloose, hlt_l, ak.ones_like(e.pt)))
 		## Per-electron HLT efficiency in data / MC (same Loose/Tight choice as hlt_sf),
 		## for the 2-electron trigger SF. 0 below 25 GeV, where Ele30 cannot fire.
 		eleEffD_loose, _, _, eleEffM_loose, _, _ = get_ele_trig_eff(self._year, abs(e.eta), e.pt, "Loose")
@@ -576,6 +792,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 			pho_sf_tight, 
 			pho.id_sf #ak.ones_like(pho.pt)
 		)
+		pho['id_sf_up'] = ak.where(pho.istight, pho_sf_tight_up, ak.where(pho.isloose, pho_sf_loose_up, ak.ones_like(pho.pt)))
+		pho['id_sf_down'] = ak.where(pho.istight, pho_sf_tight_down, ak.where(pho.isloose, pho_sf_loose_down, ak.ones_like(pho.pt)))
 		pho['T'] = ak.zip(
 			{
 				"r": pho.pt,
@@ -605,9 +823,15 @@ class AnalysisProcessor(processor.ProcessorABC):
 		#fj['mass'] = fj.mass * fjec_corr
 		fj_pt_raw   = fj.pt   * (1 - fj.rawFactor)
 		fj_mass_raw = fj.mass * (1 - fj.rawFactor)
-		fjec_corr = get_fjec_correction(self._year, fj_pt_raw, fj.eta, fj.phi, rho_density, fj.area, run, isData)
-		fj['pt']   = fj_pt_raw   * fjec_corr
-		fj['mass'] = fj_mass_raw * fjec_corr
+		fjec_nom = get_fjec_correction(self._year, fj_pt_raw, fj.eta, fj.phi, rho_density, fj.area, run, isData)
+		fjec_corr = fjec_nom
+		if jes_var != 'nominal':
+			fjec_corr = get_fjec_correction(self._year, fj_pt_raw, fj.eta, fj.phi, rho_density, fj.area, run, isData, var=jes_var)
+		# JER smearing factor, always derived from the nominal-JEC pt (so a JES
+		# pass uses the same smearing as the nominal pass)
+		fjer = jer_factor(fj, fj_pt_raw * fjec_nom, jer_var, True)
+		fj['pt']   = fj_pt_raw   * fjec_corr * fjer
+		fj['mass'] = fj_mass_raw * fjec_corr * fjer
 		#fj['msd_corr'] = get_msd_corr(fj)
 		fj['vec'] = ak.zip(
 			{
@@ -651,9 +875,23 @@ class AnalysisProcessor(processor.ProcessorABC):
 		#j['mass'] = j.mass * jec_corr
 		j_pt_raw   = j.pt   * (1 - j.rawFactor)
 		j_mass_raw = j.mass * (1 - j.rawFactor)
-		jec_corr = get_jec_correction(self._year, j_pt_raw, j.eta, j.phi, rho_density, j.area, run, isData)
-		j['pt']   = j_pt_raw   * jec_corr
-		j['mass'] = j_mass_raw * jec_corr
+		jec_nom = get_jec_correction(self._year, j_pt_raw, j.eta, j.phi, rho_density, j.area, run, isData)
+		jec_corr = jec_nom
+		if jes_var != 'nominal':
+			jec_corr = get_jec_correction(self._year, j_pt_raw, j.eta, j.phi, rho_density, j.area, run, isData, var=jes_var)
+		jer = jer_factor(j, j_pt_raw * jec_nom, jer_var, False)
+		if shift_name in self._jet_shifts:
+			# Propagate the AK4 JES/JER shift to MET (simplified type-1: every AK4
+			# jet with nominal pt > 15 GeV): MET -= sum(shifted - nominal), where
+			# nominal = nominal JEC x nominal JER. The nominal MET itself is not
+			# re-derived (MET_TODO.txt). met is only used after this point.
+			j_pt_nom = j_pt_raw * jec_nom * (jer if jer_var == 'nom' else jer_factor(j, j_pt_raw * jec_nom, 'nom', False))
+			dpt = ak.where(j_pt_nom > 15., j_pt_raw * jec_corr * jer - j_pt_nom, 0.)
+			met_x = met.pt * np.cos(met.phi) - ak.sum(dpt * np.cos(j.phi), axis=1)
+			met_y = met.pt * np.sin(met.phi) - ak.sum(dpt * np.sin(j.phi), axis=1)
+			met['pt'], met['phi'] = np.hypot(met_x, met_y), np.arctan2(met_y, met_x)
+		j['pt']   = j_pt_raw   * jec_corr * jer
+		j['mass'] = j_mass_raw * jec_corr * jer
 		j['isveto'] = isJetVeto(j, self._year)
 		j_veto = j[j.isveto]
 		n_j_veto = ak.num(j_veto, axis=1)
@@ -805,6 +1043,8 @@ class AnalysisProcessor(processor.ProcessorABC):
 			# Calculate PU weight and systematic variations
 			###
 			pu = get_pu_weight(self._year, events.Pileup.nTrueInt)
+			pu_up = get_pu_weight_var(self._year, events.Pileup.nTrueInt, 'up')
+			pu_down = get_pu_weight_var(self._year, events.Pileup.nTrueInt, 'down')
 
 			###
 			# AK4 b-tagging weights
@@ -1009,14 +1249,44 @@ class AnalysisProcessor(processor.ProcessorABC):
 		}
 		if not isData:
 			weights.add('genw', events.genWeight)
-			weights.add('pileup', pu)
+			# Weights.add(name, w, wUp, wDown): wUp/wDown are absolute (coffea
+			# divides by w where w != 0); variations appear as <name>Up/Down.
+			# Same sources and names as processors/topstudy_unc.py.
+			nev = len(events)
+			one = np.ones(nev)
+			pu_nom = finite_or(pu, 1.)
+			weights.add('pileup', pu_nom, finite_or(pu_up, pu_nom), finite_or(pu_down, pu_nom))
 			weights.add('nlo_ewk',nlo_ewk)
-			weights.add('topptreweighting', nlo)
+			# top-pT reweighting: up = applied twice, down = not applied
+			# (nlo = 1 for non-ttbar samples, so no effect there)
+			nlo_nom = finite_or(ak.to_numpy(nlo) if not isinstance(nlo, np.ndarray) else nlo, 1.)
+			weights.add('topptreweighting', nlo_nom, nlo_nom**2, one)
+			# parton shower, muR/muF scale envelope, PDF and alpha_S (relative
+			# weights; 1 where the sample has no such branch)
+			(isr_up, isr_down), (fsr_up, fsr_down) = get_ps_weights(events)
+			weights.add('ISR', one, isr_up, isr_down)
+			weights.add('FSR', one, fsr_up, fsr_down)
+			scale_up, scale_down = get_scale_weights(events)
+			weights.add('QCDscale', one, scale_up, scale_down)
+			(pdf_up, pdf_down), (as_up, as_down) = get_pdf_weights(events)
+			weights.add('PDF', one, pdf_up, pdf_down)
+			weights.add('alphaS', one, as_up, as_down)
 			weights.add('btagSF',btagSF)
-			weights.add('btagSFbc_correlated',np.ones(len(events), dtype='float'), btagSFbc_correlatedUp/btagSF, btagSFbc_correlatedDown/btagSF)
-			weights.add('btagSFbc_uncorrelated',np.ones(len(events), dtype='float'), btagSFbc_uncorrelatedUp/btagSF, btagSFbc_uncorrelatedDown/btagSF)
-			weights.add('btagSFlight_correlated',np.ones(len(events), dtype='float'), btagSFlight_correlatedUp/btagSF, btagSFlight_correlatedDown/btagSF)
-			weights.add('btagSFlight_uncorrelated',np.ones(len(events), dtype='float'), btagSFlight_uncorrelatedUp/btagSF, btagSFlight_uncorrelatedDown/btagSF)
+			# b-tag variations as ratios to the nominal btagSF. btag_weight()
+			# returns btagSF = 0 when an untagged jet has SF*eff >= 1; a plain
+			# Up/btagSF is then 0/0 = NaN and poisons whole bins of every
+			# variation. Those events have zero nominal weight, so their
+			# variation ratio is set to 1.
+			btag_nom = np.asarray(ak.to_numpy(btagSF), dtype=np.float64)
+			btag_ok = np.isfinite(btag_nom) & (btag_nom > 0)
+			btag_den = np.where(btag_ok, btag_nom, 1.)
+			def btag_ratio(var):
+				r = np.asarray(ak.to_numpy(var), dtype=np.float64) / btag_den
+				return np.where(btag_ok & np.isfinite(r), r, 1.)
+			weights.add('btagSFbc_correlated', one, btag_ratio(btagSFbc_correlatedUp), btag_ratio(btagSFbc_correlatedDown))
+			weights.add('btagSFbc_uncorrelated', one, btag_ratio(btagSFbc_uncorrelatedUp), btag_ratio(btagSFbc_uncorrelatedDown))
+			weights.add('btagSFlight_correlated', one, btag_ratio(btagSFlight_correlatedUp), btag_ratio(btagSFlight_correlatedDown))
+			weights.add('btagSFlight_uncorrelated', one, btag_ratio(btagSFlight_uncorrelatedUp), btag_ratio(btagSFlight_uncorrelatedDown))
 			weights.add('ttagSF', ttagSF, ttagSFUp, ttagSFDown)
 
 			### 
@@ -1029,93 +1299,77 @@ class AnalysisProcessor(processor.ProcessorABC):
 			mask_istwoM = ak.to_numpy((e_nloose==0)&(mu_nloose==2)&(pho_nloose==0))
 			mask_isoneG = ak.to_numpy((e_nloose==0)&(mu_nloose==0)&(pho_nloose==1)&(pho_ntight==1))
 
-			### 
-			# ID Scale Factor: electron and muon
 			###
-			id_sf	  = np.ones(len(events), dtype='float')
-			id_sf_up   = np.ones(len(events), dtype='float')
-			id_sf_down = np.ones(len(events), dtype='float')
-
-			id_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.id_sf, axis=1), 1.0))
-			id_sf_isoneM = ak.to_numpy(ak.fill_none(ak.prod(mu_tight.id_sf, axis=1), 1.0))
-			id_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.id_sf, axis=1), 1.0))
-			id_sf_istwoM = ak.to_numpy(ak.fill_none(ak.prod(mu_loose.id_sf, axis=1), 1.0))
-			id_sf_isoneG = ak.to_numpy(ak.fill_none(ak.prod(pho_tight.id_sf, axis=1), 1.0))
-
-			id_sf[mask_isoneE] = id_sf_isoneE[mask_isoneE]
-			id_sf[mask_isoneM] = id_sf_isoneM[mask_isoneM]
-			id_sf[mask_istwoE] = id_sf_isoneE[mask_istwoE]
-			id_sf[mask_istwoM] = id_sf_isoneM[mask_istwoM]
-			id_sf[mask_isoneG] = id_sf_isoneG[mask_isoneG]
-
-			weights.add('ids', id_sf)
-
-			### 
-			# RECO Scale Factor: electron
+			# Object SFs, one weight per object type so that electron, muon and
+			# photon SFs vary independently (masks are disjoint). The nominal
+			# product of these weights equals the former 'ids'*'reco'*'iso'*'trig'.
+			# As before, the 2-lepton regions use the product over the TIGHT
+			# leptons (the nominal is kept unchanged here; topstudy_unc.py uses
+			# the loose leptons there).
 			###
-			reco_sf	  = np.ones(len(events), dtype='float')
-			reco_sf_up   = np.ones(len(events), dtype='float')
-			reco_sf_down = np.ones(len(events), dtype='float')
+			def obj_prod(objs, field):
+				return finite_or(ak.to_numpy(ak.fill_none(ak.prod(objs[field], axis=1), 1.0)), 1.)
+			def add_obj_sf(name, pieces):
+				"""pieces: list of (mask, objects, field). Builds nominal/up/down
+				from field, field+'_up', field+'_down' on the masked events."""
+				w = {sfx: np.ones(nev) for sfx in ('', '_up', '_down')}
+				for mask, objs, field in pieces:
+					for sfx in w:
+						w[sfx][mask] = obj_prod(objs, field+sfx)[mask]
+				weights.add(name, w[''], w['_up'], w['_down'])
 
-			reco_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.reco_sf, axis=1), 1.0))
-			reco_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.reco_sf, axis=1), 1.0))
-
-			reco_sf[mask_isoneE] = reco_sf_isoneE[mask_isoneE]
-			reco_sf[mask_istwoE] = reco_sf_isoneE[mask_istwoE]
-
-			weights.add('reco', reco_sf)
-
-
-			### 
-			# ISO Scale Factor: muon
-			###
-			iso_sf	  = np.ones(len(events), dtype='float')
-			iso_sf_up   = np.ones(len(events), dtype='float')
-			iso_sf_down = np.ones(len(events), dtype='float')
-
-			iso_sf_isoneM = ak.to_numpy(ak.fill_none(ak.prod(mu_tight.iso_sf, axis=1), 1.0))
-			iso_sf_istwoM = ak.to_numpy(ak.fill_none(ak.prod(mu_loose.iso_sf, axis=1), 1.0))
-
-			iso_sf[mask_isoneM] = iso_sf_isoneM[mask_isoneM]
-			iso_sf[mask_istwoM] = iso_sf_isoneM[mask_istwoM]
-
-			weights.add('iso', iso_sf)
-
+			# ID: electron, muon, photon
+			add_obj_sf('ids_e',   [(mask_isoneE, e_tight, 'id_sf'), (mask_istwoE, e_tight, 'id_sf')])
+			add_obj_sf('ids_mu',  [(mask_isoneM, mu_tight, 'id_sf'), (mask_istwoM, mu_tight, 'id_sf')])
+			add_obj_sf('ids_pho', [(mask_isoneG, pho_tight, 'id_sf')])
+			# RECO: electron
+			add_obj_sf('reco_e',  [(mask_isoneE, e_tight, 'reco_sf'), (mask_istwoE, e_tight, 'reco_sf')])
+			# ISO: muon
+			add_obj_sf('iso_mu',  [(mask_isoneM, mu_tight, 'iso_sf'), (mask_istwoM, mu_tight, 'iso_sf')])
 
 			###
-			# Trigger efficiency weight
+			# Trigger efficiency weights: electron (1e, 2e), MET (0l, 1mu, 2mu), photon (1g)
 			###
 			met_sf_0,  met_sf_0_up,  met_sf_0_down  = get_met_trig_weight(self._year, u['sr'].r)
 			met_sf_m,  met_sf_m_up,  met_sf_m_down  = get_met_trig_weight(self._year, u['wmcr'].r)
 			met_sf_mm, met_sf_mm_up, met_sf_mm_down = get_met_trig_weight(self._year, u['zmcr'].r)
 			pho_sf, pho_sf_up, pho_sf_down = get_pho_trig_weight(self._year, ak.firsts(pho_tight).pt)
+			def ev_arr(x):
+				return finite_or(ak.to_numpy(ak.fill_none(x, 1.0)), 1.)
 
-			trg_sf	  = np.ones(len(events), dtype='float')
-			trg_sf_up   = np.ones(len(events), dtype='float')
-			trg_sf_down = np.ones(len(events), dtype='float')
-
-			trg_sf_iszeroL = ak.to_numpy(ak.fill_none(met_sf_0, 1.0))
-			trg_sf_isoneE = ak.to_numpy(ak.fill_none(ak.prod(e_tight.hlt_sf, axis=1), 1.0))
-			trg_sf_isoneM = ak.to_numpy(ak.fill_none(met_sf_m, 1.0))
-			#trg_sf_istwoE = ak.to_numpy(ak.fill_none(ak.prod(e_loose.hlt_sf, axis=1), 1.0))
-			## Single-e trigger fires if EITHER electron fires it:
+			## 2e: the single-e trigger fires if EITHER electron fires it:
 			## SF = [1 - prod(1 - eff_data)] / [1 - prod(1 - eff_mc)]
 			trg_p_data = 1 - ak.prod(1 - e_loose.hlt_eff_data, axis=1)
 			trg_p_mc   = 1 - ak.prod(1 - e_loose.hlt_eff_mc,   axis=1)
-			trg_sf_istwoE = ak.to_numpy(ak.fill_none(ak.where(trg_p_mc > 0, trg_p_data / trg_p_mc, 1.0), 1.0))
-			trg_sf_istwoM = ak.to_numpy(ak.fill_none(met_sf_mm, 1.0))
-			trg_sf_isoneG = ak.to_numpy(ak.fill_none(pho_sf, 1.0))
+			trg_sf_istwoE = ev_arr(ak.where(trg_p_mc > 0, trg_p_data / trg_p_mc, 1.0))
+			## 2e up/down: nominal x R, where R is the change of the same OR
+			## formula when each electron's data efficiency eff_mc*SF follows its
+			## per-electron SF up/down (the uncertainty the 1e region uses).
+			def trg_p_sf(field):
+				return 1 - ak.prod(1 - np.minimum(e_loose.hlt_eff_mc * e_loose[field], 1.), axis=1)
+			trg_p_nom = trg_p_sf('hlt_sf')
+			def trg_2e_ratio(field):
+				return ev_arr(ak.where(trg_p_nom > 0, trg_p_sf(field) / trg_p_nom, 1.0))
 
-			trg_sf[mask_iszeroL] = trg_sf_iszeroL[mask_iszeroL]
-			trg_sf[mask_isoneE] = trg_sf_isoneE[mask_isoneE]
-			trg_sf[mask_isoneM] = trg_sf_isoneM[mask_isoneM]
-			#trg_sf[mask_istwoE] = trg_sf_isoneE[mask_istwoE]
-			trg_sf[mask_istwoE] = trg_sf_istwoE[mask_istwoE]
-			#trg_sf[mask_istwoM] = trg_sf_isoneM[mask_istwoM]
-			trg_sf[mask_istwoM] = trg_sf_istwoM[mask_istwoM]
-			trg_sf[mask_isoneG] = trg_sf_isoneG[mask_isoneG]
+			trg_e = {sfx: np.ones(nev) for sfx in ('', '_up', '_down')}
+			for sfx in trg_e:
+				trg_e[sfx][mask_isoneE] = obj_prod(e_tight, 'hlt_sf'+sfx)[mask_isoneE]
+				twoE = trg_sf_istwoE if sfx == '' else trg_sf_istwoE * trg_2e_ratio('hlt_sf'+sfx)
+				trg_e[sfx][mask_istwoE] = twoE[mask_istwoE]
+			weights.add('trig_e', trg_e[''], trg_e['_up'], trg_e['_down'])
 
-			weights.add('trig', trg_sf)
+			trg_met = {sfx: np.ones(nev) for sfx in ('', '_up', '_down')}
+			for mask, trio in ((mask_iszeroL, (met_sf_0,  met_sf_0_up,  met_sf_0_down)),
+			                   (mask_isoneM,  (met_sf_m,  met_sf_m_up,  met_sf_m_down)),
+			                   (mask_istwoM,  (met_sf_mm, met_sf_mm_up, met_sf_mm_down))):
+				for sfx, x in zip(('', '_up', '_down'), trio):
+					trg_met[sfx][mask] = ev_arr(x)[mask]
+			weights.add('trig_met', trg_met[''], trg_met['_up'], trg_met['_down'])
+
+			trg_pho = {sfx: np.ones(nev) for sfx in ('', '_up', '_down')}
+			for sfx, x in zip(('', '_up', '_down'), (pho_sf, pho_sf_up, pho_sf_down)):
+				trg_pho[sfx][mask_isoneG] = ev_arr(x)[mask_isoneG]
+			weights.add('trig_pho', trg_pho[''], trg_pho['_up'], trg_pho['_down'])
 
 
 
@@ -1142,14 +1396,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 			else:
 				weight = weights.weight()[cut]
 			#print('weights: ', weights.weightStatistics.keys())
-			#output['template'].fill(
-			#	  region=region,
-			#	  systematic=sname,
-			#	  #recoil=normalize(u[region].r, cut),
-			#	  #fjmass=normalize(leading_fj.pt, cut),
-			#	  #TvsQCD=normalize(leading_fj.TvsQCD, cut),
-			#	  weight=weight
-			#)
+			# filled for every systematic (the histograms below are nominal only)
+			output['template'].fill(
+				  region=region,
+				  systematic=sname,
+				  recoil=normalize(u[region].r, cut),
+				  TvsQCD=normalize(leading_fj.TvsQCD, cut),
+				  weight=weight
+			)
 			if systematic is None:
 				variables = {
 					'met':					met.pt,
@@ -1236,7 +1490,6 @@ class AnalysisProcessor(processor.ProcessorABC):
 				)
 
 
-		shift_name = None
 		if shift_name is None:
 			systematics = [None] + list(weights.variations)
 		else:
@@ -1263,8 +1516,10 @@ class AnalysisProcessor(processor.ProcessorABC):
 				fill(region, systematic)
 
 			#########
-			## Store cutflow
+			## Store cutflow (nominal pass only; JES/JER passes fill 'template' only)
 			#########
+			if shift_name is not None:
+				continue
 			vcut=np.zeros(len(events), dtype=np.int)
 			output['cutflow'].fill(region=region,cutname='Initial', cutflow=vcut, weight=weights.weight())
 			cuts = regions[region]
@@ -1291,10 +1546,18 @@ class AnalysisProcessor(processor.ProcessorABC):
 		return accumulator
 
 if __name__ == '__main__':
+	# `python3 processors/dev_run3.py` puts processors/ (not analysis/) on
+	# sys.path; corrections_cached.coffea needs `utils.cset_cache` importable.
+	import os, sys
+	_ANALYSIS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+	if _ANALYSIS_DIR not in sys.path:
+		sys.path.insert(0, _ANALYSIS_DIR)
+
 	parser = OptionParser()
 	parser.add_option('-y', '--year', help='year', dest='year')
 	parser.add_option('-m', '--metadata', help='metadata', dest='metadata')
 	parser.add_option('-n', '--name', help='name', dest='name')
+	parser.add_option('-c', '--corrections', help='corrections file (default data/corrections.coffea)', dest='corrections', default='data/corrections.coffea')
 	(options, args) = parser.parse_args()
 
 
@@ -1302,7 +1565,7 @@ if __name__ == '__main__':
 		samplefiles = json.load(fin)
 		xsec = {k: v['xs'] for k,v in samplefiles.items()}
 
-	corrections = load('data/corrections.coffea')
+	corrections = load(options.corrections)
 	ids		 = load('data/ids.coffea')
 	common	  = load('data/common.coffea')
 
